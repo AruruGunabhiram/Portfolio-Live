@@ -1,6 +1,6 @@
 import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { Container, Button } from '../components';
+import { Container, Button, GlitchText } from '../components';
 import { useTheme } from '../hooks';
 import { heroAnimation } from '../utils';
 
@@ -45,7 +45,14 @@ export const Hero = () => {
             className={`text-4xl md:text-5xl lg:text-6xl font-bold ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}
             variants={heroAnimation.heading}
           >
-            {isGeekMode ? '> ' : ''}Hi, I'm <span className={isGeekMode ? 'text-geek-text' : 'text-dark-accent'}>Your Name</span>
+            {isGeekMode ? '> ' : ''}Hi, I'm{' '}
+            {isGeekMode ? (
+              <GlitchText className="text-geek-text">
+                Your Name
+              </GlitchText>
+            ) : (
+              <span className="text-dark-accent">Your Name</span>
+            )}
           </motion.h1>
 
           {/* Subheading with fade in up */}

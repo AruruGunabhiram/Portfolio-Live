@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Container, Button } from '../components';
+import { Container, Button, AnimatedLogo } from '../components';
 import { useTheme } from '../hooks';
 
 export const Header = () => {
@@ -29,8 +29,9 @@ export const Header = () => {
           {/* Logo */}
           <button
             onClick={() => scrollToSection('hero')}
-            className={`text-xl font-bold ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}
+            className={`flex items-center gap-2 text-xl font-bold ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}
           >
+            {isGeekMode && <AnimatedLogo className="text-geek-accent" />}
             {isGeekMode ? '> Portfolio_' : 'Portfolio'}
           </button>
 

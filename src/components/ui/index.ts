@@ -2,3 +2,7 @@ export { Container } from './Container';
 export { Button } from './Button';
 export { Card } from './Card';
 export { ParallaxLayer } from './ParallaxLayer';
+export { AnimatedLogo } from './AnimatedLogo';
+export { CodeBlock } from './CodeBlock';
+export { CustomCursor } from './CustomCursor';
+export { GlitchText } from './GlitchText';
