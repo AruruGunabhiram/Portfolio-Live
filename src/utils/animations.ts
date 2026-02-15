@@ -169,6 +169,33 @@ export const scrollViewport = {
 export const isBrowser = typeof window !== 'undefined';
 
 /**
+ * Check if user prefers reduced motion
+ * @returns true if user prefers reduced motion
+ */
+export const prefersReducedMotion = (): boolean => {
+  if (!isBrowser) return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+};
+
+/**
+ * Get animation duration based on reduced-motion preference
+ * @param duration - Normal duration in seconds
+ * @returns 0 if reduced motion, otherwise normal duration
+ */
+export const getAnimationDuration = (duration: number): number => {
+  return prefersReducedMotion() ? 0 : duration;
+};
+
+/**
+ * Get scroll effect intensity based on reduced-motion preference
+ * @param intensity - Normal intensity (0-1)
+ * @returns 0 if reduced motion, otherwise normal intensity
+ */
+export const getScrollIntensity = (intensity: number): number => {
+  return prefersReducedMotion() ? 0 : intensity;
+};
+
+/**
  * Custom hook for GSAP ScrollTrigger animations
  * SSR-safe with proper cleanup
  *

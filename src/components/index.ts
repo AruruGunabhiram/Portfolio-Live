@@ -1,1 +1,1 @@
-export { Container, Button, Card } from './ui';
+export { Container, Button, Card, ParallaxLayer } from './ui';

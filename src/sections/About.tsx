@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Container } from '../components';
+import { Container, ParallaxLayer } from '../components';
 import { useTheme } from '../hooks';
 import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
 
@@ -7,8 +7,17 @@ export const About = () => {
   const { isGeekMode } = useTheme();
 
   return (
-    <section id="about" className="py-20">
-      <Container>
+    <section id="about" className="py-20 relative overflow-hidden">
+      {/* Parallax Background Layers */}
+      <ParallaxLayer speed={-15} className="absolute top-20 left-10 opacity-10">
+        <div className={`w-64 h-64 rounded-full ${isGeekMode ? 'bg-geek-accent' : 'bg-dark-accent'} blur-3xl`} />
+      </ParallaxLayer>
+
+      <ParallaxLayer speed={-8} className="absolute bottom-20 right-10 opacity-10">
+        <div className={`w-96 h-96 rounded-full ${isGeekMode ? 'bg-geek-accent' : 'bg-dark-accent'} blur-3xl`} />
+      </ParallaxLayer>
+
+      <Container className="relative z-10">
         <motion.h2
           className={`text-3xl md:text-4xl font-bold mb-8 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}
           initial="hidden"
