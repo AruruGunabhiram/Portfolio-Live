@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { motion } from 'framer-motion';
 import { useTheme } from '../../hooks';
 
 interface CardProps {
@@ -14,8 +15,11 @@ export const Card = ({ children, className = '' }: CardProps) => {
     : 'bg-dark-surface border border-gray-800 hover:border-dark-accent';
 
   return (
-    <div className={`rounded-lg p-6 transition-all duration-200 ${cardStyles} ${className}`}>
+    <motion.div
+      className={`rounded-lg p-6 transition-all duration-200 ${cardStyles} ${className}`}
+      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+    >
       {children}
-    </div>
+    </motion.div>
   );
 };

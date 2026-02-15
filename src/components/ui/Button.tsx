@@ -1,7 +1,9 @@
 import type { ButtonHTMLAttributes } from 'react';
+import { motion } from 'framer-motion';
 import { useTheme } from '../../hooks';
+import { hoverScale, tapScale } from '../../utils';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onDrag' | 'onDragStart' | 'onDragEnd'> {
   variant?: 'primary' | 'secondary' | 'ghost';
 }
 
@@ -28,11 +30,14 @@ export const Button = ({
   };
 
   return (
-    <button
+    <motion.button
       className={`${baseStyles} ${variantStyles[variant]} ${className}`}
-      {...props}
+      whileHover={hoverScale}
+      whileTap={tapScale}
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      {...(props as any)}
     >
       {children}
-    </button>
+    </motion.button>
   );
 };

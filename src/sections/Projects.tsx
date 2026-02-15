@@ -1,6 +1,7 @@
+import { motion } from 'framer-motion';
 import { Container, Card, Button } from '../components';
 import { useTheme } from '../hooks';
-import { PROJECTS } from '../utils';
+import { PROJECTS, fadeInUp, staggerContainerFast, cardAnimation, scrollViewport } from '../utils';
 
 export const Projects = () => {
   const { isGeekMode } = useTheme();
@@ -8,13 +9,25 @@ export const Projects = () => {
   return (
     <section id="projects" className="py-20">
       <Container>
-        <h2 className={`text-3xl md:text-4xl font-bold mb-12 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}>
+        <motion.h2
+          className={`text-3xl md:text-4xl font-bold mb-12 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          variants={fadeInUp}
+        >
           {isGeekMode ? '> ' : ''}Featured Projects
-        </h2>
+        </motion.h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          variants={staggerContainerFast}
+        >
           {PROJECTS.map((project) => (
-            <article key={project.id}>
+            <motion.article key={project.id} variants={cardAnimation}>
               <Card>
                 <h3 className={`text-xl font-bold mb-3 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}>
                   {isGeekMode ? '> ' : ''}{project.title}
@@ -56,9 +69,9 @@ export const Projects = () => {
                   )}
                 </div>
               </Card>
-            </article>
+            </motion.article>
           ))}
-        </div>
+        </motion.div>
       </Container>
     </section>
   );
