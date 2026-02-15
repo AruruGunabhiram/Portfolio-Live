@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useRef, useState, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -6,19 +6,33 @@ import { Container, ParallaxLayer } from '../components';
 import { useTheme } from '../hooks';
 import { SKILLS, fadeInUp, scrollViewport, useGSAP, isBrowser, prefersReducedMotion } from '../utils';
 
+// Lazy load heavy 3D component
+const Skill3DSphere = lazy(() =>
+  import('../components/skills').then(module => ({ default: module.Skill3DSphere }))
+);
+const SkillRadialChart = lazy(() =>
+  import('../components/skills').then(module => ({ default: module.SkillRadialChart }))
+);
+const SkillBarsRough = lazy(() =>
+  import('../components/skills').then(module => ({ default: module.SkillBarsRough }))
+);
+
 // Register GSAP plugin
 if (isBrowser) {
   gsap.registerPlugin(ScrollTrigger);
 }
 
+type ViewMode = 'bars' | 'radial' | '3d' | 'rough';
+
 export const Skills = () => {
   const { isGeekMode } = useTheme();
+  const [viewMode, setViewMode] = useState<ViewMode>('bars');
   const categoryRefs = useRef<(HTMLDivElement | null)[]>([]);
   const skillBarsRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // GSAP ScrollTrigger animations for skill bars
   useGSAP(() => {
-    if (!isBrowser) return;
+    if (!isBrowser || viewMode !== 'bars') return;
 
     const reducedMotion = prefersReducedMotion();
 
@@ -56,7 +70,7 @@ export const Skills = () => {
                 trigger: ref,
                 start: 'top 85%',
                 toggleActions: 'play none none reverse',
-                scrub: reducedMotion ? false : 1, // Smooth scrubbing unless reduced motion
+                scrub: reducedMotion ? false : 1,
               },
               duration: reducedMotion ? 0 : 1.5,
               delay: reducedMotion ? 0 : index * 0.05,
@@ -71,7 +85,30 @@ export const Skills = () => {
     return () => {
       ScrollTrigger.killAll();
     };
-  }, []);
+  }, [viewMode]);
+
+  // Flatten skills for alternative views
+  const allSkills = Object.values(SKILLS).flat();
+
+  // Handle keyboard navigation for view toggle
+  const handleKeyDown = (e: React.KeyboardEvent, mode: ViewMode) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setViewMode(mode);
+    }
+  };
+
+  const viewModes: Array<{ mode: ViewMode; label: string; description: string }> = isGeekMode
+    ? [
+        { mode: 'bars', label: 'Bars', description: 'Traditional bar chart view' },
+        { mode: 'radial', label: 'Radial', description: 'Circular radar chart view' },
+        { mode: '3d', label: '3D Sphere', description: 'Interactive 3D sphere visualization' },
+      ]
+    : [
+        { mode: 'bars', label: 'Bars', description: 'Traditional bar chart view' },
+        { mode: 'rough', label: 'Sketch', description: 'Hand-drawn artistic view' },
+        { mode: 'radial', label: 'Radial', description: 'Circular radar chart view' },
+      ];
 
   return (
     <section id="skills" className="py-20 relative overflow-hidden">
@@ -82,7 +119,7 @@ export const Skills = () => {
 
       <Container className="relative z-10">
         <motion.h2
-          className={`text-3xl md:text-4xl font-bold mb-12 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}
+          className={`text-3xl md:text-4xl font-bold mb-8 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
@@ -91,52 +128,164 @@ export const Skills = () => {
           {isGeekMode ? '> ' : ''}Skills & Technologies
         </motion.h2>
 
-        <div className="space-y-12">
-          {Object.entries(SKILLS).map(([category, skills], categoryIndex) => (
-            <div key={category}>
-              <h3
-                ref={(el) => { categoryRefs.current[categoryIndex] = el; }}
-                className={`text-xl font-semibold mb-6 capitalize ${isGeekMode ? 'text-geek-text' : 'text-gray-200'}`}
-              >
-                {isGeekMode ? '> ' : ''}{category}
-              </h3>
-
-              <div className="space-y-4">
-                {skills.map((skill, skillIndex) => {
-                  const refIndex = categoryIndex * 10 + skillIndex;
-                  return (
-                    <div
-                      key={skill.name}
-                      ref={(el) => { skillBarsRefs.current[refIndex] = el; }}
-                      data-level={skill.level}
-                      className="group"
-                    >
-                      <div className="flex justify-between items-center mb-2">
-                        <span className={`font-medium ${isGeekMode ? 'text-geek-text' : 'text-gray-300'}`}>
-                          {skill.name}
-                        </span>
-                        <span className={`text-sm ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}>
-                          {skill.level}%
-                        </span>
-                      </div>
-
-                      {/* Skill Bar */}
-                      <div className={`h-2 rounded-full overflow-hidden ${isGeekMode ? 'bg-geek-accent/20' : 'bg-dark-surface'}`}>
-                        <div
-                          className={`skill-bar-fill h-full rounded-full transition-all ${
-                            isGeekMode
-                              ? 'bg-geek-accent shadow-[0_0_10px_rgba(0,255,0,0.5)]'
-                              : 'bg-dark-accent'
-                          }`}
-                          style={{ width: '0%' }}
-                        />
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
+        {/* View Mode Toggle */}
+        <motion.div
+          className="mb-12 flex flex-wrap gap-4 justify-center"
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          variants={fadeInUp}
+          role="tablist"
+          aria-label="Skill visualization modes"
+        >
+          {viewModes.map(({ mode, label, description }) => (
+            <button
+              key={mode}
+              onClick={() => setViewMode(mode)}
+              onKeyDown={(e) => handleKeyDown(e, mode)}
+              className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                viewMode === mode
+                  ? isGeekMode
+                    ? 'bg-geek-accent text-black shadow-[0_0_20px_rgba(0,255,0,0.5)]'
+                    : 'bg-dark-accent text-white shadow-lg'
+                  : isGeekMode
+                  ? 'bg-geek-accent/20 text-geek-text border border-geek-accent hover:bg-geek-accent/30'
+                  : 'bg-dark-surface text-gray-300 border border-gray-700 hover:bg-dark-surface/80'
+              }`}
+              role="tab"
+              aria-selected={viewMode === mode}
+              aria-controls={`skill-view-${mode}`}
+              aria-label={`${label}: ${description}`}
+              tabIndex={viewMode === mode ? 0 : -1}
+            >
+              {isGeekMode ? '> ' : ''}{label}
+            </button>
           ))}
+        </motion.div>
+
+        {/* View Content */}
+        <div
+          role="tabpanel"
+          id={`skill-view-${viewMode}`}
+          aria-label={`${viewMode} view of skills`}
+        >
+          {viewMode === 'bars' && (
+            <motion.div
+              className="space-y-12"
+              initial="hidden"
+              whileInView="visible"
+              viewport={scrollViewport}
+              variants={fadeInUp}
+            >
+              {Object.entries(SKILLS).map(([category, skills], categoryIndex) => (
+                <div key={category}>
+                  <h3
+                    ref={(el) => { categoryRefs.current[categoryIndex] = el; }}
+                    className={`text-xl font-semibold mb-6 capitalize ${isGeekMode ? 'text-geek-text' : 'text-gray-200'}`}
+                  >
+                    {isGeekMode ? '> ' : ''}{category}
+                  </h3>
+
+                  <div className="space-y-4">
+                    {skills.map((skill, skillIndex) => {
+                      const refIndex = categoryIndex * 10 + skillIndex;
+                      return (
+                        <div
+                          key={skill.name}
+                          ref={(el) => { skillBarsRefs.current[refIndex] = el; }}
+                          data-level={skill.level}
+                          className="group"
+                        >
+                          <div className="flex justify-between items-center mb-2">
+                            <span className={`font-medium ${isGeekMode ? 'text-geek-text' : 'text-gray-300'}`}>
+                              {skill.name}
+                            </span>
+                            <span className={`text-sm ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}>
+                              {skill.level}%
+                            </span>
+                          </div>
+
+                          {/* Skill Bar */}
+                          <div
+                            className={`h-2 rounded-full overflow-hidden ${isGeekMode ? 'bg-geek-accent/20' : 'bg-dark-surface'}`}
+                            role="progressbar"
+                            aria-valuenow={skill.level}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-label={`${skill.name} proficiency`}
+                          >
+                            <div
+                              className={`skill-bar-fill h-full rounded-full transition-all ${
+                                isGeekMode
+                                  ? 'bg-geek-accent shadow-[0_0_10px_rgba(0,255,0,0.5)]'
+                                  : 'bg-dark-accent'
+                              }`}
+                              style={{ width: '0%' }}
+                            />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          )}
+
+          {viewMode === 'radial' && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Suspense fallback={
+                <div className="h-[400px] flex items-center justify-center">
+                  <div className={`text-lg ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}>
+                    Loading radial chart...
+                  </div>
+                </div>
+              }>
+                <SkillRadialChart skills={allSkills} isGeekMode={isGeekMode} />
+              </Suspense>
+            </motion.div>
+          )}
+
+          {viewMode === '3d' && isGeekMode && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Suspense fallback={
+                <div className="h-[500px] flex items-center justify-center">
+                  <div className="text-lg text-geek-accent">Loading 3D visualization...</div>
+                </div>
+              }>
+                <Skill3DSphere skills={allSkills} isGeekMode={isGeekMode} />
+              </Suspense>
+            </motion.div>
+          )}
+
+          {viewMode === 'rough' && !isGeekMode && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Suspense fallback={
+                <div className="h-[400px] flex items-center justify-center">
+                  <div className="text-lg text-dark-accent">Loading sketch view...</div>
+                </div>
+              }>
+                <SkillBarsRough skills={allSkills} isGeekMode={isGeekMode} />
+              </Suspense>
+            </motion.div>
+          )}
+        </div>
+
+        {/* Screen reader description */}
+        <div className="sr-only" aria-live="polite">
+          Currently viewing {viewMode} visualization of skills. Use tab to navigate between view modes.
         </div>
       </Container>
     </section>

@@ -22,6 +22,7 @@
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.13.0",
     "react-scroll-parallax": "^3.5.0",
+    "roughjs": "^4.6.6",
     "three": "^0.182.0",
     "vivus": "^0.4.6"
   },

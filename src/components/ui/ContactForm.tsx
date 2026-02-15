@@ -3,8 +3,8 @@ import type { FormEvent } from 'react';
 import Lottie from 'lottie-react';
 import { Button } from './Button';
 import { isBrowser } from '../../utils';
-import loadingAnimation from '../../../public/lottie/loading.json';
-import successAnimation from '../../../public/lottie/success.json';
+import loadingAnimation from '../../assets/lottie/loading.json';
+import successAnimation from '../../assets/lottie/success.json';
 
 type FormState = 'idle' | 'loading' | 'success' | 'error';
 
