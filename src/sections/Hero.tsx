@@ -1,7 +1,13 @@
+import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Container, Button } from '../components';
 import { useTheme } from '../hooks';
 import { heroAnimation } from '../utils';
+
+// Lazy load 3D scene for code-splitting
+const Scene3D = lazy(() =>
+  import('../components/three').then(module => ({ default: module.Scene3D }))
+);
 
 export const Hero = () => {
   const { isGeekMode } = useTheme();
@@ -14,8 +20,20 @@ export const Hero = () => {
   };
 
   return (
-    <section id="hero" className="min-h-screen flex items-center">
-      <Container>
+    <section id="hero" className="min-h-screen flex items-center relative overflow-hidden">
+      {/* 3D Background Scene - Only in Geek Mode */}
+      {isGeekMode && (
+        <Suspense fallback={
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="text-geek-accent text-sm">Loading 3D scene...</div>
+          </div>
+        }>
+          <Scene3D />
+        </Suspense>
+      )}
+
+      {/* Content - Higher z-index to stay above 3D scene */}
+      <Container className="relative z-10">
         <motion.div
           className="space-y-6"
           variants={heroAnimation.container}
