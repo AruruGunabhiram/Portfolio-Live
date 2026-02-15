@@ -6,3 +6,5 @@ export { AnimatedLogo } from './AnimatedLogo';
 export { CodeBlock } from './CodeBlock';
 export { CustomCursor } from './CustomCursor';
 export { GlitchText } from './GlitchText';
+export { ParticleNetwork } from './ParticleNetwork';
+export { ContactForm } from './ContactForm';

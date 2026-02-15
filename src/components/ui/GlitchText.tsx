@@ -78,7 +78,7 @@ export const GlitchText = ({ children, className = '' }: GlitchTextProps) => {
       }}
     >
       {children}
-      <style>{`
+      {/* <style>{`
         .glitch-text {
           text-shadow:
             2px 0 0 rgba(0, 255, 0, 0.3),
@@ -117,7 +117,7 @@ export const GlitchText = ({ children, className = '' }: GlitchTextProps) => {
             text-shadow: none !important;
           }
         }
-      `}</style>
+      `}</style> */}
     </span>
   );
 };

@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { Container, Button } from '../components';
+import { Container, Button, ContactForm } from '../components';
 import { useTheme } from '../hooks';
 import { SOCIAL_LINKS, fadeInUp, staggerContainer, scrollViewport } from '../utils';
 
@@ -10,7 +10,7 @@ export const Contact = () => {
     <section id="contact" className="py-20">
       <Container>
         <motion.h2
-          className={`text-3xl md:text-4xl font-bold mb-8 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}
+          className={`text-3xl md:text-4xl font-bold mb-12 text-center ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
@@ -20,14 +20,14 @@ export const Contact = () => {
         </motion.h2>
 
         <motion.div
-          className="max-w-2xl space-y-6"
+          className="space-y-12"
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
           variants={staggerContainer}
         >
           <motion.p
-            className={`text-lg ${isGeekMode ? 'text-geek-text' : 'text-gray-300'}`}
+            className={`text-lg text-center max-w-2xl mx-auto ${isGeekMode ? 'text-geek-text' : 'text-gray-300'}`}
             variants={fadeInUp}
           >
             {isGeekMode ? '> ' : ''}
@@ -35,10 +35,14 @@ export const Contact = () => {
             Whether you have a question or just want to say hi, feel free to reach out!
           </motion.p>
 
-          <motion.div className="space-y-4" variants={fadeInUp}>
+          <motion.div variants={fadeInUp}>
+            <ContactForm />
+          </motion.div>
+
+          <motion.div className="text-center space-y-6" variants={fadeInUp}>
             <div>
               <h3 className={`text-lg font-semibold mb-2 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}>
-                {isGeekMode ? '> ' : ''}Email
+                {isGeekMode ? '> ' : ''}Or reach me directly
               </h3>
               <a
                 href={`mailto:${SOCIAL_LINKS.email}`}
@@ -48,7 +52,7 @@ export const Contact = () => {
               </a>
             </div>
 
-            <div className="flex gap-4 pt-4">
+            <div className="flex gap-4 justify-center">
               <Button
                 variant="secondary"
                 onClick={() => window.open(SOCIAL_LINKS.github, '_blank')}
