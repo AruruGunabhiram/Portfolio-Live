@@ -61,14 +61,18 @@ export const CodeBlock = ({ code, language = 'typescript', className = '' }: Cod
     });
 
     // Animate typewriter effect
+    const timeouts: number[] = [];
     spans.forEach((span, i) => {
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         span.style.opacity = '1';
       }, i * 30); // 30ms between each character
+      timeouts.push(timeout);
     });
 
-    // No cleanup needed for setTimeout
-    return () => {};
+    // Cleanup timeouts
+    return () => {
+      timeouts.forEach((timeout) => clearTimeout(timeout));
+    };
   }, [isVisible, code]);
 
   return (
