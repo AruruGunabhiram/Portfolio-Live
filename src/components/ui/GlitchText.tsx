@@ -50,8 +50,8 @@ export const GlitchText = ({ children, className = '' }: GlitchTextProps) => {
       setIsGlitching(false);
     }, 300);
 
-    // Animate color shift with CSS
-    const colors = ['#00f0ff', '#ff0000', '#00ffff', '#00f0ff'];
+    // Animate color shift with cyberpunk colors
+    const colors = ['#00f0ff', '#ff006e', '#b026ff', '#00f0ff']; // Cyan, Pink, Purple, Cyan
     let colorIndex = 0;
     const colorInterval = setInterval(() => {
       if (text && colorIndex < colors.length) {

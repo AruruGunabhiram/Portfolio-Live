@@ -21,10 +21,10 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className={`py-8 ${isGeekMode ? 'border-t border-geek-accent' : 'border-t border-gray-800'}`}>
+    <footer className={`py-8 ${isGeekMode ? 'border-t border-cyber-cyan/30' : 'border-t border-gray-800'}`}>
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className={`text-sm ${isGeekMode ? 'text-geek-text' : 'text-gray-400'}`}>
+          <div className={`text-sm ${isGeekMode ? 'text-cyber-cyan' : 'text-gray-400'}`}>
             {isGeekMode ? '> ' : ''}© {currentYear} Your Name. All rights reserved.
           </div>
 
@@ -33,15 +33,19 @@ export const Footer = () => {
               <button
                 key={link.id}
                 onClick={() => scrollToSection(link.id)}
-                className={`text-sm ${isGeekMode ? 'text-geek-text hover:text-geek-accent' : 'text-gray-400 hover:text-dark-accent'} transition-colors`}
+                className={`text-sm transition-cyber ${
+                  isGeekMode
+                    ? 'text-cyber-cyan hover:text-cyber-pink hover:text-glow-neon'
+                    : 'text-gray-400 hover:text-dark-accent'
+                }`}
               >
                 {link.label}
               </button>
             ))}
           </nav>
 
-          <div className={`text-sm ${isGeekMode ? 'text-geek-text/60' : 'text-gray-500'}`}>
-            Built with React + TypeScript
+          <div className={`text-sm ${isGeekMode ? 'text-cyber-cyan/60' : 'text-gray-500'}`}>
+            Built with <span className={isGeekMode ? 'text-cyber-pink' : ''}>React</span> + <span className={isGeekMode ? 'text-cyber-purple' : ''}>TypeScript</span>
           </div>
         </div>
       </Container>

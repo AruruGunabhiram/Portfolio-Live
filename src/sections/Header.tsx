@@ -41,7 +41,11 @@ export const Header = () => {
               <button
                 key={link.id}
                 onClick={() => scrollToSection(link.id)}
-                className={`${isGeekMode ? 'text-geek-text hover:text-geek-accent' : 'text-gray-300 hover:text-dark-accent'} transition-colors`}
+                className={`transition-cyber ${
+                  isGeekMode
+                    ? 'text-cyber-cyan hover:text-cyber-pink hover:text-glow-neon'
+                    : 'text-gray-300 hover:text-dark-accent'
+                }`}
               >
                 {isGeekMode ? `> ${link.label}` : link.label}
               </button>
@@ -81,7 +85,11 @@ export const Header = () => {
               <button
                 key={link.id}
                 onClick={() => scrollToSection(link.id)}
-                className={`block w-full text-left py-2 ${isGeekMode ? 'text-geek-text hover:text-geek-accent' : 'text-gray-300 hover:text-dark-accent'} transition-colors`}
+                className={`block w-full text-left py-2 transition-cyber ${
+                  isGeekMode
+                    ? 'text-cyber-cyan hover:text-cyber-pink hover:text-glow-neon'
+                    : 'text-gray-300 hover:text-dark-accent'
+                }`}
               >
                 {isGeekMode ? `> ${link.label}` : link.label}
               </button>

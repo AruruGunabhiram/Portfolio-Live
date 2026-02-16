@@ -99,14 +99,14 @@ export const ParticleNetwork = () => {
             },
             particles: {
               color: {
-                value: ['#00f0ff', '#ff006e', '#b026ff'], // Cyberpunk: cyan, pink, purple
+                value: ['#00f0ff', '#ff006e'], // Cyberpunk: cyan, pink
               },
               links: {
-                color: '#00f0ff',
+                color: '#b026ff', // Purple connecting lines
                 distance: 150,
                 enable: true,
-                opacity: 0.3,
-                width: 1,
+                opacity: 0.4,
+                width: 1.5,
               },
               move: {
                 direction: 'none',

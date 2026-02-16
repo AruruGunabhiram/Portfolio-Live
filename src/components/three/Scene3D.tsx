@@ -41,11 +41,12 @@ export const Scene3D = () => {
         dpr={[1, 2]} // Pixel ratio for better performance
       >
         {/* Ambient light for overall illumination */}
-        <ambientLight intensity={0.3} />
+        <ambientLight intensity={0.2} />
 
-        {/* Point light for depth and highlights */}
-        <pointLight position={[10, 10, 10]} intensity={1} color="#00f0ff" />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#00f0ff" />
+        {/* Cyberpunk tri-color lighting setup */}
+        <pointLight position={[10, 10, 10]} intensity={1.2} color="#00f0ff" /> {/* Cyan */}
+        <pointLight position={[-10, -10, -10]} intensity={0.8} color="#ff006e" /> {/* Pink */}
+        <pointLight position={[0, 15, -5]} intensity={0.6} color="#b026ff" /> {/* Purple */}
 
         {/* Particle field */}
         <ParticleField count={80} mousePosition={mousePosition} />
