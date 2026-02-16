@@ -44,8 +44,8 @@ export const Scene3D = () => {
         <ambientLight intensity={0.3} />
 
         {/* Point light for depth and highlights */}
-        <pointLight position={[10, 10, 10]} intensity={1} color="#00ff00" />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#00ff00" />
+        <pointLight position={[10, 10, 10]} intensity={1} color="#00f0ff" />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} color="#00f0ff" />
 
         {/* Particle field */}
         <ParticleField count={80} mousePosition={mousePosition} />
@@ -63,7 +63,7 @@ export const Scene3D = () => {
           backgroundColor: 'transparent',
         }}
         dataStyles={{
-          color: '#00ff00',
+          color: '#00f0ff',
           fontSize: '14px',
         }}
       />

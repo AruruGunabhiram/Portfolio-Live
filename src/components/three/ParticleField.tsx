@@ -74,8 +74,8 @@ export const ParticleField = ({ count = 100, mousePosition }: ParticleFieldProps
       <boxGeometry args={[1, 1, 1]} />
       {/* Material with geek mode terminal green */}
       <meshStandardMaterial
-        color="#00ff00"
-        emissive="#00ff00"
+        color="#00f0ff"
+        emissive="#00f0ff"
         emissiveIntensity={0.5}
         wireframe
         transparent

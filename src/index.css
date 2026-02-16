@@ -1,32 +1,143 @@
 @import "tailwindcss";
 
+/* Cyberpunk Color Palette */
+:root {
+  /* Primary Colors */
+  --color-cyber-cyan: #00f0ff;
+  --color-cyber-cyan-light: #00d9ff;
+  --color-cyber-pink: #ff006e;
+  --color-cyber-pink-light: #ff1744;
+  --color-cyber-purple: #b026ff;
+  --color-cyber-purple-dark: #7b2cbf;
+
+  /* Backgrounds */
+  --color-cyber-bg-dark: #0a0e27;
+  --color-cyber-bg-darker: #0d1117;
+
+  /* Text */
+  --color-cyber-text-primary: #00f0ff;
+  --color-cyber-text-secondary: #e0e0e0;
+
+  /* Glow Effects */
+  --glow-cyan: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
+  --glow-pink: 0 0 10px rgba(255, 0, 110, 0.5), 0 0 20px rgba(255, 0, 110, 0.3);
+  --glow-purple: 0 0 10px rgba(176, 38, 255, 0.5), 0 0 20px rgba(176, 38, 255, 0.3);
+}
+
 @theme {
+  /* Cyberpunk Theme Colors */
+  --color-cyber-cyan: #00f0ff;
+  --color-cyber-cyan-light: #00d9ff;
+  --color-cyber-pink: #ff006e;
+  --color-cyber-pink-light: #ff1744;
+  --color-cyber-purple: #b026ff;
+  --color-cyber-purple-dark: #7b2cbf;
+
+  /* Backgrounds */
+  --color-cyber-bg-dark: #0a0e27;
+  --color-cyber-bg-darker: #0d1117;
+  --color-cyber-surface: #1a1f3a;
+
+  /* Text Colors */
+  --color-cyber-text: #00f0ff;
+  --color-cyber-text-light: #e0e0e0;
+  --color-cyber-text-dim: #8892b0;
+
+  /* Legacy Dark Mode (Professional) */
   --color-dark-bg: #0a0a0a;
   --color-dark-surface: #1a1a1a;
   --color-dark-accent: #646cff;
-  --color-geek-bg: #000000;
-  --color-geek-text: #00ff00;
-  --color-geek-accent: #00ff00;
+
+  /* Legacy Geek Mode - Now Cyberpunk */
+  --color-geek-bg: #0a0e27;
+  --color-geek-text: #00f0ff;
+  --color-geek-accent: #00f0ff;
+
+  /* Border Opacity */
+  --color-cyber-border: rgba(0, 240, 255, 0.3);
 }
 
 @layer base {
   body {
-    background-color: var(--color-dark-bg);
-    color: white;
+    @apply bg-cyber-bg-dark text-cyber-text-light;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+      sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   body.dark {
-    background-color: var(--color-dark-bg);
-    color: white;
+    @apply bg-dark-bg text-gray-100;
   }
 
   body.geek {
-    background-color: var(--color-geek-bg);
-    color: var(--color-geek-text);
+    @apply bg-cyber-bg-dark text-cyber-text;
     font-family: 'Courier New', Courier, monospace;
   }
 
-  * {
-    scroll-behavior: smooth;
+  code {
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+      monospace;
+  }
+}
+
+/* Cyberpunk Glow Effects */
+@layer utilities {
+  .glow-cyan {
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
+  }
+
+  .glow-pink {
+    box-shadow: 0 0 10px rgba(255, 0, 110, 0.5), 0 0 20px rgba(255, 0, 110, 0.3);
+  }
+
+  .glow-purple {
+    box-shadow: 0 0 10px rgba(176, 38, 255, 0.5), 0 0 20px rgba(176, 38, 255, 0.3);
+  }
+
+  .text-glow-cyan {
+    text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.4);
+  }
+
+  .text-glow-pink {
+    text-shadow: 0 0 10px rgba(255, 0, 110, 0.8), 0 0 20px rgba(255, 0, 110, 0.4);
+  }
+
+  .text-glow-purple {
+    text-shadow: 0 0 10px rgba(176, 38, 255, 0.8), 0 0 20px rgba(176, 38, 255, 0.4);
+  }
+
+  .gradient-cyber {
+    background: linear-gradient(135deg, #00f0ff 0%, #b026ff 50%, #ff006e 100%);
+  }
+
+  .gradient-cyber-horizontal {
+    background: linear-gradient(90deg, #00f0ff 0%, #b026ff 50%, #ff006e 100%);
+  }
+
+  .border-cyber {
+    border-color: rgba(0, 240, 255, 0.3);
+  }
+
+  .border-cyber-glow {
+    border-color: #00f0ff;
+    box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+  }
+}
+
+/* Animation Utilities */
+@layer utilities {
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
+    }
+    50% {
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.8), 0 0 30px rgba(0, 240, 255, 0.5);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2s ease-in-out infinite;
   }
 }

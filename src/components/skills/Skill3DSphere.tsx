@@ -26,7 +26,7 @@ const SkillLabel = ({ skill, position, isGeekMode }: SkillLabelProps) => {
     }
   });
 
-  const color = isGeekMode ? '#00ff00' : '#646cff';
+  const color = isGeekMode ? '#00f0ff' : '#646cff';
   const scale = hovered ? 1.2 : 1;
 
   return (
@@ -83,7 +83,7 @@ const SkillSphere = ({ skills, isGeekMode }: { skills: Array<{ name: string; lev
       <mesh>
         <sphereGeometry args={[0.5, 32, 32]} />
         <meshStandardMaterial
-          color={isGeekMode ? '#00ff00' : '#646cff'}
+          color={isGeekMode ? '#00f0ff' : '#646cff'}
           wireframe
           transparent
           opacity={0.3}
@@ -94,7 +94,7 @@ const SkillSphere = ({ skills, isGeekMode }: { skills: Array<{ name: string; lev
       <mesh>
         <sphereGeometry args={[3.5, 16, 16]} />
         <meshStandardMaterial
-          color={isGeekMode ? '#00ff00' : '#646cff'}
+          color={isGeekMode ? '#00f0ff' : '#646cff'}
           wireframe
           transparent
           opacity={0.1}
@@ -125,8 +125,8 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
         role="img"
       >
         <ambientLight intensity={0.5} />
-        <pointLight position={[10, 10, 10]} intensity={1} color={isGeekMode ? '#00ff00' : '#646cff'} />
-        <pointLight position={[-10, -10, -10]} intensity={0.5} color={isGeekMode ? '#00ff00' : '#646cff'} />
+        <pointLight position={[10, 10, 10]} intensity={1} color={isGeekMode ? '#00f0ff' : '#646cff'} />
+        <pointLight position={[-10, -10, -10]} intensity={0.5} color={isGeekMode ? '#00f0ff' : '#646cff'} />
 
         <Suspense fallback={null}>
           <SkillSphere skills={skills} isGeekMode={isGeekMode} />

@@ -146,10 +146,10 @@ export const Skills = () => {
               className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
                 viewMode === mode
                   ? isGeekMode
-                    ? 'bg-geek-accent text-black shadow-[0_0_20px_rgba(0,255,0,0.5)]'
+                    ? 'bg-cyber-cyan text-cyber-bg-dark glow-cyan hover:glow-pink'
                     : 'bg-dark-accent text-white shadow-lg'
                   : isGeekMode
-                  ? 'bg-geek-accent/20 text-geek-text border border-geek-accent hover:bg-geek-accent/30'
+                  ? 'bg-cyber-cyan/20 text-cyber-text border border-cyber-cyan hover:bg-cyber-cyan/30 hover:border-cyber-pink'
                   : 'bg-dark-surface text-gray-300 border border-gray-700 hover:bg-dark-surface/80'
               }`}
               role="tab"
@@ -217,7 +217,7 @@ export const Skills = () => {
                             <div
                               className={`skill-bar-fill h-full rounded-full transition-all ${
                                 isGeekMode
-                                  ? 'bg-geek-accent shadow-[0_0_10px_rgba(0,255,0,0.5)]'
+                                  ? 'gradient-cyber glow-cyan'
                                   : 'bg-dark-accent'
                               }`}
                               style={{ width: '0%' }}

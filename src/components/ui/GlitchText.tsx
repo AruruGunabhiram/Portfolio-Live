@@ -51,7 +51,7 @@ export const GlitchText = ({ children, className = '' }: GlitchTextProps) => {
     }, 300);
 
     // Animate color shift with CSS
-    const colors = ['#00ff00', '#ff0000', '#00ffff', '#00ff00'];
+    const colors = ['#00f0ff', '#ff0000', '#00ffff', '#00f0ff'];
     let colorIndex = 0;
     const colorInterval = setInterval(() => {
       if (text && colorIndex < colors.length) {
@@ -81,7 +81,7 @@ export const GlitchText = ({ children, className = '' }: GlitchTextProps) => {
       {/* <style>{`
         .glitch-text {
           text-shadow:
-            2px 0 0 rgba(0, 255, 0, 0.3),
+            2px 0 0 rgba(0, 240, 255, 0.3),
             -2px 0 0 rgba(255, 0, 0, 0.3);
           animation: glitch-anim-text 0.3s ease-in-out;
         }

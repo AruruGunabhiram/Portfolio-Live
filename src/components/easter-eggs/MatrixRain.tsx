@@ -37,7 +37,7 @@ export const MatrixRain = memo(({ onComplete, duration = 5000 }: MatrixRainProps
       ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-      ctx.fillStyle = '#00ff00';
+      ctx.fillStyle = '#00f0ff';
       ctx.font = `${fontSize}px monospace`;
 
       drops.forEach((y, index) => {

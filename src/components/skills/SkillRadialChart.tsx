@@ -52,7 +52,7 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
           centerX + Math.cos(angle) * radius,
           centerY + Math.sin(angle) * radius
         );
-        ctx.strokeStyle = isGeekMode ? '#00ff00' : '#646cff';
+        ctx.strokeStyle = isGeekMode ? '#00f0ff' : '#646cff';
         ctx.lineWidth = 2;
         ctx.stroke();
 
@@ -65,7 +65,7 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
           0,
           2 * Math.PI
         );
-        ctx.fillStyle = isGeekMode ? '#00ff00' : '#646cff';
+        ctx.fillStyle = isGeekMode ? '#00f0ff' : '#646cff';
         ctx.fill();
 
         // Draw skill label
@@ -73,7 +73,7 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
         const labelX = centerX + Math.cos(angle) * labelRadius;
         const labelY = centerY + Math.sin(angle) * labelRadius;
 
-        ctx.fillStyle = isGeekMode ? '#00ff00' : '#fff';
+        ctx.fillStyle = isGeekMode ? '#00f0ff' : '#fff';
         ctx.font = '12px monospace';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -81,21 +81,21 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
 
         // Draw percentage
         ctx.font = '10px monospace';
-        ctx.fillStyle = isGeekMode ? 'rgba(0,255,0,0.7)' : 'rgba(255,255,255,0.7)';
+        ctx.fillStyle = isGeekMode ? 'rgba(0,240,255,0.7)' : 'rgba(255,255,255,0.7)';
         ctx.fillText(`${skill.level}%`, labelX, labelY + 12);
       });
 
       // Draw center circle
       ctx.beginPath();
       ctx.arc(centerX, centerY, 8, 0, 2 * Math.PI);
-      ctx.fillStyle = isGeekMode ? '#00ff00' : '#646cff';
+      ctx.fillStyle = isGeekMode ? '#00f0ff' : '#646cff';
       ctx.fill();
 
       // Draw reference circles
       [0.25, 0.5, 0.75, 1].forEach((fraction) => {
         ctx.beginPath();
         ctx.arc(centerX, centerY, maxRadius * fraction, 0, 2 * Math.PI);
-        ctx.strokeStyle = isGeekMode ? 'rgba(0,255,0,0.1)' : 'rgba(255,255,255,0.1)';
+        ctx.strokeStyle = isGeekMode ? 'rgba(0,240,255,0.1)' : 'rgba(255,255,255,0.1)';
         ctx.lineWidth = 1;
         ctx.stroke();
       });

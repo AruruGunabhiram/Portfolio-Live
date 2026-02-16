@@ -20,17 +20,17 @@ export const Button = memo(({
 }: ButtonProps) => {
   const { isGeekMode } = useTheme();
 
-  const baseStyles = 'px-6 py-3 rounded-lg font-medium transition-colors duration-200';
+  const baseStyles = 'px-6 py-3 rounded-lg font-medium transition-all duration-200';
 
   const variantStyles = {
     primary: isGeekMode
-      ? 'bg-geek-accent text-geek-bg hover:bg-geek-text border border-geek-accent'
+      ? 'bg-cyber-cyan text-cyber-bg-dark border border-cyber-cyan glow-cyan hover:glow-pink hover:bg-cyber-pink hover:border-cyber-pink'
       : 'bg-dark-accent text-white hover:bg-blue-500',
     secondary: isGeekMode
-      ? 'border border-geek-accent text-geek-accent hover:bg-geek-accent hover:text-geek-bg'
+      ? 'border-2 border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan/10 hover:border-cyber-pink hover:text-cyber-pink glow-cyan hover:glow-pink'
       : 'border border-dark-accent text-dark-accent hover:bg-dark-accent hover:text-white',
     ghost: isGeekMode
-      ? 'text-geek-accent hover:bg-geek-accent/10'
+      ? 'text-cyber-cyan hover:bg-cyber-cyan/10 hover:text-cyber-pink'
       : 'text-gray-300 hover:bg-dark-surface',
   };
 
@@ -49,3 +49,5 @@ export const Button = memo(({
     </motion.button>
   );
 });
+
+Button.displayName = 'Button';

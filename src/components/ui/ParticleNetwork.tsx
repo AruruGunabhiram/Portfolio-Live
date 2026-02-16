@@ -99,10 +99,10 @@ export const ParticleNetwork = () => {
             },
             particles: {
               color: {
-                value: '#00ff00',
+                value: ['#00f0ff', '#ff006e', '#b026ff'], // Cyberpunk: cyan, pink, purple
               },
               links: {
-                color: '#00ff00',
+                color: '#00f0ff',
                 distance: 150,
                 enable: true,
                 opacity: 0.3,

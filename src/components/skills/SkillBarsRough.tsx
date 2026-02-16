@@ -49,7 +49,7 @@ export const SkillBarsRough = ({ skills, isGeekMode }: SkillBarsRoughProps) => {
         const fillWidth = (skill.level / 100) * barWidth * animationProgress;
 
         // Draw skill name
-        ctx.fillStyle = isGeekMode ? '#00ff00' : '#fff';
+        ctx.fillStyle = isGeekMode ? '#00f0ff' : '#fff';
         ctx.font = '14px monospace';
         ctx.textBaseline = 'middle';
         ctx.fillText(skill.name, 20, y);
@@ -59,7 +59,7 @@ export const SkillBarsRough = ({ skills, isGeekMode }: SkillBarsRoughProps) => {
 
         // Draw background bar with rough.js
         rc.rectangle(200, y - barHeight / 2, barWidth, barHeight, {
-          stroke: isGeekMode ? '#00ff00' : '#646cff',
+          stroke: isGeekMode ? '#00f0ff' : '#646cff',
           strokeWidth: 2,
           fill: 'rgba(0, 0, 0, 0.3)',
           fillStyle: 'solid',
@@ -69,9 +69,9 @@ export const SkillBarsRough = ({ skills, isGeekMode }: SkillBarsRoughProps) => {
         // Draw filled portion with rough.js
         if (fillWidth > 0) {
           rc.rectangle(200, y - barHeight / 2, fillWidth, barHeight, {
-            stroke: isGeekMode ? '#00ff00' : '#646cff',
+            stroke: isGeekMode ? '#00f0ff' : '#646cff',
             strokeWidth: 1,
-            fill: isGeekMode ? '#00ff00' : '#646cff',
+            fill: isGeekMode ? '#00f0ff' : '#646cff',
             fillStyle: 'hachure',
             fillWeight: 2,
             hachureAngle: 45 + index * 10,
