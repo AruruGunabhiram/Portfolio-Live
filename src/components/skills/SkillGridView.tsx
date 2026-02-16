@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, memo, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -15,7 +15,7 @@ if (isBrowser) {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
+const SkillGridViewComponent = ({ isGeekMode }: SkillGridViewProps) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const [tooltip, setTooltip] = useState<{
     visible: boolean;
@@ -25,58 +25,41 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
     category: string;
   }>({ visible: false, x: 0, y: 0, skill: null, category: '' });
 
-  // Verify rendering
-  console.log('[SkillGridView] Rendering with', SKILL_CATEGORIES.length, 'categories');
-
   useEffect(() => {
     if (!isBrowser || !gridRef.current || prefersReducedMotion()) return;
 
     const cards = gridRef.current.querySelectorAll('.skill-card');
 
-    // Animate cards sliding up and fading in
+    // Animate cards with improved ScrollTrigger
     cards.forEach((card, index) => {
-      gsap.fromTo(
-        card,
-        {
-          opacity: 0,
-          y: 50,
+      gsap.from(card, {
+        opacity: 0,
+        y: 30,
+        duration: 0.6,
+        delay: index * 0.1,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: card,
+          start: 'top 85%',
+          toggleActions: 'play none none reverse',
         },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.6,
-          delay: index * 0.1,
-          ease: 'power3.out',
+      });
+
+      // Animate skill tags within each card
+      const tags = card.querySelectorAll('.skill-tag');
+      tags.forEach((tag, tagIndex) => {
+        gsap.from(tag, {
+          opacity: 0,
+          scale: 0.8,
+          duration: 0.3,
+          delay: index * 0.1 + 0.3 + tagIndex * 0.03,
+          ease: 'back.out(1.7)',
           scrollTrigger: {
             trigger: card,
             start: 'top 85%',
             toggleActions: 'play none none reverse',
           },
-        }
-      );
-
-      // Animate skill tags within each card
-      const tags = card.querySelectorAll('.skill-tag');
-      tags.forEach((tag, tagIndex) => {
-        gsap.fromTo(
-          tag,
-          {
-            opacity: 0,
-            scale: 0.8,
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.3,
-            delay: index * 0.1 + 0.3 + tagIndex * 0.03,
-            ease: 'back.out(1.7)',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
+        });
       });
     });
 
@@ -97,16 +80,11 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
         return (
           <motion.div
             key={categoryConfig.key}
-            className={`skill-card relative group rounded-xl p-6 transition-cyber ${
+            className={`skill-card relative group rounded-xl p-6 transition-all duration-300 ${
               isGeekMode
-                ? 'bg-cyber-bg-dark/20 border border-cyber-cyan'
-                : 'bg-dark-surface/20 border border-gray-700'
+                ? 'bg-[rgba(10,14,39,0.6)] backdrop-blur-md border border-cyan-500/50 hover:border-cyan-400'
+                : 'bg-[rgba(10,14,39,0.6)] backdrop-blur-md border border-gray-700 hover:border-blue-400'
             }`}
-            style={{
-              borderImage: isGeekMode
-                ? 'linear-gradient(135deg, #00f0ff, #b026ff, #ff006e) 1'
-                : undefined,
-            }}
             whileHover={{
               y: -8,
               transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
@@ -114,21 +92,27 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, duration: 0.6 }}
+            style={{
+              boxShadow: 'none',
+            }}
+            onMouseEnter={(e) => {
+              if (isGeekMode) {
+                (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(0, 240, 255, 0.3)';
+              } else {
+                (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(100, 108, 255, 0.3)';
+              }
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.boxShadow = 'none';
+            }}
           >
-            {/* Hover glow effect */}
-            <div
-              className={`absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${
-                isGeekMode ? 'box-glow-neon' : ''
-              }`}
-            />
-
-            {/* Icon */}
-            <div className="text-4xl mb-3">{categoryConfig.icon}</div>
+            {/* Category emoji/icon at top */}
+            <div className="text-4xl mb-4">{categoryConfig.icon}</div>
 
             {/* Category Title */}
             <h3
-              className={`text-lg font-bold mb-2 ${
-                isGeekMode ? 'text-cyber-cyan' : 'text-dark-accent'
+              className={`text-xl font-bold mb-2 font-mono ${
+                isGeekMode ? 'text-cyber-cyan' : 'text-blue-400'
               }`}
             >
               {isGeekMode ? '> ' : ''}
@@ -149,12 +133,14 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
               {categorySkills.map((skill) => (
                 <motion.span
                   key={skill.name}
-                  className={`skill-tag px-3 py-1.5 rounded-full text-xs font-medium border transition-cyber cursor-default ${
+                  className={`skill-tag px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 cursor-default ${
                     isGeekMode
-                      ? 'bg-cyber-cyan/10 border-cyber-cyan text-white hover:bg-cyber-cyan hover:text-cyber-bg-dark'
-                      : 'bg-blue-500/10 border-blue-500 text-gray-200 hover:bg-blue-500 hover:text-white'
+                      ? 'bg-cyber-cyan/10 border-cyber-cyan text-white'
+                      : 'bg-blue-500/10 border-blue-500 text-gray-200'
                   }`}
                   whileHover={{
+                    backgroundColor: isGeekMode ? '#00f0ff' : '#646cff',
+                    color: '#0a0e27',
                     scale: 1.05,
                     transition: { duration: 0.2 },
                   }}
@@ -195,12 +181,6 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
               ))}
             </div>
 
-            {/* Corner accent */}
-            {isGeekMode && (
-              <div className="absolute top-2 right-2 w-3 h-3">
-                <div className="absolute inset-0 border-t border-r border-cyber-cyan opacity-30" />
-              </div>
-            )}
           </motion.div>
         );
       })}
@@ -226,3 +206,9 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
     </>
   );
 };
+
+// Wrap with React.memo to prevent unnecessary re-renders
+export const SkillGridView = memo(
+  SkillGridViewComponent,
+  (prevProps, nextProps) => prevProps.isGeekMode === nextProps.isGeekMode
+);

@@ -45,71 +45,80 @@ export interface CategoryConfig {
 
 /**
  * Category metadata for organizing and displaying skills
+ * Intelligent sector distribution:
+ * - Frontend: 0° to 45° (top to top-right)
+ * - Backend: 45° to 90° (top-right to right)
+ * - Databases: 90° to 135° (right to bottom-right)
+ * - Cloud/DevOps: 135° to 180° (bottom-right to bottom)
+ * - Languages: 180° to 225° (bottom to bottom-left) - inner ring
+ * - Data Analytics: 225° to 270° (bottom-left to left)
+ * - Tools: 270° to 315° (left to top-left) - inner ring
+ * - AI/LLM: 315° to 360° (top-left to top)
  */
 export const SKILL_CATEGORIES: CategoryConfig[] = [
   {
     key: 'frontend',
     icon: '⚛️',
-    title: 'Frontend Development',
+    title: 'Frontend',
     description: 'Modern frameworks and libraries for creating responsive, interactive user interfaces.',
     color: '#00f0ff',
-    zone: { startAngle: 0, endAngle: 90 },
+    zone: { startAngle: 0, endAngle: 45 },
   },
   {
     key: 'backend',
     icon: '⚙️',
-    title: 'Backend & Frameworks',
+    title: 'Backend',
     description: 'Server-side technologies for building APIs, microservices, and scalable architectures.',
     color: '#b026ff',
-    zone: { startAngle: 90, endAngle: 180 },
+    zone: { startAngle: 45, endAngle: 90 },
   },
   {
     key: 'databases',
     icon: '🗄️',
-    title: 'Databases & Data',
+    title: 'Databases',
     description: 'SQL and NoSQL databases, message queues, and distributed data processing systems.',
     color: '#ff006e',
-    zone: { startAngle: 180, endAngle: 270 },
+    zone: { startAngle: 90, endAngle: 135 },
   },
   {
     key: 'cloud',
     icon: '☁️',
-    title: 'Cloud & DevOps',
+    title: 'Cloud/DevOps',
     description: 'Cloud platforms, containerization, and CI/CD tools for modern deployment workflows.',
     color: '#00d9ff',
-    zone: { startAngle: 270, endAngle: 360 },
-  },
-  {
-    key: 'tools',
-    icon: '🛠️',
-    title: 'Development Tools',
-    description: 'Essential tools for version control, testing, design, and development workflows.',
-    color: '#ff1744',
-    zone: { startAngle: 0, endAngle: 360, innerRing: true },
+    zone: { startAngle: 135, endAngle: 180 },
   },
   {
     key: 'languages',
     icon: '💻',
-    title: 'Programming Languages',
+    title: 'Languages',
     description: 'Core programming languages for building robust, scalable applications across multiple domains.',
     color: '#7b2cbf',
-    zone: { startAngle: 45, endAngle: 135 },
+    zone: { startAngle: 180, endAngle: 225, innerRing: true },
   },
   {
     key: 'dataAnalytics',
     icon: '📊',
-    title: 'Data & Analytics',
+    title: 'Data Analytics',
     description: 'Business intelligence, data warehousing, and analytics platforms for data-driven insights.',
     color: '#ff6b9d',
-    zone: { startAngle: 135, endAngle: 225 },
+    zone: { startAngle: 225, endAngle: 270 },
+  },
+  {
+    key: 'tools',
+    icon: '🛠️',
+    title: 'Tools',
+    description: 'Essential tools for version control, testing, design, and development workflows.',
+    color: '#ff1744',
+    zone: { startAngle: 270, endAngle: 315, innerRing: true },
   },
   {
     key: 'aiTools',
     icon: '🤖',
-    title: 'AI/LLM Tools',
+    title: 'AI/LLM',
     description: 'Large language models and AI-powered development tools for enhanced productivity.',
     color: '#00ffaa',
-    zone: { startAngle: 225, endAngle: 315 },
+    zone: { startAngle: 315, endAngle: 360 },
   },
 ];
 

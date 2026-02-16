@@ -1,8 +1,20 @@
-import { useEffect, useRef, useState, memo } from 'react';
+import { useEffect, useRef, useState, memo, useCallback } from 'react';
 import gsap from 'gsap';
 import { isBrowser, prefersReducedMotion } from '../../utils';
 import { SKILLS, SKILL_CATEGORIES, getSkillsByCategory } from '../../data/skills';
 import { SkillTooltip } from './SkillTooltip';
+
+// Debounce helper function
+const debounce = <T extends (...args: any[]) => any>(
+  func: T,
+  delay: number
+): ((...args: Parameters<T>) => void) => {
+  let timeoutId: NodeJS.Timeout;
+  return (...args: Parameters<T>) => {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func(...args), delay);
+  };
+};
 
 interface SkillNode {
   name: string;
@@ -73,13 +85,14 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
       const angleRange = endRad - startRad;
       const angleStep = angleRange / (categorySkills.length + 1);
 
-      // Radius based on ring
-      const baseRadius = innerRing ? 120 : 240;
+      // Radius based on ring - increased for better spacing
+      const baseRadius = innerRing ? 180 : 320;
 
       categorySkills.forEach((skill, index) => {
         const angle = startRad + angleStep * (index + 1);
-        // Add slight radius variation for visual interest
-        const radius = baseRadius + (Math.random() - 0.5) * 20;
+        // Add radius variation within sectors for visual interest
+        const radiusVariation = (Math.random() - 0.5) * 40; // ±20px
+        const radius = baseRadius + radiusVariation;
         const x = centerX + Math.cos(angle) * radius;
         const y = centerY + Math.sin(angle) * radius;
 
@@ -100,41 +113,43 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
 
     // Draw background grid
     const drawBackground = () => {
-      // Concentric circles
+      // Concentric circles - adjusted for new radius
       ctx.strokeStyle = isGeekMode ? 'rgba(0, 240, 255, 0.05)' : 'rgba(100, 108, 255, 0.05)';
       ctx.lineWidth = 1;
       [0.25, 0.5, 0.75, 1].forEach((fraction) => {
         ctx.beginPath();
-        ctx.arc(centerX, centerY, 260 * fraction, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, 340 * fraction, 0, Math.PI * 2);
         ctx.stroke();
       });
 
-      // Radial lines for quadrants
+      // Radial lines for sector boundaries (8 sectors)
       ctx.strokeStyle = isGeekMode ? 'rgba(0, 240, 255, 0.08)' : 'rgba(100, 108, 255, 0.08)';
       for (let i = 0; i < 8; i++) {
         const angle = (i / 8) * Math.PI * 2;
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX + Math.cos(angle) * 260, centerY + Math.sin(angle) * 260);
+        ctx.lineTo(centerX + Math.cos(angle) * 340, centerY + Math.sin(angle) * 340);
         ctx.stroke();
       }
 
-      // Category labels
-      ctx.font = 'bold 11px "Fira Code", monospace';
+      // Category labels at sector midpoints
+      ctx.font = '10px "Fira Code", monospace';
       ctx.textAlign = 'center';
-      const categoryLabels = [
-        { text: 'FRONTEND', angle: 45, radius: 280 },
-        { text: 'BACKEND', angle: 135, radius: 280 },
-        { text: 'DATABASES', angle: 225, radius: 280 },
-        { text: 'CLOUD/DEVOPS', angle: 315, radius: 280 },
-      ];
+      ctx.textBaseline = 'middle';
 
-      categoryLabels.forEach(({ text, angle, radius }) => {
-        const rad = ((angle - 90) * Math.PI) / 180;
-        const x = centerX + Math.cos(rad) * radius;
-        const y = centerY + Math.sin(rad) * radius;
-        ctx.fillStyle = isGeekMode ? 'rgba(0, 240, 255, 0.4)' : 'rgba(100, 108, 255, 0.4)';
-        ctx.fillText(text, x, y);
+      // Render category labels from SKILL_CATEGORIES
+      SKILL_CATEGORIES.forEach((categoryConfig) => {
+        if (!categoryConfig.zone) return;
+
+        const { startAngle, endAngle } = categoryConfig.zone;
+        const midAngle = (startAngle + endAngle) / 2;
+        const labelRadius = 360;
+        const rad = ((midAngle - 90) * Math.PI) / 180;
+        const x = centerX + Math.cos(rad) * labelRadius;
+        const y = centerY + Math.sin(rad) * labelRadius;
+
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.3)';
+        ctx.fillText(categoryConfig.title.toUpperCase(), x, y);
       });
     };
 
@@ -200,8 +215,13 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
       ctx.stroke();
     };
 
+    // Truncate long skill names
+    const truncateSkillName = (name: string, maxLength = 12) => {
+      return name.length > maxLength ? name.substring(0, maxLength - 1) + '…' : name;
+    };
+
     // Draw skill node with label
-    const drawSkillNode = (node: SkillNode, scale = 1, glowIntensity = 1) => {
+    const drawSkillNode = (node: SkillNode, scale = 1, glowIntensity = 1, opacity = 1) => {
       const categoryConfig = SKILL_CATEGORIES.find(cat => cat.key === node.category);
       const categoryColor = categoryConfig?.color || '#00f0ff';
       const nodeRadius = 5 * scale;
@@ -217,6 +237,9 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
         ctx.arc(node.x, node.y, nodeRadius * 4, 0, Math.PI * 2);
         ctx.fill();
       }
+
+      // Apply opacity for non-hovered nodes
+      ctx.globalAlpha = opacity;
 
       // Node circle
       const nodeGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, nodeRadius);
@@ -240,20 +263,26 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
 
       // Skill name label
       if (node.visible) {
-        const fontSize = isHovered ? 14 : 12;
+        const fontSize = 10; // Smaller font for better readability
         ctx.font = `${fontSize}px "Fira Code", monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        // Text shadow/glow for readability
+        // Text shadow for better contrast
+        ctx.shadowColor = 'rgba(0, 0, 0, 0.8)';
+        ctx.shadowBlur = 4;
+        ctx.shadowOffsetX = 1;
+        ctx.shadowOffsetY = 1;
+
+        // Enhanced hover styling
         if (isHovered && isGeekMode) {
           ctx.shadowColor = '#ff006e';
           ctx.shadowBlur = 8;
-        } else {
-          ctx.shadowBlur = 0;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 0;
         }
 
-        ctx.fillStyle = isHovered ? (isGeekMode ? '#ff006e' : '#fff') : (isGeekMode ? categoryColor : '#e5e7eb');
+        ctx.fillStyle = isHovered ? (isGeekMode ? '#ff006e' : '#fff') : '#ffffff';
 
         // Position label based on node position relative to center
         const labelOffset = isHovered ? 20 : 16;
@@ -263,9 +292,18 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
         const labelX = node.x + (dx / distance) * labelOffset;
         const labelY = node.y + (dy / distance) * labelOffset;
 
-        ctx.fillText(node.name, labelX, labelY);
+        // Truncate long names
+        const displayName = truncateSkillName(node.name);
+        ctx.fillText(displayName, labelX, labelY);
+
+        // Reset shadows
         ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
       }
+
+      // Reset global alpha
+      ctx.globalAlpha = 1;
     };
 
     // Main animation loop
@@ -276,12 +314,17 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
       drawCenterNode();
 
       nodesRef.current.forEach((node, index) => {
-        const glowIntensity = hoveredNode === index ? 2 : 1;
-        const scale = hoveredNode === index ? 1.3 : 1;
+        const isCurrentHovered = hoveredNode === index;
+        const hasHoveredNode = hoveredNode !== null;
+
+        // Better hover states: scale up hovered node, fade others
+        const glowIntensity = isCurrentHovered ? 2 : 1;
+        const scale = isCurrentHovered ? 1.4 : 1;
+        const opacity = hasHoveredNode && !isCurrentHovered ? 0.4 : 1;
 
         if (node.drawn) {
           drawConnection(node, 1, glowIntensity);
-          drawSkillNode(node, scale, glowIntensity);
+          drawSkillNode(node, scale, glowIntensity, opacity);
         }
       });
 
@@ -357,13 +400,16 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
       }
     };
 
-    canvas.addEventListener('mousemove', handleMouseMove);
+    // Debounce mouse move to improve performance
+    const debouncedMouseMove = debounce(handleMouseMove, 50);
+
+    canvas.addEventListener('mousemove', debouncedMouseMove);
 
     return () => {
       if (animationFrameRef.current) {
         cancelAnimationFrame(animationFrameRef.current);
       }
-      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mousemove', debouncedMouseMove);
     };
   }, [isGeekMode]); // Removed hoveredNode from dependencies to prevent infinite re-renders
 
