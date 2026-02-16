@@ -2,11 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { isBrowser, prefersReducedMotion } from '../../utils';
 import { PROJECTS } from '../../utils/constants';
-import { SKILLS } from '../../data/skills';
+import { SKILLS, SKILL_CATEGORIES } from '../../data/skills';
 import { SkillTooltip } from './SkillTooltip';
 
 interface SkillTimelineProps {
-  skills: Record<string, Array<{ name: string; level?: number; year?: number; tagline?: string; firstProject?: string }>>;
+  skills?: Record<string, Array<{ name: string; level?: number; year?: number; tagline?: string; firstProject?: string }>>;
   isGeekMode: boolean;
 }
 
@@ -30,7 +30,7 @@ interface TooltipState {
   skill: TimelineNode | null;
 }
 
-export const SkillTimeline = ({ skills, isGeekMode }: SkillTimelineProps) => {
+export const SkillTimeline = ({ isGeekMode }: SkillTimelineProps) => {
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
@@ -41,13 +41,6 @@ export const SkillTimeline = ({ skills, isGeekMode }: SkillTimelineProps) => {
     if (!isBrowser || !svgRef.current) return;
 
     const reducedMotion = prefersReducedMotion();
-
-    // Category colors
-    const categoryColors: Record<string, string> = {
-      frontend: isGeekMode ? '#00f0ff' : '#646cff',
-      backend: isGeekMode ? '#b026ff' : '#8b5cf6',
-      tools: isGeekMode ? '#ff006e' : '#ec4899',
-    };
 
     // Calculate project count for each skill
     const calculateProjectCount = (skillName: string): number => {
@@ -63,25 +56,26 @@ export const SkillTimeline = ({ skills, isGeekMode }: SkillTimelineProps) => {
       return 'small';
     };
 
-    // Flatten and sort skills by year
-    const allSkills: TimelineNode[] = [];
-    Object.entries(skills).forEach(([category, categorySkills]) => {
-      categorySkills.forEach((skill) => {
+    // Use centralized SKILLS data
+    const allSkills: TimelineNode[] = SKILLS
+      .filter(skill => skill.yearStarted) // Only show skills with yearStarted
+      .map((skill) => {
+        const categoryConfig = SKILL_CATEGORIES.find(cat => cat.key === skill.category);
         const projectCount = calculateProjectCount(skill.name);
-        allSkills.push({
+
+        return {
           name: skill.name,
-          category,
-          year: skill.year || 2020,
-          tagline: skill.tagline || 'Essential tech',
+          category: skill.category,
+          year: skill.yearStarted || 2020,
+          tagline: skill.description || 'Essential tech',
           firstProject: skill.firstProject || 'Various Projects',
           projectCount,
           x: 0,
           y: 0,
           size: getNodeSize(projectCount),
-          color: categoryColors[category] || categoryColors.frontend,
-        });
+          color: categoryConfig?.color || '#00f0ff',
+        };
       });
-    });
 
     // Sort by year
     allSkills.sort((a, b) => a.year - b.year);
@@ -129,7 +123,7 @@ export const SkillTimeline = ({ skills, isGeekMode }: SkillTimelineProps) => {
       }
 
       // Animate nodes appearing
-      allSkills.forEach((skill, index) => {
+      allSkills.forEach((_, index) => {
         const nodeElement = svgRef.current?.querySelector(`#node-${index}`);
         const labelElement = svgRef.current?.querySelector(`#label-${index}`);
         const yearElement = svgRef.current?.querySelector(`#year-${index}`);
@@ -167,7 +161,7 @@ export const SkillTimeline = ({ skills, isGeekMode }: SkillTimelineProps) => {
     return () => {
       // Cleanup handled by GSAP
     };
-  }, [skills, isGeekMode]);
+  }, [isGeekMode]);
 
   const handleNodeHover = (index: number, event: React.MouseEvent) => {
     setHoveredNode(index);
@@ -242,7 +236,7 @@ export const SkillTimeline = ({ skills, isGeekMode }: SkillTimelineProps) => {
         {/* Timeline markers (years) */}
         {Array.from(new Set(nodesRef.current.map((n) => n.year)))
           .sort()
-          .map((year, index) => {
+          .map((year) => {
             const minYear = Math.min(...nodesRef.current.map((s) => s.year));
             const maxYear = Math.max(...nodesRef.current.map((s) => s.year));
             const yearRange = maxYear - minYear || 1;
@@ -389,21 +383,18 @@ export const SkillTimeline = ({ skills, isGeekMode }: SkillTimelineProps) => {
           isGeekMode ? 'text-cyber-text' : 'text-gray-400'
         }`}
       >
-        <div className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-full ${isGeekMode ? 'bg-cyber-cyan' : 'bg-blue-500'}`} />
-          <span>Frontend</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-full ${isGeekMode ? 'bg-cyber-purple' : 'bg-purple-500'}`} />
-          <span>Backend</span>
-        </div>
-        <div className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-full ${isGeekMode ? 'bg-cyber-pink' : 'bg-pink-500'}`} />
-          <span>Tools</span>
-        </div>
+        {SKILL_CATEGORIES.slice(0, 4).map((category) => (
+          <div key={category.key} className="flex items-center gap-2">
+            <div
+              className="w-3 h-3 rounded-full"
+              style={{ backgroundColor: category.color }}
+            />
+            <span>{category.title.replace(' Development', '').replace(' & Frameworks', '')}</span>
+          </div>
+        ))}
         <div className="ml-4 opacity-60">
           <span className="mr-2">•</span>
-          Node size = usage frequency
+          Node size = project usage
         </div>
       </div>
     </div>

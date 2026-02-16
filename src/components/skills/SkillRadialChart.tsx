@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, memo } from 'react';
 import gsap from 'gsap';
 import { isBrowser, prefersReducedMotion } from '../../utils';
 import { SKILLS, SKILL_CATEGORIES, getSkillsByCategory } from '../../data/skills';
@@ -28,14 +28,14 @@ interface SkillRadialChartProps {
   isGeekMode: boolean;
 }
 
-export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
+const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
   const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, skill: null, relatedSkills: [] });
   const nodesRef = useRef<SkillNode[]>([]);
   const pulsePhaseRef = useRef(0);
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     if (!isBrowser || !canvasRef.current) return;
@@ -61,7 +61,7 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
 
     SKILL_CATEGORIES.forEach((categoryConfig) => {
       const categorySkills = getSkillsByCategory(categoryConfig.key);
-      const { zone, color, key } = categoryConfig;
+      const { zone, key } = categoryConfig;
 
       if (!zone) return;
 
@@ -365,7 +365,7 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
       }
       canvas.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [isGeekMode, hoveredNode]);
+  }, [isGeekMode]); // Removed hoveredNode from dependencies to prevent infinite re-renders
 
   return (
     <div className="relative flex justify-center" ref={overlayRef}>
@@ -415,3 +415,10 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
     </div>
   );
 };
+
+// Wrap with React.memo to prevent unnecessary re-renders
+// Return true if props are equal (should NOT re-render), false if different (should re-render)
+export const SkillRadialChart = memo(
+  SkillRadialChartComponent,
+  (prevProps, nextProps) => prevProps.isGeekMode === nextProps.isGeekMode
+);

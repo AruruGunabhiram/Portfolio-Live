@@ -25,6 +25,9 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
     category: string;
   }>({ visible: false, x: 0, y: 0, skill: null, category: '' });
 
+  // Verify rendering
+  console.log('[SkillGridView] Rendering with', SKILL_CATEGORIES.length, 'categories');
+
   useEffect(() => {
     if (!isBrowser || !gridRef.current || prefersReducedMotion()) return;
 

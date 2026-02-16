@@ -92,42 +92,42 @@ export const CodeBlock = ({ code, language = 'typescript', className = '' }: Cod
     };
     Array.from(tempDiv.childNodes).forEach(walkNodes);
 
-    // Animate typewriter effect
-    let charIndex = 0;
+    // Animate typewriter effect (legacy - unused, kept for reference)
+    // let charIndex = 0;
     const timeouts: number[] = [];
 
-    const typeNextChar = () => {
-      if (charIndex < nodes.length) {
-        const node = nodes[charIndex];
-        if (node.nodeType === Node.TEXT_NODE) {
-          const text = node.textContent || '';
-          for (let i = 0; i < text.length; i++) {
-            const span = document.createElement('span');
-            span.textContent = text[i];
-            span.style.opacity = '0';
-            span.style.transition = 'opacity 0.1s';
-            codeElement.appendChild(span);
+    // const typeNextChar = () => {
+    //   if (charIndex < nodes.length) {
+    //     const node = nodes[charIndex];
+    //     if (node.nodeType === Node.TEXT_NODE) {
+    //       const text = node.textContent || '';
+    //       for (let i = 0; i < text.length; i++) {
+    //         const span = document.createElement('span');
+    //         span.textContent = text[i];
+    //         span.style.opacity = '0';
+    //         span.style.transition = 'opacity 0.1s';
+    //         codeElement.appendChild(span);
 
-            const timeout = setTimeout(() => {
-              span.style.opacity = '1';
-            }, (charIndex + i) * 20);
-            timeouts.push(timeout);
-          }
-          charIndex += text.length;
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          const clone = (node as Element).cloneNode(false) as HTMLElement;
-          clone.style.opacity = '0';
-          clone.style.transition = 'opacity 0.1s';
-          codeElement.appendChild(clone);
+    //         const timeout = setTimeout(() => {
+    //           span.style.opacity = '1';
+    //         }, (charIndex + i) * 20);
+    //         timeouts.push(timeout);
+    //       }
+    //       charIndex += text.length;
+    //     } else if (node.nodeType === Node.ELEMENT_NODE) {
+    //       const clone = (node as Element).cloneNode(false) as HTMLElement;
+    //       clone.style.opacity = '0';
+    //       clone.style.transition = 'opacity 0.1s';
+    //       codeElement.appendChild(clone);
 
-          const timeout = setTimeout(() => {
-            clone.style.opacity = '1';
-          }, charIndex * 20);
-          timeouts.push(timeout);
-          charIndex++;
-        }
-      }
-    };
+    //       const timeout = setTimeout(() => {
+    //         clone.style.opacity = '1';
+    //       }, charIndex * 20);
+    //       timeouts.push(timeout);
+    //       charIndex++;
+    //     }
+    //   }
+    // };
 
     // Start typing animation (simplified version - show syntax-highlighted code immediately)
     codeElement.innerHTML = highlightedCode;

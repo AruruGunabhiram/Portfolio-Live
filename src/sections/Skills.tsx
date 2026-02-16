@@ -5,7 +5,7 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Container, ParallaxLayer } from '../components';
 import { useTheme } from '../hooks';
 import { fadeInUp, scrollViewport, useGSAP, isBrowser, prefersReducedMotion } from '../utils';
-import { SKILLS, getSkillsGroupedByCategory } from '../data/skills';
+import { SKILLS } from '../data/skills';
 
 // Lazy load heavy 3D component
 const Skill3DSphere = lazy(() =>
@@ -236,8 +236,7 @@ export const Skills = () => {
     };
   }, [viewMode]);
 
-  // Get skills data - grouped for timeline, flat for 3D/rough views
-  const groupedSkills = getSkillsGroupedByCategory();
+  // Get skills data - flat for 3D/rough views
   const allSkills = SKILLS;
 
   // Handle view mode change with haptic animation
@@ -377,7 +376,7 @@ export const Skills = () => {
                   </div>
                 }
               >
-                <SkillTimeline skills={groupedSkills} isGeekMode={isGeekMode} />
+                <SkillTimeline isGeekMode={isGeekMode} />
               </Suspense>
             )}
 
@@ -401,7 +400,13 @@ export const Skills = () => {
                   </div>
                 }
               >
-                <Skill3DSphere skills={allSkills} isGeekMode={isGeekMode} />
+                <Skill3DSphere
+                  skills={allSkills
+                    .filter(skill => skill.level !== undefined)
+                    .map(skill => ({ name: skill.name, level: skill.level! }))
+                  }
+                  isGeekMode={isGeekMode}
+                />
               </Suspense>
             )}
 
@@ -413,7 +418,13 @@ export const Skills = () => {
                   </div>
                 }
               >
-                <SkillBarsRough skills={allSkills} isGeekMode={isGeekMode} />
+                <SkillBarsRough
+                  skills={allSkills
+                    .filter(skill => skill.level !== undefined)
+                    .map(skill => ({ name: skill.name, level: skill.level! }))
+                  }
+                  isGeekMode={isGeekMode}
+                />
               </Suspense>
             )}
           </motion.div>

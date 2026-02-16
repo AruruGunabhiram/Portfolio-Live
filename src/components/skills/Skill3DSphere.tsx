@@ -2,7 +2,7 @@ import { useRef, useState, Suspense, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
-import type { Mesh, Group, Line } from 'three';
+import type { Mesh, Group } from 'three';
 import { isBrowser } from '../../utils';
 import { SKILLS } from '../../data/skills';
 import { SkillTooltip } from './SkillTooltip';
@@ -85,7 +85,6 @@ const CentralSphere = ({ isGeekMode }: { isGeekMode: boolean }) => {
 // Orbiting box with trail
 const OrbitingBox = ({ index, isGeekMode }: OrbitingBoxProps) => {
   const boxRef = useRef<Mesh>(null);
-  const trailRef = useRef<Line>(null);
   const groupRef = useRef<Group>(null);
 
   // Different orbital parameters for each box
@@ -126,13 +125,11 @@ const OrbitingBox = ({ index, isGeekMode }: OrbitingBoxProps) => {
   return (
     <>
       {/* Orbital trail */}
-      <line ref={trailRef} geometry={trailGeometry}>
-        <lineBasicMaterial
-          color={isGeekMode ? '#00f0ff' : '#646cff'}
-          transparent
-          opacity={0.15}
-        />
-      </line>
+      <primitive object={new THREE.Line(trailGeometry, new THREE.LineBasicMaterial({
+        color: isGeekMode ? '#00f0ff' : '#646cff',
+        transparent: true,
+        opacity: 0.15,
+      }))} />
 
       {/* Orbiting box */}
       <group ref={groupRef}>
@@ -154,7 +151,6 @@ const OrbitingBox = ({ index, isGeekMode }: OrbitingBoxProps) => {
 // Skill label with hover effects
 const SkillLabel = ({ skill, position, isGeekMode, onHover }: SkillLabelProps) => {
   const meshRef = useRef<Mesh>(null);
-  const lineRef = useRef<Line>(null);
   const [hovered, setHovered] = useState(false);
 
   useFrame((state) => {
@@ -180,14 +176,12 @@ const SkillLabel = ({ skill, position, isGeekMode, onHover }: SkillLabelProps) =
     <group ref={meshRef} position={position}>
       {/* Connecting line on hover */}
       {hovered && (
-        <line ref={lineRef} geometry={lineGeometry}>
-          <lineBasicMaterial
-            color={isGeekMode ? '#ff006e' : '#ff1744'}
-            transparent
-            opacity={0.6}
-            linewidth={2}
-          />
-        </line>
+        <primitive object={new THREE.Line(lineGeometry, new THREE.LineBasicMaterial({
+          color: isGeekMode ? '#ff006e' : '#ff1744',
+          transparent: true,
+          opacity: 0.6,
+          linewidth: 2,
+        }))} />
       )}
 
       {/* Skill name text */}
