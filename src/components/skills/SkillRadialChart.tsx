@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { isBrowser, prefersReducedMotion } from '../../utils';
-import { SKILLS_CONSTELLATION, SKILL_RELATIONSHIPS } from '../../utils/constants';
+import { SKILLS, SKILL_CATEGORIES, getSkillsByCategory } from '../../data/skills';
 import { SkillTooltip } from './SkillTooltip';
 
 interface SkillNode {
@@ -56,23 +56,27 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
     const centerY = size / 2;
     const reducedMotion = prefersReducedMotion();
 
-    // Create skill nodes with proper positioning
+    // Create skill nodes with proper positioning from centralized data
     const nodes: SkillNode[] = [];
 
-    Object.entries(SKILLS_CONSTELLATION).forEach(([category, config]) => {
-      const { skills, zone, color } = config;
+    SKILL_CATEGORIES.forEach((categoryConfig) => {
+      const categorySkills = getSkillsByCategory(categoryConfig.key);
+      const { zone, color, key } = categoryConfig;
+
+      if (!zone) return;
+
       const { startAngle, endAngle, innerRing } = zone;
 
       // Convert angles to radians (0° at top, clockwise)
       const startRad = ((startAngle - 90) * Math.PI) / 180;
       const endRad = ((endAngle - 90) * Math.PI) / 180;
       const angleRange = endRad - startRad;
-      const angleStep = angleRange / (skills.length + 1);
+      const angleStep = angleRange / (categorySkills.length + 1);
 
       // Radius based on ring
       const baseRadius = innerRing ? 120 : 240;
 
-      skills.forEach((skillName, index) => {
+      categorySkills.forEach((skill, index) => {
         const angle = startRad + angleStep * (index + 1);
         // Add slight radius variation for visual interest
         const radius = baseRadius + (Math.random() - 0.5) * 20;
@@ -80,8 +84,8 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
         const y = centerY + Math.sin(angle) * radius;
 
         nodes.push({
-          name: skillName,
-          category,
+          name: skill.name,
+          category: key,
           x,
           y,
           angle,
@@ -169,7 +173,7 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
 
     // Draw connection with animated gradient flow
     const drawConnection = (node: SkillNode, progress: number, glowIntensity = 1) => {
-      const categoryConfig = SKILLS_CONSTELLATION[node.category as keyof typeof SKILLS_CONSTELLATION];
+      const categoryConfig = SKILL_CATEGORIES.find(cat => cat.key === node.category);
       const categoryColor = categoryConfig?.color || '#00f0ff';
 
       // Create gradient that flows from center to node
@@ -198,7 +202,7 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
 
     // Draw skill node with label
     const drawSkillNode = (node: SkillNode, scale = 1, glowIntensity = 1) => {
-      const categoryConfig = SKILLS_CONSTELLATION[node.category as keyof typeof SKILLS_CONSTELLATION];
+      const categoryConfig = SKILL_CATEGORIES.find(cat => cat.key === node.category);
       const categoryColor = categoryConfig?.color || '#00f0ff';
       const nodeRadius = 5 * scale;
       const isHovered = hoveredNode === nodesRef.current.indexOf(node);
@@ -334,7 +338,8 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
         const distance = Math.sqrt((mouseX - node.x) ** 2 + (mouseY - node.y) ** 2);
         if (distance < 25) {
           setHoveredNode(index);
-          const relatedSkills = SKILL_RELATIONSHIPS[node.name] || [];
+          const skillData = SKILLS.find(s => s.name === node.name);
+          const relatedSkills = skillData?.relatedSkills || [];
           setTooltip({
             visible: true,
             x: e.clientX,
@@ -375,7 +380,7 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
       <SkillTooltip
         skill={{
           name: tooltip.skill?.name || '',
-          category: tooltip.skill ? SKILLS_CONSTELLATION[tooltip.skill.category as keyof typeof SKILLS_CONSTELLATION]?.description : '',
+          category: tooltip.skill ? SKILL_CATEGORIES.find(cat => cat.key === tooltip.skill?.category)?.description : '',
         }}
         relatedSkills={tooltip.relatedSkills}
         isVisible={tooltip.visible && !!tooltip.skill}

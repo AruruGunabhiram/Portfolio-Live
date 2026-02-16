@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { isBrowser, prefersReducedMotion } from '../../utils';
-import { PROJECTS, SKILL_RELATIONSHIPS } from '../../utils/constants';
+import { PROJECTS } from '../../utils/constants';
+import { SKILLS } from '../../data/skills';
 import { SkillTooltip } from './SkillTooltip';
 
 interface SkillTimelineProps {
@@ -375,7 +376,7 @@ export const SkillTimeline = ({ skills, isGeekMode }: SkillTimelineProps) => {
           tagline: tooltip.skill?.tagline,
           firstProject: tooltip.skill?.firstProject,
         }}
-        relatedSkills={tooltip.skill ? SKILL_RELATIONSHIPS[tooltip.skill.name] || [] : []}
+        relatedSkills={tooltip.skill ? (SKILLS.find(s => s.name === tooltip.skill?.name)?.relatedSkills || []) : []}
         isVisible={tooltip.visible && !!tooltip.skill}
         x={tooltip.x}
         y={tooltip.y}

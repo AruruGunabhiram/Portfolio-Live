@@ -4,7 +4,8 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Container, ParallaxLayer } from '../components';
 import { useTheme } from '../hooks';
-import { SKILLS, fadeInUp, scrollViewport, useGSAP, isBrowser, prefersReducedMotion } from '../utils';
+import { fadeInUp, scrollViewport, useGSAP, isBrowser, prefersReducedMotion } from '../utils';
+import { SKILLS, getSkillsGroupedByCategory } from '../data/skills';
 
 // Lazy load heavy 3D component
 const Skill3DSphere = lazy(() =>
@@ -93,8 +94,9 @@ export const Skills = () => {
     };
   }, [viewMode]);
 
-  // Flatten skills for 3D view only
-  const allSkills = Object.values(SKILLS).flat();
+  // Get skills data - grouped for timeline, flat for 3D/rough views
+  const groupedSkills = getSkillsGroupedByCategory();
+  const allSkills = SKILLS;
 
   // Handle keyboard navigation for view toggle
   const handleKeyDown = (e: React.KeyboardEvent, mode: ViewMode) => {
@@ -208,7 +210,7 @@ export const Skills = () => {
                   </div>
                 </div>
               }>
-                <SkillTimeline skills={SKILLS} isGeekMode={isGeekMode} />
+                <SkillTimeline skills={groupedSkills} isGeekMode={isGeekMode} />
               </Suspense>
             </motion.div>
           )}

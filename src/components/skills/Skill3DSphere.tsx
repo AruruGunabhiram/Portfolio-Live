@@ -4,7 +4,7 @@ import { Text, OrbitControls, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Mesh, Group, Line } from 'three';
 import { isBrowser } from '../../utils';
-import { SKILL_RELATIONSHIPS } from '../../utils/constants';
+import { SKILLS } from '../../data/skills';
 import { SkillTooltip } from './SkillTooltip';
 
 interface Skill3DSphereProps {
@@ -357,7 +357,7 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
           name: tooltip.skill || '',
           category: '', // 3D view doesn't have category context
         }}
-        relatedSkills={tooltip.skill ? SKILL_RELATIONSHIPS[tooltip.skill] || [] : []}
+        relatedSkills={tooltip.skill ? (SKILLS.find(s => s.name === tooltip.skill)?.relatedSkills || []) : []}
         isVisible={tooltip.visible && !!tooltip.skill}
         x={tooltip.x}
         y={tooltip.y}
