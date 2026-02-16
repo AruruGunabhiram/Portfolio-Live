@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Parallax } from 'react-scroll-parallax';
 import { prefersReducedMotion } from '../../utils';
 import type { ReactNode } from 'react';
@@ -8,7 +9,7 @@ interface ParallaxLayerProps {
   className?: string;
 }
 
-export const ParallaxLayer = ({
+export const ParallaxLayer = memo(({
   speed = -10,
   children,
   className = ''
@@ -25,4 +26,4 @@ export const ParallaxLayer = ({
       {children}
     </Parallax>
   );
-};
+});

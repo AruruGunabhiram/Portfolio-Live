@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
 import { useTheme } from '../../hooks';
@@ -7,7 +8,7 @@ interface CardProps {
   className?: string;
 }
 
-export const Card = ({ children, className = '' }: CardProps) => {
+export const Card = memo(({ children, className = '' }: CardProps) => {
   const { isGeekMode } = useTheme();
 
   const cardStyles = isGeekMode
@@ -22,4 +23,4 @@ export const Card = ({ children, className = '' }: CardProps) => {
       {children}
     </motion.div>
   );
-};
+});
