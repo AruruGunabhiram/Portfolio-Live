@@ -37,8 +37,15 @@ export const SkillTimeline = ({ isGeekMode }: SkillTimelineProps) => {
   const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, skill: null });
   const nodesRef = useRef<TimelineNode[]>([]);
 
+  console.log('🎯 SkillTimeline mounted, isGeekMode:', isGeekMode);
+
   useEffect(() => {
-    if (!isBrowser || !svgRef.current) return;
+    if (!isBrowser || !svgRef.current) {
+      console.log('⚠️ Timeline: Skipping effect - isBrowser:', isBrowser, 'svgRef:', !!svgRef.current);
+      return;
+    }
+
+    console.log('✅ Timeline: Starting animation setup');
 
     const reducedMotion = prefersReducedMotion();
 
@@ -80,6 +87,8 @@ export const SkillTimeline = ({ isGeekMode }: SkillTimelineProps) => {
     // Sort by year
     allSkills.sort((a, b) => a.year - b.year);
 
+    console.log('📊 Timeline: Processed skills:', allSkills.length, 'skills with years from', Math.min(...allSkills.map(s => s.year)), 'to', Math.max(...allSkills.map(s => s.year)));
+
     // Calculate positions along timeline
     const padding = 80;
     const width = 1000;
@@ -91,12 +100,26 @@ export const SkillTimeline = ({ isGeekMode }: SkillTimelineProps) => {
     const maxYear = Math.max(...allSkills.map((s) => s.year));
     const yearRange = maxYear - minYear || 1;
 
+    // Smart positioning with collision detection
     allSkills.forEach((skill, index) => {
       const progress = (skill.year - minYear) / yearRange;
       skill.x = timelineStart + progress * (timelineEnd - timelineStart);
 
-      // Alternate nodes above and below timeline to avoid overlap
-      const verticalOffset = index % 2 === 0 ? -80 : 80;
+      // Check if previous skill is too close (within 80px)
+      const previousSkill = index > 0 ? allSkills[index - 1] : null;
+      const isTooClose = previousSkill && Math.abs(skill.x - previousSkill.x) < 80;
+
+      // If too close, put on opposite side from previous
+      // Otherwise alternate above/below
+      let verticalOffset;
+      if (isTooClose && previousSkill) {
+        // Put on opposite side from previous skill
+        verticalOffset = previousSkill.y > timelineY ? -100 : 100;
+      } else {
+        // Normal alternating pattern with increased spacing
+        verticalOffset = index % 2 === 0 ? -100 : 100;
+      }
+
       skill.y = timelineY + verticalOffset;
     });
 
@@ -326,34 +349,34 @@ export const SkillTimeline = ({ isGeekMode }: SkillTimelineProps) => {
                 fill="rgba(255, 255, 255, 0.4)"
               />
 
-              {/* Skill name label */}
+              {/* Skill name label with truncation */}
               <text
                 id={`label-${index}`}
                 x={node.x}
                 y={node.y > 200 ? node.y + yOffset + radius + 18 : node.y + yOffset - radius - 8}
                 textAnchor="middle"
                 fill={isGeekMode ? '#00f0ff' : '#e5e7eb'}
-                fontSize={isHovered ? '13' : '11'}
+                fontSize={isHovered ? '12' : '10'}
                 fontWeight={isHovered ? 'bold' : 'normal'}
                 fontFamily="monospace"
                 style={{ transition: 'all 0.3s ease' }}
               >
-                {node.name}
+                {node.name.length > 12 ? node.name.substring(0, 11) + '…' : node.name}
               </text>
 
-              {/* Project count indicator */}
+              {/* Project count indicator - smaller font */}
               {node.projectCount > 0 && (
                 <text
                   id={`year-${index}`}
                   x={node.x}
-                  y={node.y > 200 ? node.y + yOffset + radius + 32 : node.y + yOffset - radius - 22}
+                  y={node.y > 200 ? node.y + yOffset + radius + 30 : node.y + yOffset - radius - 20}
                   textAnchor="middle"
                   fill={node.color}
-                  fontSize="9"
+                  fontSize="8"
                   fontFamily="monospace"
                   opacity="0.5"
                 >
-                  {node.projectCount} project{node.projectCount !== 1 ? 's' : ''}
+                  {node.projectCount} proj
                 </text>
               )}
             </g>

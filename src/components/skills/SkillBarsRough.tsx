@@ -54,9 +54,6 @@ export const SkillBarsRough = ({ skills, isGeekMode }: SkillBarsRoughProps) => {
         ctx.textBaseline = 'middle';
         ctx.fillText(skill.name, 20, y);
 
-        // Draw percentage
-        ctx.fillText(`${skill.level}%`, 20 + barWidth + 20, y);
-
         // Draw background bar with rough.js
         rc.rectangle(200, y - barHeight / 2, barWidth, barHeight, {
           stroke: isGeekMode ? '#00f0ff' : '#646cff',

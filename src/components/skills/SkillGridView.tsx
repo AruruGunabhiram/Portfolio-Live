@@ -48,18 +48,25 @@ const SkillGridViewComponent = ({ isGeekMode }: SkillGridViewProps) => {
       // Animate skill tags within each card
       const tags = card.querySelectorAll('.skill-tag');
       tags.forEach((tag, tagIndex) => {
-        gsap.from(tag, {
-          opacity: 0,
-          scale: 0.8,
-          duration: 0.3,
-          delay: index * 0.1 + 0.3 + tagIndex * 0.03,
-          ease: 'back.out(1.7)',
-          scrollTrigger: {
-            trigger: card,
-            start: 'top 85%',
-            toggleActions: 'play none none reverse',
+        gsap.fromTo(tag,
+          {
+            opacity: 0,
+            scale: 0.8,
           },
-        });
+          {
+            opacity: 1,
+            scale: 1,
+            duration: 0.3,
+            delay: index * 0.1 + 0.3 + tagIndex * 0.03,
+            ease: 'back.out(1.7)',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top 85%',
+              toggleActions: 'play none none reverse',
+              once: true, // Only animate once to prevent hiding on scroll up
+            },
+          }
+        );
       });
     });
 
@@ -138,6 +145,8 @@ const SkillGridViewComponent = ({ isGeekMode }: SkillGridViewProps) => {
                       ? 'bg-cyber-cyan/10 border-cyber-cyan text-white'
                       : 'bg-blue-500/10 border-blue-500 text-gray-200'
                   }`}
+                  style={{ opacity: 1 }} // Explicitly set opacity to 1 to ensure always visible
+                  initial={{ opacity: 1 }} // Start visible
                   whileHover={{
                     backgroundColor: isGeekMode ? '#00f0ff' : '#646cff',
                     color: '#0a0e27',

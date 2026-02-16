@@ -271,6 +271,8 @@ const Scene3D = ({
 export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
   if (!isBrowser) return null;
 
+  console.log('🎨 Skill3DSphere mounted with', skills.length, 'skills, isGeekMode:', isGeekMode);
+
   const [dpr, setDpr] = useState(1.5);
   const [tooltip, setTooltip] = useState<{
     visible: boolean;
