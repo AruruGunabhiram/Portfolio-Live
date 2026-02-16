@@ -17,9 +17,6 @@ const SkillRadialChart = lazy(() =>
 const SkillBarsRough = lazy(() =>
   import('../components/skills').then(module => ({ default: module.SkillBarsRough }))
 );
-const SkillTimeline = lazy(() =>
-  import('../components/skills').then(module => ({ default: module.SkillTimeline }))
-);
 const SkillGridView = lazy(() =>
   import('../components/skills').then(module => ({ default: module.SkillGridView }))
 );
@@ -29,7 +26,7 @@ if (isBrowser) {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-type ViewMode = 'bars' | 'radial' | '3d' | 'rough' | 'grid';
+type ViewMode = 'radial' | '3d' | 'rough' | 'grid';
 
 // Loading spinner component
 const LoadingSpinner = ({ isGeekMode, text }: { isGeekMode: boolean; text: string }) => (
@@ -259,15 +256,13 @@ export const Skills = () => {
   const viewModes: Array<{ mode: ViewMode; label: string; description: string }> = isGeekMode
     ? [
         { mode: 'grid', label: 'Grid', description: 'Organized card-based skill categories' },
-        { mode: 'bars', label: 'Timeline', description: 'Journey through technology learning' },
         { mode: 'radial', label: 'Constellation', description: 'Interconnected tech ecosystem' },
         { mode: '3d', label: '3D Sphere', description: 'Interactive 3D sphere visualization' },
       ]
     : [
         { mode: 'grid', label: 'Grid', description: 'Organized card-based skill categories' },
-        { mode: 'bars', label: 'Timeline', description: 'Journey through technology learning' },
-        { mode: 'rough', label: 'Sketch', description: 'Hand-drawn artistic view' },
         { mode: 'radial', label: 'Constellation', description: 'Interconnected tech ecosystem' },
+        { mode: 'rough', label: 'Sketch', description: 'Hand-drawn artistic view' },
       ];
 
   return (
@@ -365,18 +360,6 @@ export const Skills = () => {
                 }
               >
                 <SkillGridView isGeekMode={isGeekMode} />
-              </Suspense>
-            )}
-
-            {viewMode === 'bars' && (
-              <Suspense
-                fallback={
-                  <div className="h-[500px] flex items-center justify-center">
-                    <LoadingSpinner isGeekMode={isGeekMode} text="Loading technology timeline..." />
-                  </div>
-                }
-              >
-                <SkillTimeline isGeekMode={isGeekMode} />
               </Suspense>
             )}
 

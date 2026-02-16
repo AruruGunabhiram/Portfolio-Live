@@ -30,7 +30,7 @@ const SkillGridViewComponent = ({ isGeekMode }: SkillGridViewProps) => {
 
     const cards = gridRef.current.querySelectorAll('.skill-card');
 
-    // Animate cards with improved ScrollTrigger
+    // Only animate cards entrance, NOT skill tags
     cards.forEach((card, index) => {
       gsap.from(card, {
         opacity: 0,
@@ -43,30 +43,6 @@ const SkillGridViewComponent = ({ isGeekMode }: SkillGridViewProps) => {
           start: 'top 85%',
           toggleActions: 'play none none reverse',
         },
-      });
-
-      // Animate skill tags within each card
-      const tags = card.querySelectorAll('.skill-tag');
-      tags.forEach((tag, tagIndex) => {
-        gsap.fromTo(tag,
-          {
-            opacity: 0,
-            scale: 0.8,
-          },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.3,
-            delay: index * 0.1 + 0.3 + tagIndex * 0.03,
-            ease: 'back.out(1.7)',
-            scrollTrigger: {
-              trigger: card,
-              start: 'top 85%',
-              toggleActions: 'play none none reverse',
-              once: true, // Only animate once to prevent hiding on scroll up
-            },
-          }
-        );
       });
     });
 
@@ -142,15 +118,17 @@ const SkillGridViewComponent = ({ isGeekMode }: SkillGridViewProps) => {
                   key={skill.name}
                   className={`skill-tag px-3 py-1.5 rounded-full text-xs font-medium border transition-all duration-200 cursor-default ${
                     isGeekMode
-                      ? 'bg-cyber-cyan/10 border-cyber-cyan text-white'
-                      : 'bg-blue-500/10 border-blue-500 text-gray-200'
+                      ? 'bg-cyber-cyan/10 border-cyber-cyan text-white opacity-100'
+                      : 'bg-blue-500/10 border-blue-500 text-gray-200 opacity-100'
                   }`}
-                  style={{ opacity: 1 }} // Explicitly set opacity to 1 to ensure always visible
-                  initial={{ opacity: 1 }} // Start visible
+                  // No initial animation - always visible
                   whileHover={{
                     backgroundColor: isGeekMode ? '#00f0ff' : '#646cff',
                     color: '#0a0e27',
                     scale: 1.05,
+                    boxShadow: isGeekMode
+                      ? '0 0 20px rgba(0, 240, 255, 0.5)'
+                      : '0 0 20px rgba(100, 108, 255, 0.5)',
                     transition: { duration: 0.2 },
                   }}
                   onMouseEnter={(e) => {
