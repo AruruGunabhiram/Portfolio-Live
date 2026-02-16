@@ -87,7 +87,7 @@ export const Skills = () => {
     };
   }, [viewMode]);
 
-  // Flatten skills for alternative views
+  // Flatten skills for 3D view only
   const allSkills = Object.values(SKILLS).flat();
 
   // Handle keyboard navigation for view toggle
@@ -239,13 +239,13 @@ export const Skills = () => {
               transition={{ duration: 0.5 }}
             >
               <Suspense fallback={
-                <div className="h-[400px] flex items-center justify-center">
+                <div className="h-[600px] flex items-center justify-center">
                   <div className={`text-lg ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}>
-                    Loading radial chart...
+                    Loading constellation map...
                   </div>
                 </div>
               }>
-                <SkillRadialChart skills={allSkills} isGeekMode={isGeekMode} />
+                <SkillRadialChart skills={SKILLS} isGeekMode={isGeekMode} />
               </Suspense>
             </motion.div>
           )}
