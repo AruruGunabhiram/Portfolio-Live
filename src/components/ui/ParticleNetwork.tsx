@@ -80,9 +80,10 @@ export const ParticleNetwork = () => {
             fpsLimit: 60,
             interactivity: {
               events: {
-                // NO mouse interaction - particles drift independently
+                // Mouse interaction: repulsion effect (push particles away)
                 onHover: {
-                  enable: false,
+                  enable: true,
+                  mode: 'repulse', // Particles move away from cursor
                 },
                 onClick: {
                   enable: false,
@@ -92,44 +93,58 @@ export const ParticleNetwork = () => {
                   delay: 0.5,
                 },
               },
+              modes: {
+                repulse: {
+                  distance: 100, // Repulsion radius: 100px from cursor
+                  duration: 0.4, // Smooth transition duration
+                  speed: 1, // Repulsion speed
+                  factor: 3, // Repulsion strength
+                  easing: 'ease-out-quad', // Smooth easing
+                  maxSpeed: 50, // Max repulsion velocity
+                },
+              },
             },
             particles: {
               color: {
                 value: ['#00f0ff', '#00ff88'], // Cyan and green glow
               },
-              // Connection lines for network effect
+              // Connection lines for network effect (dynamic breaking/reconnecting)
               links: {
                 enable: true,
                 distance: 150, // Connect particles within 150px
                 color: '#00f0ff', // Cyan lines
-                opacity: 0.4, // Semi-transparent (0.3-0.5 range)
+                opacity: 0.4, // Semi-transparent
                 width: 1, // 1px line thickness
                 triangles: {
-                  enable: false, // No triangular meshes, just lines
+                  enable: false, // No triangular meshes
                 },
-                // Lines fade based on distance
+                // Lines fade based on distance (closer = more opaque)
                 blink: false,
                 consent: false,
                 shadow: {
                   enable: false,
                 },
+                // Lines break when mouse is nearby (creates "mouse cuts through network" effect)
+                warp: true,
               },
               move: {
-                // Slow, smooth drift
-                direction: 'none',
+                // Random movement in all directions (like reference video)
+                direction: 'none', // No fixed direction - completely random
                 enable: true,
                 outModes: {
-                  default: 'out', // Particles leave and respawn
+                  default: 'bounce', // Bounce off edges (boundary bounce)
                 },
-                random: true, // Organic, varied movement
-                speed: 0.2, // Very slow drift
-                straight: false,
+                random: true, // Randomize movement for organic motion
+                speed: 0.5, // Increased from 0.2 for more noticeable movement
+                straight: false, // Curved, organic paths
                 attract: {
                   enable: false,
                 },
                 trail: {
                   enable: false,
                 },
+                vibrate: false,
+                bounce: true, // Enable boundary bouncing
               },
               number: {
                 density: {

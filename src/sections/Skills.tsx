@@ -14,9 +14,6 @@ const Skill3DSphere = lazy(() =>
 const SkillRadialChart = lazy(() =>
   import('../components/skills').then(module => ({ default: module.SkillRadialChart }))
 );
-const SkillBarsRough = lazy(() =>
-  import('../components/skills').then(module => ({ default: module.SkillBarsRough }))
-);
 const SkillGridView = lazy(() =>
   import('../components/skills').then(module => ({ default: module.SkillGridView }))
 );
@@ -26,7 +23,7 @@ if (isBrowser) {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-type ViewMode = 'radial' | '3d' | 'rough' | 'grid';
+type ViewMode = 'radial' | '3d' | 'grid';
 
 // Loading spinner component
 const LoadingSpinner = ({ isGeekMode, text }: { isGeekMode: boolean; text: string }) => (
@@ -253,17 +250,11 @@ export const Skills = () => {
     }
   };
 
-  const viewModes: Array<{ mode: ViewMode; label: string; description: string }> = isGeekMode
-    ? [
-        { mode: 'grid', label: 'Grid', description: 'Organized card-based skill categories' },
-        { mode: 'radial', label: 'Constellation', description: 'Interconnected tech ecosystem' },
-        { mode: '3d', label: '3D Sphere', description: 'Interactive 3D sphere visualization' },
-      ]
-    : [
-        { mode: 'grid', label: 'Grid', description: 'Organized card-based skill categories' },
-        { mode: 'radial', label: 'Constellation', description: 'Interconnected tech ecosystem' },
-        { mode: 'rough', label: 'Sketch', description: 'Hand-drawn artistic view' },
-      ];
+  const viewModes: Array<{ mode: ViewMode; label: string; description: string }> = [
+    { mode: 'grid', label: 'Grid', description: 'Organized card-based skill categories' },
+    { mode: 'radial', label: 'Constellation', description: 'Interconnected tech ecosystem' },
+    { mode: '3d', label: '3D Sphere', description: 'Interactive 3D sphere visualization' },
+  ];
 
   return (
     <section id="skills" className="py-20 relative overflow-hidden">
@@ -375,7 +366,7 @@ export const Skills = () => {
               </Suspense>
             )}
 
-            {viewMode === '3d' && isGeekMode && (
+            {viewMode === '3d' && (
               <Suspense
                 fallback={
                   <div className="h-[500px] flex items-center justify-center">
@@ -384,24 +375,6 @@ export const Skills = () => {
                 }
               >
                 <Skill3DSphere
-                  skills={allSkills
-                    .filter(skill => skill.level !== undefined)
-                    .map(skill => ({ name: skill.name, level: skill.level! }))
-                  }
-                  isGeekMode={isGeekMode}
-                />
-              </Suspense>
-            )}
-
-            {viewMode === 'rough' && !isGeekMode && (
-              <Suspense
-                fallback={
-                  <div className="h-[400px] flex items-center justify-center">
-                    <LoadingSpinner isGeekMode={isGeekMode} text="Loading sketch view..." />
-                  </div>
-                }
-              >
-                <SkillBarsRough
                   skills={allSkills
                     .filter(skill => skill.level !== undefined)
                     .map(skill => ({ name: skill.name, level: skill.level! }))
