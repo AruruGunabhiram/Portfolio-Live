@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { isBrowser, prefersReducedMotion } from '../../utils';
-import { PROJECTS } from '../../utils/constants';
+import { PROJECTS, SKILL_RELATIONSHIPS } from '../../utils/constants';
+import { SkillTooltip } from './SkillTooltip';
 
 interface SkillTimelineProps {
   skills: Record<string, Array<{ name: string; level?: number; year?: number; tagline?: string; firstProject?: string }>>;
@@ -366,34 +367,20 @@ export const SkillTimeline = ({ skills, isGeekMode }: SkillTimelineProps) => {
       </svg>
 
       {/* Tooltip */}
-      {tooltip.visible && tooltip.skill && (
-        <div
-          className={`fixed pointer-events-none z-50 px-5 py-4 rounded-lg border max-w-xs ${
-            isGeekMode
-              ? 'bg-cyber-bg-darker border-cyber-cyan text-cyber-text glow-cyan'
-              : 'bg-dark-surface border-dark-accent text-white'
-          }`}
-          style={{
-            left: `${tooltip.x + 15}px`,
-            top: `${tooltip.y - 10}px`,
-            transform: 'translateY(-50%)',
-          }}
-        >
-          <div className={`font-bold text-base mb-2 ${isGeekMode ? 'text-cyber-cyan' : 'text-dark-accent'}`}>
-            {isGeekMode ? '> ' : ''}{tooltip.skill.name}
-          </div>
-          <div className="text-sm mb-1 opacity-90">{tooltip.skill.tagline}</div>
-          <div className="text-xs opacity-60 mt-2">
-            First used in <span className="font-semibold">{tooltip.skill.firstProject}</span> ({tooltip.skill.year})
-          </div>
-          {tooltip.skill.projectCount > 0 && (
-            <div className="text-xs opacity-60 mt-1">
-              Used in <span className="font-semibold">{tooltip.skill.projectCount}</span> project{tooltip.skill.projectCount !== 1 ? 's' : ''}
-            </div>
-          )}
-          <div className="text-xs opacity-50 mt-2 capitalize italic">{tooltip.skill.category}</div>
-        </div>
-      )}
+      <SkillTooltip
+        skill={{
+          name: tooltip.skill?.name || '',
+          category: tooltip.skill?.category,
+          year: tooltip.skill?.year,
+          tagline: tooltip.skill?.tagline,
+          firstProject: tooltip.skill?.firstProject,
+        }}
+        relatedSkills={tooltip.skill ? SKILL_RELATIONSHIPS[tooltip.skill.name] || [] : []}
+        isVisible={tooltip.visible && !!tooltip.skill}
+        x={tooltip.x}
+        y={tooltip.y}
+        isGeekMode={isGeekMode}
+      />
 
       {/* Legend */}
       <div

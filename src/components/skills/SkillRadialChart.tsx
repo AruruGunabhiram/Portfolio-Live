@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { isBrowser, prefersReducedMotion } from '../../utils';
 import { SKILLS_CONSTELLATION, SKILL_RELATIONSHIPS } from '../../utils/constants';
+import { SkillTooltip } from './SkillTooltip';
 
 interface SkillNode {
   name: string;
@@ -371,54 +372,17 @@ export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
       />
 
       {/* Enhanced Tooltip */}
-      {tooltip.visible && tooltip.skill && (
-        <div
-          className={`fixed pointer-events-none z-50 px-6 py-4 rounded-lg border-2 max-w-sm ${
-            isGeekMode
-              ? 'bg-cyber-bg-darker border-cyber-pink text-cyber-text box-glow-neon-pink'
-              : 'bg-dark-surface border-dark-accent text-white'
-          }`}
-          style={{
-            left: `${tooltip.x + 20}px`,
-            top: `${tooltip.y - 10}px`,
-            transform: 'translateY(-50%)',
-          }}
-        >
-          {/* Skill Name */}
-          <div className={`font-bold text-lg mb-2 ${isGeekMode ? 'text-cyber-pink text-glow-neon' : 'text-dark-accent'}`}>
-            {isGeekMode ? '> ' : ''}{tooltip.skill.name}
-          </div>
-
-          {/* Category */}
-          <div className="text-xs opacity-60 mb-3 capitalize">
-            {SKILLS_CONSTELLATION[tooltip.skill.category as keyof typeof SKILLS_CONSTELLATION]?.description}
-          </div>
-
-          {/* Description */}
-          <div className="text-sm mb-3 opacity-90">
-            Core technology in my stack
-          </div>
-
-          {/* Related Skills */}
-          {tooltip.relatedSkills.length > 0 && (
-            <div className="text-xs opacity-70 mt-3 pt-3 border-t border-current/20">
-              <div className="font-semibold mb-1">Used with:</div>
-              <div className="flex flex-wrap gap-1">
-                {tooltip.relatedSkills.map((skill) => (
-                  <span
-                    key={skill}
-                    className={`px-2 py-1 rounded text-xs ${
-                      isGeekMode ? 'bg-cyber-cyan/20 text-cyber-cyan' : 'bg-gray-700 text-gray-300'
-                    }`}
-                  >
-                    {skill}
-                  </span>
-                ))}
-              </div>
-            </div>
-          )}
-        </div>
-      )}
+      <SkillTooltip
+        skill={{
+          name: tooltip.skill?.name || '',
+          category: tooltip.skill ? SKILLS_CONSTELLATION[tooltip.skill.category as keyof typeof SKILLS_CONSTELLATION]?.description : '',
+        }}
+        relatedSkills={tooltip.relatedSkills}
+        isVisible={tooltip.visible && !!tooltip.skill}
+        x={tooltip.x}
+        y={tooltip.y}
+        isGeekMode={isGeekMode}
+      />
 
       {/* Legend */}
       <div

@@ -3,3 +3,4 @@ export { Skill3DSphere } from './Skill3DSphere';
 export { SkillBarsRough } from './SkillBarsRough';
 export { SkillTimeline } from './SkillTimeline';
 export { SkillGridView } from './SkillGridView';
+export { SkillTooltip } from './SkillTooltip';

@@ -1,8 +1,10 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { isBrowser, prefersReducedMotion } from '../../utils';
+import { SKILL_RELATIONSHIPS } from '../../utils/constants';
+import { SkillTooltip } from './SkillTooltip';
 
 interface SkillGridViewProps {
   isGeekMode: boolean;
@@ -73,6 +75,13 @@ if (isBrowser) {
 
 export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
   const gridRef = useRef<HTMLDivElement>(null);
+  const [tooltip, setTooltip] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    skill: string | null;
+    category: string;
+  }>({ visible: false, x: 0, y: 0, skill: null, category: '' });
 
   useEffect(() => {
     if (!isBrowser || !gridRef.current || prefersReducedMotion()) return;
@@ -132,10 +141,11 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
   }, []);
 
   return (
-    <div
-      ref={gridRef}
-      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
+    <>
+      <div
+        ref={gridRef}
+        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+      >
       {skillCategories.map((category, index) => (
         <motion.div
           key={category.title}
@@ -200,6 +210,37 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
                   scale: 1.05,
                   transition: { duration: 0.2 },
                 }}
+                onMouseEnter={(e) => {
+                  setTooltip({
+                    visible: true,
+                    x: e.clientX,
+                    y: e.clientY,
+                    skill,
+                    category: category.title,
+                  });
+                }}
+                onMouseMove={(e) => {
+                  setTooltip((prev) => ({
+                    ...prev,
+                    x: e.clientX,
+                    y: e.clientY,
+                  }));
+                }}
+                onMouseLeave={() => {
+                  setTooltip((prev) => ({ ...prev, visible: false }));
+                }}
+                onClick={(e) => {
+                  // Mobile tap to show tooltip
+                  if (window.innerWidth < 768) {
+                    setTooltip({
+                      visible: !tooltip.visible,
+                      x: e.clientX,
+                      y: e.clientY,
+                      skill,
+                      category: category.title,
+                    });
+                  }
+                }}
               >
                 {skill}
               </motion.span>
@@ -214,6 +255,21 @@ export const SkillGridView = ({ isGeekMode }: SkillGridViewProps) => {
           )}
         </motion.div>
       ))}
-    </div>
+      </div>
+
+      {/* Tooltip */}
+      <SkillTooltip
+        skill={{
+          name: tooltip.skill || '',
+          category: tooltip.category,
+        }}
+        relatedSkills={tooltip.skill ? SKILL_RELATIONSHIPS[tooltip.skill] || [] : []}
+        isVisible={tooltip.visible && !!tooltip.skill}
+        x={tooltip.x}
+        y={tooltip.y}
+        isGeekMode={isGeekMode}
+        onClose={() => setTooltip((prev) => ({ ...prev, visible: false }))}
+      />
+    </>
   );
 };

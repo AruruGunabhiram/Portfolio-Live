@@ -1,9 +1,11 @@
-import { useRef, useState, Suspense } from 'react';
+import { useRef, useState, Suspense, useEffect } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
 import type { Mesh, Group, Line } from 'three';
 import { isBrowser } from '../../utils';
+import { SKILL_RELATIONSHIPS } from '../../utils/constants';
+import { SkillTooltip } from './SkillTooltip';
 
 interface Skill3DSphereProps {
   skills: Array<{ name: string; level: number }>;
@@ -206,9 +208,16 @@ const SkillLabel = ({ skill, position, isGeekMode, onHover }: SkillLabelProps) =
 };
 
 // Main 3D scene
-const Scene3D = ({ skills, isGeekMode }: { skills: Array<{ name: string; level: number }>; isGeekMode: boolean }) => {
+const Scene3D = ({
+  skills,
+  isGeekMode,
+  onSkillHover
+}: {
+  skills: Array<{ name: string; level: number }>;
+  isGeekMode: boolean;
+  onSkillHover: (skill: string | null) => void;
+}) => {
   const groupRef = useRef<Group>(null);
-  const [hoveredSkill, setHoveredSkill] = useState<string | null>(null);
 
   // Distribute skills in a sphere pattern using spherical coordinates
   const positions: Array<[number, number, number]> = skills.map((_, index) => {
@@ -247,7 +256,7 @@ const Scene3D = ({ skills, isGeekMode }: { skills: Array<{ name: string; level: 
             skill={{ name: skill.name }}
             position={positions[index]}
             isGeekMode={isGeekMode}
-            onHover={(hovered) => setHoveredSkill(hovered ? skill.name : null)}
+            onHover={(hovered) => onSkillHover(hovered ? skill.name : null)}
           />
         ))}
       </group>
@@ -269,9 +278,39 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
   if (!isBrowser) return null;
 
   const [dpr, setDpr] = useState(1.5);
+  const [tooltip, setTooltip] = useState<{
+    visible: boolean;
+    x: number;
+    y: number;
+    skill: string | null;
+  }>({ visible: false, x: 0, y: 0, skill: null });
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  // Track mouse position for tooltip
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (tooltip.skill) {
+        setTooltip((prev) => ({
+          ...prev,
+          x: e.clientX,
+          y: e.clientY,
+        }));
+      }
+    };
+
+    if (containerRef.current) {
+      containerRef.current.addEventListener('mousemove', handleMouseMove);
+    }
+
+    return () => {
+      if (containerRef.current) {
+        containerRef.current.removeEventListener('mousemove', handleMouseMove);
+      }
+    };
+  }, [tooltip.skill]);
 
   return (
-    <div className="w-full h-[500px] relative">
+    <div ref={containerRef} className="w-full h-[500px] relative">
       <Suspense fallback={<LoadingSpinner isGeekMode={isGeekMode} />}>
         <Canvas
           camera={{ position: [0, 0, 5], fov: 60 }}
@@ -283,7 +322,17 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
             onIncline={() => setDpr(2)}
             onDecline={() => setDpr(1)}
           >
-            <Scene3D skills={skills} isGeekMode={isGeekMode} />
+            <Scene3D
+              skills={skills}
+              isGeekMode={isGeekMode}
+              onSkillHover={(skill) => {
+                setTooltip((prev) => ({
+                  ...prev,
+                  visible: !!skill,
+                  skill,
+                }));
+              }}
+            />
           </PerformanceMonitor>
         </Canvas>
       </Suspense>
@@ -301,6 +350,19 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
           Hover over skills to highlight and connect to center
         </p>
       </div>
+
+      {/* Tooltip */}
+      <SkillTooltip
+        skill={{
+          name: tooltip.skill || '',
+          category: '', // 3D view doesn't have category context
+        }}
+        relatedSkills={tooltip.skill ? SKILL_RELATIONSHIPS[tooltip.skill] || [] : []}
+        isVisible={tooltip.visible && !!tooltip.skill}
+        x={tooltip.x}
+        y={tooltip.y}
+        isGeekMode={isGeekMode}
+      />
     </div>
   );
 };
