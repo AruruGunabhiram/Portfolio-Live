@@ -65,29 +65,20 @@ const SkillGridViewComponent = ({ isGeekMode }: SkillGridViewProps) => {
             key={categoryConfig.key}
             className={`skill-card relative group rounded-xl p-6 transition-all duration-300 ${
               isGeekMode
-                ? 'bg-[rgba(10,14,39,0.6)] backdrop-blur-md border border-cyan-500/50 hover:border-cyan-400'
-                : 'bg-[rgba(10,14,39,0.6)] backdrop-blur-md border border-gray-700 hover:border-blue-400'
+                ? 'bg-[rgba(10,14,39,0.6)] backdrop-blur-md border-2 border-cyan-500/50'
+                : 'bg-[rgba(10,14,39,0.6)] backdrop-blur-md border-2 border-gray-700'
             }`}
             whileHover={{
               y: -8,
+              borderColor: isGeekMode ? '#00f0ff' : '#646cff',
+              boxShadow: isGeekMode
+                ? '0 12px 40px rgba(0, 240, 255, 0.4), 0 0 20px rgba(0, 240, 255, 0.2)'
+                : '0 12px 40px rgba(100, 108, 255, 0.4), 0 0 20px rgba(100, 108, 255, 0.2)',
               transition: { duration: 0.3, ease: [0.4, 0, 0.2, 1] },
             }}
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1, duration: 0.6 }}
-            style={{
-              boxShadow: 'none',
-            }}
-            onMouseEnter={(e) => {
-              if (isGeekMode) {
-                (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(0, 240, 255, 0.3)';
-              } else {
-                (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 30px rgba(100, 108, 255, 0.3)';
-              }
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLElement).style.boxShadow = 'none';
-            }}
           >
             {/* Category emoji/icon at top */}
             <div className="text-4xl mb-4">{categoryConfig.icon}</div>

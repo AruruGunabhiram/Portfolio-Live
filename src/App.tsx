@@ -71,12 +71,10 @@ function AppContent() {
       )}
 
       <div className="min-h-screen flex flex-col relative">
-        {/* Particle network background - only in geek mode */}
-        {isGeekMode && (
-          <div className="fixed inset-0 pointer-events-none z-0">
-            <ParticleNetwork />
-          </div>
-        )}
+        {/* Particle network background - always active in both themes */}
+        <div className="fixed inset-0 pointer-events-none z-0">
+          <ParticleNetwork />
+        </div>
 
         <Header />
 

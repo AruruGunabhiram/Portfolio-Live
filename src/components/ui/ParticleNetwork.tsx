@@ -64,7 +64,7 @@ export const ParticleNetwork = () => {
   return (
     <div
       ref={containerRef}
-      className="absolute inset-0 pointer-events-none"
+      className="absolute inset-0 pointer-events-none -z-10"
       style={{ opacity: isVisible ? 1 : 0.3 }}
     >
       {init && (
@@ -80,43 +80,43 @@ export const ParticleNetwork = () => {
             fpsLimit: 60,
             interactivity: {
               events: {
+                // NO mouse interaction - particles drift independently
                 onHover: {
-                  enable: true,
-                  mode: 'repulse',
+                  enable: false,
+                },
+                onClick: {
+                  enable: false,
                 },
                 resize: {
                   enable: true,
                   delay: 0.5,
                 },
               },
-              modes: {
-                repulse: {
-                  distance: 100,
-                  duration: 0.4,
-                  speed: 1,
-                },
-              },
             },
             particles: {
               color: {
-                value: ['#00f0ff', '#ff006e'], // Cyberpunk: cyan, pink
+                value: ['#00f0ff', '#00ff88'], // Cyan and green glow
               },
+              // NO connecting lines - just floating particles
               links: {
-                color: '#b026ff', // Purple connecting lines
-                distance: 150,
-                enable: true,
-                opacity: 0.4,
-                width: 1.5,
+                enable: false,
               },
               move: {
+                // Slow, smooth drift
                 direction: 'none',
                 enable: true,
                 outModes: {
-                  default: 'bounce',
+                  default: 'out', // Particles leave and respawn
                 },
-                random: false,
-                speed: 1,
+                random: true, // Organic, varied movement
+                speed: 0.2, // Very slow drift
                 straight: false,
+                attract: {
+                  enable: false,
+                },
+                trail: {
+                  enable: false,
+                },
               },
               number: {
                 density: {
@@ -124,23 +124,57 @@ export const ParticleNetwork = () => {
                   width: 1920,
                   height: 1080,
                 },
-                value: 80, // Limited for performance
+                value: 60, // 50-80 particles as specified
               },
               opacity: {
-                value: 0.5,
+                value: {
+                  min: 0.2,
+                  max: 0.4,
+                }, // 20-40% opacity - subtle
+                animation: {
+                  enable: true,
+                  speed: 0.5,
+                  sync: false,
+                },
               },
               shape: {
-                type: 'circle',
+                type: ['circle', 'square', 'triangle'], // Mix of geometric shapes
               },
               size: {
-                value: { min: 1, max: 3 },
+                value: {
+                  min: 2,
+                  max: 4,
+                }, // Tiny: 2-4px
+              },
+              rotate: {
+                value: {
+                  min: 0,
+                  max: 360,
+                },
+                animation: {
+                  enable: true,
+                  speed: 1, // Very slow rotation
+                  sync: false,
+                },
+              },
+              // Add subtle glow effect
+              shadow: {
+                enable: true,
+                blur: 5,
+                color: {
+                  value: '#00f0ff',
+                },
+                offset: {
+                  x: 0,
+                  y: 0,
+                },
               },
             },
             detectRetina: true,
             smooth: true,
             fullScreen: {
               enable: false,
-              zIndex: 0,
+              zIndex: -1,
             },
           }}
         />
