@@ -19,13 +19,16 @@ const SkillBarsRough = lazy(() =>
 const SkillTimeline = lazy(() =>
   import('../components/skills').then(module => ({ default: module.SkillTimeline }))
 );
+const SkillGridView = lazy(() =>
+  import('../components/skills').then(module => ({ default: module.SkillGridView }))
+);
 
 // Register GSAP plugin
 if (isBrowser) {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-type ViewMode = 'bars' | 'radial' | '3d' | 'rough';
+type ViewMode = 'bars' | 'radial' | '3d' | 'rough' | 'grid';
 
 export const Skills = () => {
   const { isGeekMode } = useTheme();
@@ -103,11 +106,13 @@ export const Skills = () => {
 
   const viewModes: Array<{ mode: ViewMode; label: string; description: string }> = isGeekMode
     ? [
+        { mode: 'grid', label: 'Grid', description: 'Organized card-based skill categories' },
         { mode: 'bars', label: 'Timeline', description: 'Journey through technology learning' },
         { mode: 'radial', label: 'Constellation', description: 'Interconnected tech ecosystem' },
         { mode: '3d', label: '3D Sphere', description: 'Interactive 3D sphere visualization' },
       ]
     : [
+        { mode: 'grid', label: 'Grid', description: 'Organized card-based skill categories' },
         { mode: 'bars', label: 'Timeline', description: 'Journey through technology learning' },
         { mode: 'rough', label: 'Sketch', description: 'Hand-drawn artistic view' },
         { mode: 'radial', label: 'Constellation', description: 'Interconnected tech ecosystem' },
@@ -172,6 +177,24 @@ export const Skills = () => {
           id={`skill-view-${viewMode}`}
           aria-label={`${viewMode} view of skills`}
         >
+          {viewMode === 'grid' && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
+            >
+              <Suspense fallback={
+                <div className="h-[600px] flex items-center justify-center">
+                  <div className={`text-lg ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}>
+                    Loading grid view...
+                  </div>
+                </div>
+              }>
+                <SkillGridView isGeekMode={isGeekMode} />
+              </Suspense>
+            </motion.div>
+          )}
+
           {viewMode === 'bars' && (
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
