@@ -97,9 +97,22 @@ export const ParticleNetwork = () => {
               color: {
                 value: ['#00f0ff', '#00ff88'], // Cyan and green glow
               },
-              // NO connecting lines - just floating particles
+              // Connection lines for network effect
               links: {
-                enable: false,
+                enable: true,
+                distance: 150, // Connect particles within 150px
+                color: '#00f0ff', // Cyan lines
+                opacity: 0.4, // Semi-transparent (0.3-0.5 range)
+                width: 1, // 1px line thickness
+                triangles: {
+                  enable: false, // No triangular meshes, just lines
+                },
+                // Lines fade based on distance
+                blink: false,
+                consent: false,
+                shadow: {
+                  enable: false,
+                },
               },
               move: {
                 // Slow, smooth drift

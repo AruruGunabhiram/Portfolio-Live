@@ -1,4 +1,4 @@
-import { useRef, useState, Suspense, useEffect } from 'react';
+import { useRef, useState, Suspense, useEffect, Component, ReactNode } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { Text, OrbitControls, PerformanceMonitor } from '@react-three/drei';
 import * as THREE from 'three';
@@ -6,6 +6,33 @@ import type { Mesh, Group } from 'three';
 import { isBrowser } from '../../utils';
 import { SKILLS } from '../../data/skills';
 import { SkillTooltip } from './SkillTooltip';
+
+// Error Boundary for Three.js errors
+class ThreeErrorBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { hasError: boolean; error: Error | null }
+> {
+  constructor(props: { children: ReactNode; fallback: ReactNode }) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error: Error) {
+    console.error('🔴 Three.js Error:', error);
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error: Error, errorInfo: any) {
+    console.error('🔴 Three.js Error Details:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 
 interface Skill3DSphereProps {
   skills: Array<{ name: string; level: number }>;
@@ -228,11 +255,10 @@ const Scene3D = ({
 
   return (
     <>
-      {/* Lighting setup */}
-      <ambientLight intensity={0.2} />
+      {/* Lighting setup - 3 lights for proper illumination */}
+      <ambientLight intensity={0.5} />
       <pointLight position={[5, 5, 5]} intensity={1} color={isGeekMode ? '#00f0ff' : '#646cff'} />
-      <pointLight position={[-5, -5, -5]} intensity={0.8} color={isGeekMode ? '#ff006e' : '#ff1744'} />
-      <pointLight position={[0, 5, -5]} intensity={0.6} color={isGeekMode ? '#b026ff' : '#7b2cbf'} />
+      <pointLight position={[-5, -5, 5]} intensity={0.8} color={isGeekMode ? '#ff006e' : '#ff1744'} />
 
       <group ref={groupRef}>
         {/* Central glowing sphere */}
@@ -255,7 +281,7 @@ const Scene3D = ({
         ))}
       </group>
 
-      {/* Camera controls */}
+      {/* Camera controls with auto-rotation */}
       <OrbitControls
         enableZoom={true}
         enablePan={false}
@@ -263,15 +289,32 @@ const Scene3D = ({
         maxDistance={12}
         autoRotate={true}
         autoRotateSpeed={0.5}
+        makeDefault
       />
     </>
   );
 };
 
 export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
-  if (!isBrowser) return null;
+  if (!isBrowser) {
+    console.log('⚠️ Skill3DSphere: Not browser environment');
+    return null;
+  }
 
   console.log('🎨 Skill3DSphere mounted with', skills.length, 'skills, isGeekMode:', isGeekMode);
+
+  // Check WebGL support
+  const hasWebGL = (() => {
+    try {
+      const canvas = document.createElement('canvas');
+      return !!(
+        window.WebGLRenderingContext &&
+        (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+      );
+    } catch (e) {
+      return false;
+    }
+  })();
 
   const [dpr, setDpr] = useState(1.5);
   const [tooltip, setTooltip] = useState<{
@@ -281,6 +324,23 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
     skill: string | null;
   }>({ visible: false, x: 0, y: 0, skill: null });
   const containerRef = useRef<HTMLDivElement>(null);
+
+  // WebGL not supported fallback
+  if (!hasWebGL) {
+    console.warn('⚠️ WebGL not supported');
+    return (
+      <div className="w-full h-[600px] flex items-center justify-center">
+        <div className="text-center">
+          <p className={`text-lg mb-2 ${isGeekMode ? 'text-cyber-cyan' : 'text-gray-400'}`}>
+            {isGeekMode ? '> ' : ''}3D View Requires WebGL
+          </p>
+          <p className={`text-sm ${isGeekMode ? 'text-cyber-text-dim' : 'text-gray-500'}`}>
+            Your browser doesn't support WebGL or it's disabled
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Track mouse position for tooltip
   useEffect(() => {
@@ -306,32 +366,57 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
   }, [tooltip.skill]);
 
   return (
-    <div ref={containerRef} className="w-full h-[500px] relative">
-      <Suspense fallback={<LoadingSpinner isGeekMode={isGeekMode} />}>
-        <Canvas
-          camera={{ position: [0, 0, 5], fov: 60 }}
-          dpr={dpr}
-          aria-label="3D sphere showing skills in interactive 3D space"
-          role="img"
+    <ThreeErrorBoundary
+      fallback={
+        <div className="w-full h-[600px] flex items-center justify-center">
+          <div className="text-center">
+            <p className={`text-lg mb-2 ${isGeekMode ? 'text-cyber-cyan' : 'text-gray-400'}`}>
+              {isGeekMode ? '> ' : ''}3D Scene Error
+            </p>
+            <p className={`text-sm ${isGeekMode ? 'text-cyber-text-dim' : 'text-gray-500'}`}>
+              Unable to load 3D visualization. Try refreshing the page.
+            </p>
+          </div>
+        </div>
+      }
+    >
+      <div ref={containerRef} className="w-full h-[600px] min-h-[600px] relative">
+        <Suspense
+          fallback={
+            <div className="h-[600px] flex items-center justify-center">
+              <LoadingSpinner isGeekMode={isGeekMode} />
+              <p className={`ml-4 text-sm ${isGeekMode ? 'text-cyber-text' : 'text-gray-400'}`}>
+                {isGeekMode ? '> ' : ''}Loading 3D Scene...
+              </p>
+            </div>
+          }
         >
-          <PerformanceMonitor
-            onIncline={() => setDpr(2)}
-            onDecline={() => setDpr(1)}
+          <Canvas
+            camera={{ position: [0, 0, 6], fov: 60 }}
+            dpr={dpr}
+            style={{ width: '100%', height: '600px' }}
+            aria-label="3D sphere showing skills in interactive 3D space"
+            role="img"
+            onCreated={() => console.log('✅ Canvas created successfully')}
           >
-            <Scene3D
-              skills={skills}
-              isGeekMode={isGeekMode}
-              onSkillHover={(skill) => {
-                setTooltip((prev) => ({
-                  ...prev,
-                  visible: !!skill,
-                  skill,
-                }));
-              }}
-            />
-          </PerformanceMonitor>
-        </Canvas>
-      </Suspense>
+            <PerformanceMonitor
+              onIncline={() => setDpr(2)}
+              onDecline={() => setDpr(1)}
+            >
+              <Scene3D
+                skills={skills}
+                isGeekMode={isGeekMode}
+                onSkillHover={(skill) => {
+                  setTooltip((prev) => ({
+                    ...prev,
+                    visible: !!skill,
+                    skill,
+                  }));
+                }}
+              />
+            </PerformanceMonitor>
+          </Canvas>
+        </Suspense>
 
       {/* Instructions */}
       <div
@@ -347,18 +432,19 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
         </p>
       </div>
 
-      {/* Tooltip */}
-      <SkillTooltip
-        skill={{
-          name: tooltip.skill || '',
-          category: '', // 3D view doesn't have category context
-        }}
-        relatedSkills={tooltip.skill ? (SKILLS.find(s => s.name === tooltip.skill)?.relatedSkills || []) : []}
-        isVisible={tooltip.visible && !!tooltip.skill}
-        x={tooltip.x}
-        y={tooltip.y}
-        isGeekMode={isGeekMode}
-      />
-    </div>
+        {/* Tooltip */}
+        <SkillTooltip
+          skill={{
+            name: tooltip.skill || '',
+            category: '', // 3D view doesn't have category context
+          }}
+          relatedSkills={tooltip.skill ? (SKILLS.find(s => s.name === tooltip.skill)?.relatedSkills || []) : []}
+          isVisible={tooltip.visible && !!tooltip.skill}
+          x={tooltip.x}
+          y={tooltip.y}
+          isGeekMode={isGeekMode}
+        />
+      </div>
+    </ThreeErrorBoundary>
   );
 };

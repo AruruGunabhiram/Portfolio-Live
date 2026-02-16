@@ -57,7 +57,7 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const size = 700;
+    const size = 800; // Increased from 700 to 800 for more space
     canvas.width = size * dpr;
     canvas.height = size * dpr;
     canvas.style.width = `${size}px`;
@@ -85,13 +85,13 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
       const angleRange = endRad - startRad;
       const angleStep = angleRange / (categorySkills.length + 1);
 
-      // Radius based on ring - increased for better spacing
-      const baseRadius = innerRing ? 180 : 320;
+      // Radius based on ring - increased for better spacing and readability
+      const baseRadius = innerRing ? 200 : 360; // Increased: outer 360px (was 320), inner 200px (was 180)
 
       categorySkills.forEach((skill, index) => {
         const angle = startRad + angleStep * (index + 1);
         // Add radius variation within sectors for visual interest
-        const radiusVariation = (Math.random() - 0.5) * 40; // ±20px
+        const radiusVariation = (Math.random() - 0.5) * 50; // ±25px (increased from ±20px)
         const radius = baseRadius + radiusVariation;
         const x = centerX + Math.cos(angle) * radius;
         const y = centerY + Math.sin(angle) * radius;
@@ -263,7 +263,7 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
 
       // Skill name label
       if (node.visible) {
-        const fontSize = 10; // Smaller font for better readability
+        const fontSize = 11; // Increased from 10px to 11px for better readability
         ctx.font = `${fontSize}px "Fira Code", monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
@@ -317,10 +317,10 @@ const SkillRadialChartComponent = ({ isGeekMode }: SkillRadialChartProps) => {
         const isCurrentHovered = hoveredNode === index;
         const hasHoveredNode = hoveredNode !== null;
 
-        // Better hover states: scale up hovered node, fade others
-        const glowIntensity = isCurrentHovered ? 2 : 1;
-        const scale = isCurrentHovered ? 1.4 : 1;
-        const opacity = hasHoveredNode && !isCurrentHovered ? 0.4 : 1;
+        // Better hover states: scale up hovered node more, fade others significantly
+        const glowIntensity = isCurrentHovered ? 2.5 : 1;
+        const scale = isCurrentHovered ? 1.5 : 1; // Increased from 1.4
+        const opacity = hasHoveredNode && !isCurrentHovered ? 0.3 : 1; // Fade more: 0.3 instead of 0.4
 
         if (node.drawn) {
           drawConnection(node, 1, glowIntensity);
