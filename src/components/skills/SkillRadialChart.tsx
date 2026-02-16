@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import gsap from 'gsap';
 import { isBrowser, prefersReducedMotion } from '../../utils';
+import { SKILLS_CONSTELLATION, SKILL_RELATIONSHIPS } from '../../utils/constants';
 
 interface SkillNode {
   name: string;
@@ -10,36 +11,30 @@ interface SkillNode {
   angle: number;
   radius: number;
   drawn: boolean;
-}
-
-interface Particle {
-  progress: number;
-  skillIndex: number;
-  speed: number;
-}
-
-interface SkillRadialChartProps {
-  skills: Record<string, Array<{ name: string; level?: number }>>;
-  isGeekMode: boolean;
+  visible: boolean;
 }
 
 interface TooltipState {
   visible: boolean;
   x: number;
   y: number;
-  skill: string;
-  category: string;
+  skill: SkillNode | null;
+  relatedSkills: string[];
 }
 
-export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) => {
+interface SkillRadialChartProps {
+  skills?: Record<string, Array<{ name: string; level?: number }>>;
+  isGeekMode: boolean;
+}
+
+export const SkillRadialChart = ({ isGeekMode }: SkillRadialChartProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
   const [hoveredNode, setHoveredNode] = useState<number | null>(null);
-  const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, skill: '', category: '' });
+  const [tooltip, setTooltip] = useState<TooltipState>({ visible: false, x: 0, y: 0, skill: null, relatedSkills: [] });
   const nodesRef = useRef<SkillNode[]>([]);
-  const particlesRef = useRef<Particle[]>([]);
-  const animationFrameRef = useRef<number>();
   const pulsePhaseRef = useRef(0);
+  const animationFrameRef = useRef<number>();
 
   useEffect(() => {
     if (!isBrowser || !canvasRef.current) return;
@@ -49,7 +44,7 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
     if (!ctx) return;
 
     const dpr = window.devicePixelRatio || 1;
-    const size = 600;
+    const size = 700;
     canvas.width = size * dpr;
     canvas.height = size * dpr;
     canvas.style.width = `${size}px`;
@@ -60,131 +55,137 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
     const centerY = size / 2;
     const reducedMotion = prefersReducedMotion();
 
-    // Category configuration with angular sections and colors
-    const categoryConfig: Record<string, { startAngle: number; endAngle: number; color: string; radius: number }> = {
-      frontend: { startAngle: -Math.PI / 2, endAngle: Math.PI / 6, color: '#00f0ff', radius: 200 },
-      backend: { startAngle: Math.PI / 6, endAngle: Math.PI / 2 + Math.PI / 3, color: '#b026ff', radius: 180 },
-      tools: { startAngle: Math.PI / 2 + Math.PI / 3, endAngle: Math.PI * 3 / 2, color: '#ff006e', radius: 160 },
-    };
-
-    // Create skill nodes positioned by category
+    // Create skill nodes with proper positioning
     const nodes: SkillNode[] = [];
-    Object.entries(skills).forEach(([category, categorySkills]) => {
-      const config = categoryConfig[category];
-      if (!config) return;
 
-      const angleRange = config.endAngle - config.startAngle;
-      const angleStep = angleRange / (categorySkills.length + 1);
+    Object.entries(SKILLS_CONSTELLATION).forEach(([category, config]) => {
+      const { skills, zone, color } = config;
+      const { startAngle, endAngle, innerRing } = zone;
 
-      categorySkills.forEach((skill, index) => {
-        const angle = config.startAngle + angleStep * (index + 1);
-        const radius = config.radius;
+      // Convert angles to radians (0° at top, clockwise)
+      const startRad = ((startAngle - 90) * Math.PI) / 180;
+      const endRad = ((endAngle - 90) * Math.PI) / 180;
+      const angleRange = endRad - startRad;
+      const angleStep = angleRange / (skills.length + 1);
+
+      // Radius based on ring
+      const baseRadius = innerRing ? 120 : 240;
+
+      skills.forEach((skillName, index) => {
+        const angle = startRad + angleStep * (index + 1);
+        // Add slight radius variation for visual interest
+        const radius = baseRadius + (Math.random() - 0.5) * 20;
         const x = centerX + Math.cos(angle) * radius;
         const y = centerY + Math.sin(angle) * radius;
 
         nodes.push({
-          name: skill.name,
+          name: skillName,
           category,
           x,
           y,
           angle,
           radius,
           drawn: false,
+          visible: false,
         });
       });
     });
 
     nodesRef.current = nodes;
 
-    // Initialize particles
-    particlesRef.current = nodes.map((_, index) => ({
-      progress: Math.random(),
-      skillIndex: index,
-      speed: 0.003 + Math.random() * 0.002,
-    }));
-
-    // Draw background grid (radar/HUD style)
+    // Draw background grid
     const drawBackground = () => {
       // Concentric circles
-      ctx.strokeStyle = isGeekMode ? 'rgba(0, 240, 255, 0.08)' : 'rgba(100, 108, 255, 0.08)';
+      ctx.strokeStyle = isGeekMode ? 'rgba(0, 240, 255, 0.05)' : 'rgba(100, 108, 255, 0.05)';
       ctx.lineWidth = 1;
-      [0.3, 0.5, 0.7, 1].forEach((fraction) => {
+      [0.25, 0.5, 0.75, 1].forEach((fraction) => {
         ctx.beginPath();
-        ctx.arc(centerX, centerY, 220 * fraction, 0, Math.PI * 2);
+        ctx.arc(centerX, centerY, 260 * fraction, 0, Math.PI * 2);
         ctx.stroke();
       });
 
-      // Radial lines
-      ctx.strokeStyle = isGeekMode ? 'rgba(0, 240, 255, 0.05)' : 'rgba(100, 108, 255, 0.05)';
-      for (let i = 0; i < 12; i++) {
-        const angle = (i / 12) * Math.PI * 2;
+      // Radial lines for quadrants
+      ctx.strokeStyle = isGeekMode ? 'rgba(0, 240, 255, 0.08)' : 'rgba(100, 108, 255, 0.08)';
+      for (let i = 0; i < 8; i++) {
+        const angle = (i / 8) * Math.PI * 2;
         ctx.beginPath();
         ctx.moveTo(centerX, centerY);
-        ctx.lineTo(centerX + Math.cos(angle) * 220, centerY + Math.sin(angle) * 220);
+        ctx.lineTo(centerX + Math.cos(angle) * 260, centerY + Math.sin(angle) * 260);
         ctx.stroke();
       }
 
-      // Category arc labels
-      ctx.font = '11px monospace';
+      // Category labels
+      ctx.font = 'bold 11px "Fira Code", monospace';
       ctx.textAlign = 'center';
-      Object.entries(categoryConfig).forEach(([category, config]) => {
-        const midAngle = (config.startAngle + config.endAngle) / 2;
-        const labelRadius = 235;
-        const x = centerX + Math.cos(midAngle) * labelRadius;
-        const y = centerY + Math.sin(midAngle) * labelRadius;
-        ctx.fillStyle = isGeekMode ? config.color : 'rgba(255, 255, 255, 0.6)';
-        ctx.fillText(category.toUpperCase(), x, y);
+      const categoryLabels = [
+        { text: 'FRONTEND', angle: 45, radius: 280 },
+        { text: 'BACKEND', angle: 135, radius: 280 },
+        { text: 'DATABASES', angle: 225, radius: 280 },
+        { text: 'CLOUD/DEVOPS', angle: 315, radius: 280 },
+      ];
+
+      categoryLabels.forEach(({ text, angle, radius }) => {
+        const rad = ((angle - 90) * Math.PI) / 180;
+        const x = centerX + Math.cos(rad) * radius;
+        const y = centerY + Math.sin(rad) * radius;
+        ctx.fillStyle = isGeekMode ? 'rgba(0, 240, 255, 0.4)' : 'rgba(100, 108, 255, 0.4)';
+        ctx.fillText(text, x, y);
       });
     };
 
     // Draw center pulsing node
     const drawCenterNode = () => {
-      pulsePhaseRef.current += 0.05;
-      const pulseScale = 1 + Math.sin(pulsePhaseRef.current) * 0.2;
+      pulsePhaseRef.current += 0.03;
+      const pulseScale = 1 + Math.sin(pulsePhaseRef.current) * 0.15;
 
       // Outer glow
-      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 20 * pulseScale);
+      const gradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 25 * pulseScale);
       gradient.addColorStop(0, isGeekMode ? 'rgba(0, 240, 255, 0.8)' : 'rgba(100, 108, 255, 0.8)');
       gradient.addColorStop(0.5, isGeekMode ? 'rgba(0, 240, 255, 0.3)' : 'rgba(100, 108, 255, 0.3)');
       gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
       ctx.fillStyle = gradient;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 20 * pulseScale, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, 25 * pulseScale, 0, Math.PI * 2);
       ctx.fill();
 
       // Core node
-      const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 8);
+      const coreGradient = ctx.createRadialGradient(centerX, centerY, 0, centerX, centerY, 10);
       coreGradient.addColorStop(0, isGeekMode ? '#00f0ff' : '#646cff');
       coreGradient.addColorStop(1, isGeekMode ? '#b026ff' : '#8b5cf6');
 
       ctx.fillStyle = coreGradient;
       ctx.beginPath();
-      ctx.arc(centerX, centerY, 8, 0, Math.PI * 2);
+      ctx.arc(centerX, centerY, 10, 0, Math.PI * 2);
       ctx.fill();
 
-      // Inner highlight
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
+      // Highlight
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
       ctx.beginPath();
-      ctx.arc(centerX - 2, centerY - 2, 3, 0, Math.PI * 2);
+      ctx.arc(centerX - 3, centerY - 3, 3, 0, Math.PI * 2);
       ctx.fill();
     };
 
-    // Draw connection line with gradient
+    // Draw connection with animated gradient flow
     const drawConnection = (node: SkillNode, progress: number, glowIntensity = 1) => {
+      const categoryConfig = SKILLS_CONSTELLATION[node.category as keyof typeof SKILLS_CONSTELLATION];
+      const categoryColor = categoryConfig?.color || '#00f0ff';
+
+      // Create gradient that flows from center to node
       const gradient = ctx.createLinearGradient(centerX, centerY, node.x, node.y);
-      const categoryColor = categoryConfig[node.category]?.color || '#00f0ff';
+      const flowOffset = (pulsePhaseRef.current * 0.1) % 1;
 
       if (isGeekMode) {
-        gradient.addColorStop(0, `rgba(176, 38, 255, ${0.6 * glowIntensity})`); // Purple at center
-        gradient.addColorStop(1, `${categoryColor}${Math.floor(255 * glowIntensity).toString(16).padStart(2, '0')}`);
+        gradient.addColorStop(0, `rgba(176, 38, 255, ${0.5 * glowIntensity})`); // Purple at center
+        gradient.addColorStop(flowOffset, `rgba(0, 240, 255, ${0.8 * glowIntensity})`); // Flowing cyan
+        gradient.addColorStop(1, `${categoryColor}${Math.floor(200 * glowIntensity).toString(16).padStart(2, '0')}`);
       } else {
-        gradient.addColorStop(0, `rgba(100, 108, 255, ${0.6 * glowIntensity})`);
-        gradient.addColorStop(1, `rgba(100, 108, 255, ${0.8 * glowIntensity})`);
+        gradient.addColorStop(0, `rgba(100, 108, 255, ${0.5 * glowIntensity})`);
+        gradient.addColorStop(1, `rgba(100, 108, 255, ${0.7 * glowIntensity})`);
       }
 
       ctx.strokeStyle = gradient;
-      ctx.lineWidth = glowIntensity > 1 ? 3 : 2;
+      ctx.lineWidth = glowIntensity > 1 ? 2.5 : 1.5;
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
       ctx.lineTo(
@@ -194,27 +195,29 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
       ctx.stroke();
     };
 
-    // Draw skill node
+    // Draw skill node with label
     const drawSkillNode = (node: SkillNode, scale = 1, glowIntensity = 1) => {
-      const nodeRadius = 6 * scale;
-      const categoryColor = categoryConfig[node.category]?.color || '#00f0ff';
+      const categoryConfig = SKILLS_CONSTELLATION[node.category as keyof typeof SKILLS_CONSTELLATION];
+      const categoryColor = categoryConfig?.color || '#00f0ff';
+      const nodeRadius = 5 * scale;
+      const isHovered = hoveredNode === nodesRef.current.indexOf(node);
 
       // Outer glow
       if (glowIntensity > 1) {
-        const glowGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, nodeRadius * 3);
-        glowGradient.addColorStop(0, `${categoryColor}80`);
+        const glowGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, nodeRadius * 4);
+        glowGradient.addColorStop(0, isGeekMode ? `${categoryColor}cc` : 'rgba(100, 108, 255, 0.8)');
         glowGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
         ctx.fillStyle = glowGradient;
         ctx.beginPath();
-        ctx.arc(node.x, node.y, nodeRadius * 3, 0, Math.PI * 2);
+        ctx.arc(node.x, node.y, nodeRadius * 4, 0, Math.PI * 2);
         ctx.fill();
       }
 
-      // Node gradient (cyan → pink)
+      // Node circle
       const nodeGradient = ctx.createRadialGradient(node.x, node.y, 0, node.x, node.y, nodeRadius);
       if (isGeekMode) {
-        nodeGradient.addColorStop(0, categoryColor);
-        nodeGradient.addColorStop(1, '#ff006e');
+        nodeGradient.addColorStop(0, isHovered ? '#ff006e' : categoryColor);
+        nodeGradient.addColorStop(1, isHovered ? '#b026ff' : categoryColor);
       } else {
         nodeGradient.addColorStop(0, '#646cff');
         nodeGradient.addColorStop(1, '#8b5cf6');
@@ -225,29 +228,39 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
       ctx.arc(node.x, node.y, nodeRadius, 0, Math.PI * 2);
       ctx.fill();
 
-      // Highlight
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.5)';
-      ctx.beginPath();
-      ctx.arc(node.x - 1.5, node.y - 1.5, 2, 0, Math.PI * 2);
-      ctx.fill();
-    };
+      // Node border
+      ctx.strokeStyle = isHovered ? (isGeekMode ? '#ff006e' : '#fff') : 'rgba(255, 255, 255, 0.3)';
+      ctx.lineWidth = isHovered ? 2 : 1;
+      ctx.stroke();
 
-    // Draw particle on connection line
-    const drawParticle = (node: SkillNode, progress: number) => {
-      const x = centerX + (node.x - centerX) * progress;
-      const y = centerY + (node.y - centerY) * progress;
-      const categoryColor = categoryConfig[node.category]?.color || '#00f0ff';
+      // Skill name label
+      if (node.visible) {
+        const fontSize = isHovered ? 14 : 12;
+        ctx.font = `${fontSize}px "Fira Code", monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
 
-      ctx.fillStyle = isGeekMode ? categoryColor : '#646cff';
-      ctx.beginPath();
-      ctx.arc(x, y, 2, 0, Math.PI * 2);
-      ctx.fill();
+        // Text shadow/glow for readability
+        if (isHovered && isGeekMode) {
+          ctx.shadowColor = '#ff006e';
+          ctx.shadowBlur = 8;
+        } else {
+          ctx.shadowBlur = 0;
+        }
 
-      // Glow
-      ctx.fillStyle = isGeekMode ? `${categoryColor}40` : 'rgba(100, 108, 255, 0.3)';
-      ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
-      ctx.fill();
+        ctx.fillStyle = isHovered ? (isGeekMode ? '#ff006e' : '#fff') : (isGeekMode ? categoryColor : '#e5e7eb');
+
+        // Position label based on node position relative to center
+        const labelOffset = isHovered ? 20 : 16;
+        const dx = node.x - centerX;
+        const dy = node.y - centerY;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+        const labelX = node.x + (dx / distance) * labelOffset;
+        const labelY = node.y + (dy / distance) * labelOffset;
+
+        ctx.fillText(node.name, labelX, labelY);
+        ctx.shadowBlur = 0;
+      }
     };
 
     // Main animation loop
@@ -257,10 +270,9 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
       drawBackground();
       drawCenterNode();
 
-      // Draw connections and nodes
       nodesRef.current.forEach((node, index) => {
         const glowIntensity = hoveredNode === index ? 2 : 1;
-        const scale = hoveredNode === index ? 1.4 : 1;
+        const scale = hoveredNode === index ? 1.3 : 1;
 
         if (node.drawn) {
           drawConnection(node, 1, glowIntensity);
@@ -268,56 +280,48 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
         }
       });
 
-      // Draw particles
-      if (!reducedMotion) {
-        particlesRef.current.forEach((particle) => {
-          const node = nodesRef.current[particle.skillIndex];
-          if (node?.drawn) {
-            drawParticle(node, particle.progress);
-            particle.progress += particle.speed;
-            if (particle.progress > 1) {
-              particle.progress = 0;
-            }
-          }
-        });
-      }
-
       animationFrameRef.current = requestAnimationFrame(animate);
     };
 
-    // Animate lines drawing in sequence using GSAP
+    // GSAP timeline for sequential drawing
     if (!reducedMotion) {
       const timeline = gsap.timeline();
 
       nodesRef.current.forEach((node, index) => {
+        // Draw connection line
         timeline.to(
           {},
           {
-            duration: 0.3,
+            duration: 0.4,
             onStart: () => {
-              let progress = 0;
-              const drawInterval = setInterval(() => {
-                progress += 0.05;
-                if (progress >= 1) {
-                  progress = 1;
-                  clearInterval(drawInterval);
-                  node.drawn = true;
-                }
-              }, 16);
+              node.drawn = true;
             },
           },
-          index * 0.08
+          index * 0.05
+        );
+
+        // Fade in skill name with typewriter effect
+        timeline.to(
+          {},
+          {
+            duration: 0.2,
+            onStart: () => {
+              node.visible = true;
+            },
+          },
+          index * 0.05 + 0.3
         );
       });
     } else {
       nodesRef.current.forEach((node) => {
         node.drawn = true;
+        node.visible = true;
       });
     }
 
     animate();
 
-    // Mouse move handler for hover detection
+    // Mouse move handler
     const handleMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       const mouseX = ((e.clientX - rect.left) / rect.width) * size;
@@ -327,14 +331,15 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
 
       nodesRef.current.forEach((node, index) => {
         const distance = Math.sqrt((mouseX - node.x) ** 2 + (mouseY - node.y) ** 2);
-        if (distance < 15) {
+        if (distance < 25) {
           setHoveredNode(index);
+          const relatedSkills = SKILL_RELATIONSHIPS[node.name] || [];
           setTooltip({
             visible: true,
             x: e.clientX,
             y: e.clientY,
-            skill: node.name,
-            category: node.category,
+            skill: node,
+            relatedSkills,
           });
           foundHover = true;
         }
@@ -354,55 +359,88 @@ export const SkillRadialChart = ({ skills, isGeekMode }: SkillRadialChartProps) 
       }
       canvas.removeEventListener('mousemove', handleMouseMove);
     };
-  }, [skills, isGeekMode, hoveredNode]);
+  }, [isGeekMode, hoveredNode]);
 
   return (
-    <div ref={containerRef} className="relative flex justify-center">
+    <div className="relative flex justify-center" ref={overlayRef}>
       <canvas
         ref={canvasRef}
         className="max-w-full cursor-crosshair"
-        aria-label="Constellation map showing tech stack ecosystem"
+        aria-label="Constellation map showing comprehensive tech stack"
         role="img"
       />
 
-      {/* Tooltip */}
-      {tooltip.visible && (
+      {/* Enhanced Tooltip */}
+      {tooltip.visible && tooltip.skill && (
         <div
-          className={`fixed pointer-events-none z-50 px-4 py-3 rounded-lg border ${
+          className={`fixed pointer-events-none z-50 px-6 py-4 rounded-lg border-2 max-w-sm ${
             isGeekMode
-              ? 'bg-cyber-bg-darker border-cyber-cyan text-cyber-text glow-cyan'
+              ? 'bg-cyber-bg-darker border-cyber-pink text-cyber-text box-glow-neon-pink'
               : 'bg-dark-surface border-dark-accent text-white'
           }`}
           style={{
-            left: `${tooltip.x + 15}px`,
+            left: `${tooltip.x + 20}px`,
             top: `${tooltip.y - 10}px`,
             transform: 'translateY(-50%)',
           }}
         >
-          <div className={`font-bold text-sm mb-1 ${isGeekMode ? 'text-cyber-cyan' : 'text-dark-accent'}`}>
-            {isGeekMode ? '> ' : ''}{tooltip.skill}
+          {/* Skill Name */}
+          <div className={`font-bold text-lg mb-2 ${isGeekMode ? 'text-cyber-pink text-glow-neon' : 'text-dark-accent'}`}>
+            {isGeekMode ? '> ' : ''}{tooltip.skill.name}
           </div>
-          <div className="text-xs opacity-70 capitalize">{tooltip.category} • Tech Stack</div>
+
+          {/* Category */}
+          <div className="text-xs opacity-60 mb-3 capitalize">
+            {SKILLS_CONSTELLATION[tooltip.skill.category as keyof typeof SKILLS_CONSTELLATION]?.description}
+          </div>
+
+          {/* Description */}
+          <div className="text-sm mb-3 opacity-90">
+            Core technology in my stack
+          </div>
+
+          {/* Related Skills */}
+          {tooltip.relatedSkills.length > 0 && (
+            <div className="text-xs opacity-70 mt-3 pt-3 border-t border-current/20">
+              <div className="font-semibold mb-1">Used with:</div>
+              <div className="flex flex-wrap gap-1">
+                {tooltip.relatedSkills.map((skill) => (
+                  <span
+                    key={skill}
+                    className={`px-2 py-1 rounded text-xs ${
+                      isGeekMode ? 'bg-cyber-cyan/20 text-cyber-cyan' : 'bg-gray-700 text-gray-300'
+                    }`}
+                  >
+                    {skill}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
       {/* Legend */}
       <div
-        className={`absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-4 text-xs ${
+        className={`absolute bottom-4 left-1/2 -translate-x-1/2 flex flex-wrap gap-3 justify-center text-xs ${
           isGeekMode ? 'text-cyber-text' : 'text-gray-400'
         }`}
       >
-        <div className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-full ${isGeekMode ? 'bg-cyber-cyan' : 'bg-dark-accent'}`} />
+        <div className="flex items-center gap-1.5">
+          <div className={`w-2 h-2 rounded-full ${isGeekMode ? 'bg-cyber-cyan' : 'bg-blue-500'}`} />
           <span>Frontend</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-full ${isGeekMode ? 'bg-cyber-purple' : 'bg-dark-accent'}`} />
+        <div className="flex items-center gap-1.5">
+          <div className={`w-2 h-2 rounded-full ${isGeekMode ? 'bg-cyber-purple' : 'bg-purple-500'}`} />
           <span>Backend</span>
         </div>
-        <div className="flex items-center gap-2">
-          <div className={`w-3 h-3 rounded-full ${isGeekMode ? 'bg-cyber-pink' : 'bg-dark-accent'}`} />
-          <span>Tools</span>
+        <div className="flex items-center gap-1.5">
+          <div className={`w-2 h-2 rounded-full ${isGeekMode ? 'bg-cyber-pink' : 'bg-pink-500'}`} />
+          <span>Databases</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className={`w-2 h-2 rounded-full ${isGeekMode ? 'bg-cyan-400' : 'bg-cyan-500'}`} />
+          <span>Cloud</span>
         </div>
       </div>
     </div>

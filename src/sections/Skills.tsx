@@ -197,13 +197,13 @@ export const Skills = () => {
               transition={{ duration: 0.5 }}
             >
               <Suspense fallback={
-                <div className="h-[600px] flex items-center justify-center">
+                <div className="h-[700px] flex items-center justify-center">
                   <div className={`text-lg ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}>
-                    Loading constellation map...
+                    Loading comprehensive constellation map...
                   </div>
                 </div>
               }>
-                <SkillRadialChart skills={SKILLS} isGeekMode={isGeekMode} />
+                <SkillRadialChart isGeekMode={isGeekMode} />
               </Suspense>
             </motion.div>
           )}

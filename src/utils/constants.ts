@@ -93,3 +93,70 @@ export const SOCIAL_LINKS = {
   linkedin: 'https://linkedin.com/in/yourusername',
   email: 'your.email@example.com',
 };
+
+// Comprehensive skills data for Constellation visualization
+export const SKILLS_CONSTELLATION = {
+  frontend: {
+    skills: ['React', 'TypeScript', 'Next.js', 'Vue.js', 'Tailwind CSS', 'HTML5', 'CSS3', 'JavaScript', 'Redux', 'WebSockets'],
+    zone: { startAngle: 0, endAngle: 90 }, // Top-right quadrant
+    color: '#00f0ff',
+    description: 'Frontend Development',
+  },
+  backend: {
+    skills: ['Node.js', 'Express.js', 'Python', 'Django', 'Java', 'Spring Boot', 'GraphQL', 'REST APIs', 'Microservices'],
+    zone: { startAngle: 90, endAngle: 180 }, // Bottom-right quadrant
+    color: '#b026ff',
+    description: 'Backend Development',
+  },
+  databases: {
+    skills: ['PostgreSQL', 'MongoDB', 'MySQL', 'Redis', 'Kafka', 'Spark'],
+    zone: { startAngle: 180, endAngle: 270 }, // Bottom-left quadrant
+    color: '#ff006e',
+    description: 'Databases & Message Queues',
+  },
+  cloud: {
+    skills: ['AWS', 'GCP', 'Azure', 'Docker', 'Kubernetes', 'Terraform', 'CI/CD'],
+    zone: { startAngle: 270, endAngle: 360 }, // Top-left quadrant
+    color: '#00d9ff',
+    description: 'Cloud & DevOps',
+  },
+  tools: {
+    skills: ['Git', 'Jest', 'Figma', 'VS Code', 'Vercel', 'Firebase'],
+    zone: { startAngle: 0, endAngle: 360, innerRing: true }, // Inner ring
+    color: '#ff1744',
+    description: 'Development Tools',
+  },
+  languages: {
+    skills: ['C++', 'Smalltalk', 'Ruby on Rails', 'GoLang', 'Embedded C'],
+    zone: { startAngle: 45, endAngle: 135 }, // Distributed
+    color: '#7b2cbf',
+    description: 'Programming Languages',
+  },
+  dataAnalytics: {
+    skills: ['Snowflake', 'Tableau', 'BigQuery', 'ETL Pipelines', 'Data Modeling'],
+    zone: { startAngle: 135, endAngle: 225 }, // Distributed
+    color: '#ff6b9d',
+    description: 'Data Analytics',
+  },
+  aiTools: {
+    skills: ['ChatGPT', 'Claude', 'GitHub Copilot', 'Cursor'],
+    zone: { startAngle: 225, endAngle: 315 }, // Distributed
+    color: '#00ffaa',
+    description: 'AI Tools',
+  },
+};
+
+// Skill relationships for tooltip
+export const SKILL_RELATIONSHIPS: Record<string, string[]> = {
+  'React': ['TypeScript', 'Next.js', 'Tailwind CSS', 'Redux'],
+  'TypeScript': ['React', 'Next.js', 'Node.js'],
+  'Next.js': ['React', 'TypeScript', 'Vercel'],
+  'Node.js': ['Express.js', 'TypeScript', 'MongoDB', 'PostgreSQL'],
+  'Python': ['Django', 'PostgreSQL', 'Data Modeling'],
+  'AWS': ['Docker', 'Kubernetes', 'Terraform'],
+  'PostgreSQL': ['Node.js', 'Python', 'Django'],
+  'MongoDB': ['Node.js', 'Express.js'],
+  'Docker': ['Kubernetes', 'AWS', 'CI/CD'],
+  'Git': ['GitHub Copilot', 'VS Code', 'CI/CD'],
+  'Tailwind CSS': ['React', 'Next.js', 'Vue.js'],
+};
