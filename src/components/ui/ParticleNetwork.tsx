@@ -135,7 +135,7 @@ export const ParticleNetwork = () => {
                   default: 'bounce', // Bounce off edges (boundary bounce)
                 },
                 random: true, // Randomize movement for organic motion
-                speed: 0.5, // Increased from 0.2 for more noticeable movement
+                speed: 1.2, // Increased from 0.5 for faster, more dynamic network
                 straight: false, // Curved, organic paths
                 attract: {
                   enable: false,
@@ -155,24 +155,33 @@ export const ParticleNetwork = () => {
                 value: 60, // 50-80 particles as specified
               },
               opacity: {
-                value: {
-                  min: 0.2,
-                  max: 0.4,
-                }, // 20-40% opacity - subtle
+                value: 0.5, // 50% opacity
+                random: {
+                  enable: true,
+                  minimumValue: 0.3,
+                },
                 animation: {
                   enable: true,
-                  speed: 0.5,
+                  speed: 1,
                   sync: false,
+                  minimumValue: 0.2,
                 },
               },
               shape: {
-                type: ['circle', 'square', 'triangle'], // Mix of geometric shapes
+                type: 'circle', // ONLY circles - tiny dots like stars
               },
               size: {
-                value: {
-                  min: 2,
-                  max: 4,
-                }, // Tiny: 2-4px
+                value: 3, // 3px dots
+                random: {
+                  enable: true,
+                  minimumValue: 2,
+                },
+                animation: {
+                  enable: true,
+                  speed: 2,
+                  sync: false,
+                  minimumValue: 1,
+                },
               },
               rotate: {
                 value: {
