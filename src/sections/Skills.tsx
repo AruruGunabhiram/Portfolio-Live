@@ -16,6 +16,9 @@ const SkillRadialChart = lazy(() =>
 const SkillBarsRough = lazy(() =>
   import('../components/skills').then(module => ({ default: module.SkillBarsRough }))
 );
+const SkillTimeline = lazy(() =>
+  import('../components/skills').then(module => ({ default: module.SkillTimeline }))
+);
 
 // Register GSAP plugin
 if (isBrowser) {
@@ -100,14 +103,14 @@ export const Skills = () => {
 
   const viewModes: Array<{ mode: ViewMode; label: string; description: string }> = isGeekMode
     ? [
-        { mode: 'bars', label: 'Bars', description: 'Traditional bar chart view' },
-        { mode: 'radial', label: 'Radial', description: 'Circular radar chart view' },
+        { mode: 'bars', label: 'Timeline', description: 'Journey through technology learning' },
+        { mode: 'radial', label: 'Constellation', description: 'Interconnected tech ecosystem' },
         { mode: '3d', label: '3D Sphere', description: 'Interactive 3D sphere visualization' },
       ]
     : [
-        { mode: 'bars', label: 'Bars', description: 'Traditional bar chart view' },
+        { mode: 'bars', label: 'Timeline', description: 'Journey through technology learning' },
         { mode: 'rough', label: 'Sketch', description: 'Hand-drawn artistic view' },
-        { mode: 'radial', label: 'Radial', description: 'Circular radar chart view' },
+        { mode: 'radial', label: 'Constellation', description: 'Interconnected tech ecosystem' },
       ];
 
   return (
@@ -171,64 +174,19 @@ export const Skills = () => {
         >
           {viewMode === 'bars' && (
             <motion.div
-              className="space-y-12"
-              initial="hidden"
-              whileInView="visible"
-              viewport={scrollViewport}
-              variants={fadeInUp}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5 }}
             >
-              {Object.entries(SKILLS).map(([category, skills], categoryIndex) => (
-                <div key={category}>
-                  <h3
-                    ref={(el) => { categoryRefs.current[categoryIndex] = el; }}
-                    className={`text-xl font-semibold mb-6 capitalize ${isGeekMode ? 'text-geek-text' : 'text-gray-200'}`}
-                  >
-                    {isGeekMode ? '> ' : ''}{category}
-                  </h3>
-
-                  <div className="space-y-4">
-                    {skills.map((skill, skillIndex) => {
-                      const refIndex = categoryIndex * 10 + skillIndex;
-                      return (
-                        <div
-                          key={skill.name}
-                          ref={(el) => { skillBarsRefs.current[refIndex] = el; }}
-                          data-level={skill.level}
-                          className="group"
-                        >
-                          <div className="flex justify-between items-center mb-2">
-                            <span className={`font-medium ${isGeekMode ? 'text-geek-text' : 'text-gray-300'}`}>
-                              {skill.name}
-                            </span>
-                            <span className={`text-sm ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}>
-                              {skill.level}%
-                            </span>
-                          </div>
-
-                          {/* Skill Bar */}
-                          <div
-                            className={`h-2 rounded-full overflow-hidden ${isGeekMode ? 'bg-geek-accent/20' : 'bg-dark-surface'}`}
-                            role="progressbar"
-                            aria-valuenow={skill.level}
-                            aria-valuemin={0}
-                            aria-valuemax={100}
-                            aria-label={`${skill.name} proficiency`}
-                          >
-                            <div
-                              className={`skill-bar-fill h-full rounded-full transition-all ${
-                                isGeekMode
-                                  ? 'gradient-cyber glow-cyan'
-                                  : 'bg-dark-accent'
-                              }`}
-                              style={{ width: '0%' }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
+              <Suspense fallback={
+                <div className="h-[500px] flex items-center justify-center">
+                  <div className={`text-lg ${isGeekMode ? 'text-geek-accent' : 'text-dark-accent'}`}>
+                    Loading technology timeline...
                   </div>
                 </div>
-              ))}
+              }>
+                <SkillTimeline skills={SKILLS} isGeekMode={isGeekMode} />
+              </Suspense>
             </motion.div>
           )}
 
