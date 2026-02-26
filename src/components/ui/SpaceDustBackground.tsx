@@ -18,13 +18,15 @@ const COUNT    = 260;
 const PARALLAX = 7;           // max px shift at z=0
 
 // ─── Dotted network — tune these ─────────────────────────────────────────────
-const MAX_DIST         = 120;    // px — max connection distance
+const MAX_DIST         = 110;    // px — reduced range → fewer long-reach edges
 const MAX_DIST_SQ      = MAX_DIST * MAX_DIST;
 const DASH             = 3;      // dash length (canvas px)
-const GAP              = 6;      // gap length (canvas px)
-const EDGE_OPACITY     = 0.22;   // max dotted-line opacity (0.07 was invisible)
-const MAX_EPP          = 4;      // max edges drawn per particle (outgoing cap)
-const MAX_TOTAL_EDGES  = 480;    // hard frame cap — keeps fps smooth
+const GAP              = 7;      // gap length — slightly wider gaps = lighter texture
+const EDGE_ALPHA_MIN   = 0.04;   // floor: far edges almost invisible
+const EDGE_ALPHA_MAX_NEAR = 0.17; // cap: near edges still subtle (not screaming)
+const EDGE_WIDTH       = 0.65;   // stroke width (CSS px, before DPR)
+const MAX_EPP          = 2;      // max edges per particle — key knob for density
+const MAX_TOTAL_EDGES  = 300;    // hard frame cap — keeps fps smooth
 
 // ─── Hover split / reattach ───────────────────────────────────────────────────
 const HOVER_DIST    = 28;   // px cursor→segment distance that triggers a split
@@ -33,7 +35,7 @@ const BLOCK_MS      = 750;  // how long a split edge stays hidden before rewirin
 
 // ─── Teal solid lines (original, unchanged) ───────────────────────────────────
 const CONNECT_DIST  = 90;
-const MAX_CONNECT_OP = 0.11;
+const MAX_CONNECT_OP = 0.07;
 
 // ─── Depth constants (unchanged) ─────────────────────────────────────────────
 const ACTIVE_DEPTH_RATIO = 0.15;
@@ -217,7 +219,15 @@ export const SpaceDustBackground = () => {
               if (distSq >= MAX_DIST_SQ) continue;
 
               const dist = Math.sqrt(distSq);
-              const op   = EDGE_OPACITY * (1 - dist / MAX_DIST);
+              const t    = 1 - dist / MAX_DIST;              // 1 = near, 0 = far
+              // depth factor: lines between far-z particles are dimmer
+              const depthZ = (particles[i].z + particles[j].z) * 0.5; // 0=far bg, 1=front
+              const depthFade = 0.35 + depthZ * 0.65;                  // 0.35–1.0
+              // cubic falloff keeps near lines readable, far lines near-invisible
+              const op = Math.min(
+                EDGE_ALPHA_MAX_NEAR,
+                (EDGE_ALPHA_MIN + t * t * t * (EDGE_ALPHA_MAX_NEAR - EDGE_ALPHA_MIN)) * depthFade,
+              );
               if (op < 0.018) continue;
 
               const bx = sx[j];
@@ -235,8 +245,9 @@ export const SpaceDustBackground = () => {
                 }
               }
 
-              // Draw the dotted edge
+              // Single thin stroke — no two-pass (keeps it firmly in the background)
               ctx.strokeStyle = `rgba(175,200,215,${op.toFixed(3)})`;
+              ctx.lineWidth   = EDGE_WIDTH;
               ctx.beginPath();
               ctx.moveTo(ax, ay);
               ctx.lineTo(bx, by);
