@@ -60,7 +60,7 @@ export const Header = () => {
             {/* Theme toggle — disabled during transition to prevent double-click */}
             <Button
               variant="ghost"
-              onClick={toggleTheme}
+              onClick={(e) => toggleTheme(e.currentTarget.getBoundingClientRect())}
               disabled={isTransitioning}
               className={`text-xs px-2 py-1 transition-opacity ${isTransitioning ? 'opacity-40 cursor-not-allowed' : ''}`}
               aria-label={`Switch to ${theme === 'dark' ? 'geek' : 'dark'} mode`}

@@ -41,7 +41,7 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     return () => { timerRefs.current.forEach(clearTimeout); };
   }, []);
 
-  const toggleTheme = useCallback(() => {
+  const toggleTheme = useCallback((_rect?: DOMRect) => {
     if (isTransitioning) return;
     const next: Theme = theme === 'dark' ? 'geek' : 'dark';
 
@@ -53,13 +53,14 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     setTransitionTarget(next);
     setIsTransitioning(true);
 
-    // Switch theme at midpoint of overlay animation
-    const t1 = setTimeout(() => setTheme(next), 360);
-    // End transition after full overlay cycle
+    // Swap theme at 380ms — overlay is fully opaque by then (fade-in: 300ms),
+    // so the CSS variable swap is invisible.
+    const t1 = setTimeout(() => setTheme(next), 380);
+    // Release overlay at 950ms — AnimatePresence plays exit fade-out (450ms).
     const t2 = setTimeout(() => {
       setIsTransitioning(false);
       setTransitionTarget(null);
-    }, 820);
+    }, 950);
 
     timerRefs.current = [t1, t2];
   }, [theme, isTransitioning]);

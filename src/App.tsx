@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 import { ParallaxProvider } from 'react-scroll-parallax';
 import { AnimatePresence, motion } from 'framer-motion';
@@ -11,14 +11,19 @@ import { useTheme } from './hooks';
 import { usePageLoading } from './hooks/usePageLoading';
 import { prefersReducedMotion } from './utils';
 
-// Theme transition scanline overlay
+// ─── Theme transition: GPU-composited opacity overlay ─────────────────────────
+// Uses opacity only (no clip-path) so the browser can promote to a compositor
+// layer and avoid per-frame layout/paint work entirely.
 function ThemeTransitionOverlay() {
   const { isTransitioning, transitionTarget } = useTheme();
-  const reduced = prefersReducedMotion();
+  // Capture the background colour while transitionTarget is still set,
+  // so the exit-fade uses the same colour rather than flashing on null.
+  const bgRef = useRef<string>('#090910');
+  if (transitionTarget !== null) {
+    bgRef.current = transitionTarget === 'geek' ? '#071220' : '#090910';
+  }
 
-  if (reduced) return null;
-
-  const bgColor = transitionTarget === 'geek' ? '#080c1a' : '#090910';
+  if (prefersReducedMotion()) return null;
 
   return (
     <AnimatePresence>
@@ -31,22 +36,12 @@ function ThemeTransitionOverlay() {
             inset: 0,
             zIndex: 9998,
             pointerEvents: 'none',
-            backgroundColor: bgColor,
+            backgroundColor: bgRef.current,
+            willChange: 'opacity',
           }}
-          initial={{ clipPath: 'inset(0 0 100% 0)' }}
-          animate={{
-            clipPath: [
-              'inset(0 0 100% 0)',
-              'inset(0 0 0% 0)',
-              'inset(0 0 0% 0)',
-              'inset(100% 0 0% 0)',
-            ],
-          }}
-          transition={{
-            duration: 0.8,
-            ease: [0.4, 0, 0.2, 1],
-            times: [0, 0.44, 0.56, 1],
-          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1, transition: { duration: 0.3, ease: 'easeIn' } }}
+          exit={{ opacity: 0, transition: { duration: 0.45, ease: 'easeOut' } }}
         />
       )}
     </AnimatePresence>
@@ -58,22 +53,24 @@ function AppContent() {
   const location = useLocation();
   const [showMatrix, setShowMatrix] = useState(false);
   const [showHackerTyper, setShowHackerTyper] = useState(false);
-  const { isLoading, setLoading } = usePageLoading(120, 380);
 
-  // Initial app load
+  // startVisible=true → loader shows from frame 1; minDisplay 2200ms = intentional intro
+  const { isLoading, setLoading } = usePageLoading(0, 2200, true);
+
+  // Signal "app ready" once browser is idle — the 2200ms minimum keeps loader up
   useEffect(() => {
-    setLoading(true);
-    // Mark ready once React has hydrated (fonts + first paint)
     const hasRIC = typeof window !== 'undefined' && 'requestIdleCallback' in window;
     const id = hasRIC
       ? (window as Window & { requestIdleCallback: (cb: () => void, opts?: { timeout: number }) => number })
-          .requestIdleCallback(() => setLoading(false), { timeout: 2000 })
-      : setTimeout(() => setLoading(false), 400) as unknown as number;
+          .requestIdleCallback(() => setLoading(false), { timeout: 3000 })
+      : setTimeout(() => setLoading(false), 600) as unknown as number;
     return () => {
       if (hasRIC) {
-        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(id);
+        (window as Window & { cancelIdleCallback: (id: number) => void }).cancelIdleCallback(
+          id as number,
+        );
       } else {
-        clearTimeout(id);
+        clearTimeout(id as ReturnType<typeof setTimeout>);
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -99,10 +96,10 @@ function AppContent() {
 
   return (
     <>
-      {/* Premium initial load overlay */}
+      {/* Premium initial load overlay — always 2.2s+ */}
       <LoaderOverlay isLoading={isLoading} />
 
-      {/* Scanline theme transition overlay */}
+      {/* Button-origin expanding portal theme transition */}
       <ThemeTransitionOverlay />
 
       {/* Custom cursor — geek mode only */}
@@ -121,7 +118,7 @@ function AppContent() {
       )}
 
       <div className="min-h-screen flex flex-col relative">
-        {/* Space-dust background — always active, Canvas2D, no tsParticles */}
+        {/* Space-dust background — always active, Canvas2D */}
         <div className="fixed inset-0 pointer-events-none z-0">
           <SpaceDustBackground />
         </div>

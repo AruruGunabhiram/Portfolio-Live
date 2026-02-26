@@ -55,7 +55,7 @@ export const LoaderOverlay = ({ isLoading }: LoaderOverlayProps) => {
                 style={{
                   display: 'inline-block',
                   fontFamily: "'Courier New', Courier, monospace",
-                  fontSize: '1.1rem',
+                  fontSize: '1.5rem',
                   fontWeight: 500,
                   color: '#8bbfd4',
                   opacity: 0.15,

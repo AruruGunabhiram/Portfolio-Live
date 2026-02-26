@@ -7,18 +7,22 @@ interface UsePageLoadingReturn {
 
 /**
  * Manages global loading state with a minimum display threshold.
- * If content is ready before `minDisplayMs`, the loader won't flash
- * (it only appears if loading takes longer than `delayMs`).
+ *
+ * @param delayMs      - ms before showing loader (set to 0 to show immediately)
+ * @param minDisplayMs - minimum ms loader stays visible once shown
+ * @param startVisible - if true, loader is visible from first render (no delay)
  */
 export function usePageLoading(
   delayMs = 120,
   minDisplayMs = 400,
+  startVisible = false,
 ): UsePageLoadingReturn {
-  const [visible, setVisible] = useState(false);
-  const loadingRef = useRef(false);
+  const [visible, setVisible] = useState(startVisible);
+  const loadingRef = useRef(startVisible);
   const showTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hideTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const shownAtRef = useRef<number | null>(null);
+  // When startVisible=true, shownAt is the component mount time
+  const shownAtRef = useRef<number | null>(startVisible ? Date.now() : null);
 
   useEffect(() => {
     return () => {
@@ -47,7 +51,6 @@ export function usePageLoading(
       }
 
       if (!shownAtRef.current) {
-        // Never shown; nothing to hide
         setVisible(false);
         return;
       }
