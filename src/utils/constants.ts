@@ -1,73 +1,46 @@
 export const PROJECTS = [
   {
     id: 1,
-    title: 'E-Commerce Platform',
-    description: 'A full-featured e-commerce platform with cart management, payment integration, and admin dashboard.',
-    image: '/projects/ecommerce.jpg',
-    techStack: ['React', 'Node.js', 'MongoDB', 'Stripe'],
-    githubUrl: 'https://github.com/yourusername/ecommerce',
-    liveUrl: 'https://ecommerce-demo.com',
+    title: 'Computer-Aided Lung Cancer Diagnosis',
+    description:
+      'CNN + transfer learning pipeline for lung CT scan analysis. Achieved 94% classification accuracy with Grad-CAM visual explainability. Published in IEEE 2025.',
+    image: '/projects/cancer-diagnosis.jpg',
+    techStack: ['Python', 'TensorFlow', 'CNN', 'Grad-CAM', 'Transfer Learning'],
+    githubUrl: 'https://github.com/GunabhiramA',
+    liveUrl: '',
+    metric: '94% accuracy · IEEE 2025',
   },
   {
     id: 2,
-    title: 'Task Management App',
-    description: 'Collaborative task management application with real-time updates and team features.',
-    image: '/projects/taskmanager.jpg',
-    techStack: ['TypeScript', 'React', 'Firebase', 'Tailwind'],
-    githubUrl: 'https://github.com/yourusername/taskmanager',
-    liveUrl: 'https://taskmanager-demo.com',
+    title: 'Intelligent Sudoku Generator',
+    description:
+      'High-performance Sudoku engine in C++ using backtracking with constraint propagation. Features difficulty grading, SVG board export, and full puzzle validation.',
+    image: '/projects/sudoku.jpg',
+    techStack: ['C++', 'Backtracking', 'SVG', 'Algorithms'],
+    githubUrl: 'https://github.com/GunabhiramA',
+    liveUrl: '',
+    metric: 'Difficulty-graded · SVG export',
   },
   {
     id: 3,
-    title: 'Weather Dashboard',
-    description: 'Beautiful weather dashboard with forecasts, maps, and location-based recommendations.',
-    image: '/projects/weather.jpg',
-    techStack: ['React', 'OpenWeather API', 'Chart.js', 'CSS'],
-    githubUrl: 'https://github.com/yourusername/weather',
-    liveUrl: 'https://weather-demo.com',
-  },
-  {
-    id: 4,
-    title: 'Social Media Analytics',
-    description: 'Analytics dashboard for tracking social media metrics and engagement across platforms.',
-    image: '/projects/analytics.jpg',
-    techStack: ['Vue.js', 'Python', 'Django', 'PostgreSQL'],
-    githubUrl: 'https://github.com/yourusername/analytics',
-    liveUrl: 'https://analytics-demo.com',
-  },
-  {
-    id: 5,
-    title: 'Portfolio Builder',
-    description: 'Drag-and-drop portfolio builder with customizable templates and export options.',
-    image: '/projects/portfolio.jpg',
-    techStack: ['Next.js', 'Prisma', 'TailwindCSS', 'Vercel'],
-    githubUrl: 'https://github.com/yourusername/portfolio-builder',
-    liveUrl: 'https://portfolio-builder-demo.com',
-  },
-  {
-    id: 6,
-    title: 'Chat Application',
-    description: 'Real-time chat application with channels, direct messages, and file sharing.',
-    image: '/projects/chat.jpg',
-    techStack: ['React', 'Socket.io', 'Express', 'Redis'],
-    githubUrl: 'https://github.com/yourusername/chat',
-    liveUrl: 'https://chat-demo.com',
+    title: 'Tic Tac Toe AI',
+    description:
+      'Modular C implementation with a minimax AI opponent. Clean separation of game logic, rendering, and AI strategy. Includes full Makefile build system.',
+    image: '/projects/tictactoe.jpg',
+    techStack: ['C', 'Minimax AI', 'Makefile', 'Modular Design'],
+    githubUrl: 'https://github.com/GunabhiramA',
+    liveUrl: '',
+    metric: 'Unbeatable AI · Modular C',
   },
 ];
 
 export const SOCIAL_LINKS = {
-  github: 'https://github.com/yourusername',
-  linkedin: 'https://linkedin.com/in/yourusername',
-  email: 'your.email@example.com',
+  github: 'https://github.com/GunabhiramA',
+  linkedin: 'https://www.linkedin.com/in/gunabhiram-aruru/',
+  email: 'gunabhiram.aruru@colorado.edu',
 };
 
 /**
- * SKILLS DATA MOVED TO CENTRALIZED SOURCE
- *
- * All skills data now lives in /src/data/skills.ts for consistency across views.
- * This ensures when you add a skill to the centralized data file, it automatically
- * appears in all 4 visualization modes (Constellation, Timeline, 3D Sphere, Grid).
- *
- * Import skills data directly from:
- * import { SKILLS, SKILL_CATEGORIES, getSkillsByCategory } from '../data/skills';
+ * Skills data lives in /src/data/skills.ts
+ * Import from there: import { SKILLS } from '../data/skills';
  */

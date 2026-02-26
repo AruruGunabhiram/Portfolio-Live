@@ -1,178 +1,97 @@
-import { useRef } from 'react';
 import { motion } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { Container, Card, Button, ParallaxLayer } from '../components';
+import { Container } from '../components';
 import { useTheme } from '../hooks';
-import {
-  PROJECTS,
-  fadeInUp,
-  scrollViewport,
-  useGSAP,
-  isBrowser,
-  prefersReducedMotion,
-} from '../utils';
-
-// Register GSAP plugin
-if (isBrowser) {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
+import { PROJECTS } from '../data/resume';
 
 export const Projects = () => {
   const { isGeekMode } = useTheme();
-  const sectionRef = useRef<HTMLElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
-  // GSAP Horizontal Scroll with pinning
-  useGSAP(() => {
-    if (!isBrowser || !scrollContainerRef.current || !sectionRef.current) return;
-
-    const reducedMotion = prefersReducedMotion();
-
-    // Skip horizontal scroll if reduced motion is preferred
-    if (reducedMotion) return;
-
-    const scrollContainer = scrollContainerRef.current;
-    const cards = scrollContainer.querySelectorAll('.project-card');
-
-    // Calculate total scroll width
-    const scrollWidth = scrollContainer.scrollWidth - window.innerWidth;
-
-    // Horizontal scroll animation
-    const tl = gsap.timeline({
-      scrollTrigger: {
-        trigger: sectionRef.current,
-        start: 'top top',
-        end: () => `+=${scrollWidth}`,
-        scrub: 1,
-        pin: true,
-        anticipatePin: 1,
-        invalidateOnRefresh: true,
-      },
-    });
-
-    // Animate horizontal scroll
-    tl.to(scrollContainer, {
-      x: -scrollWidth,
-      ease: 'none',
-    });
-
-    // Animate individual cards
-    cards.forEach((card) => {
-      gsap.from(card, {
-        scrollTrigger: {
-          trigger: card,
-          start: 'left 80%',
-          end: 'left 20%',
-          scrub: 1,
-          containerAnimation: tl,
-        },
-        opacity: 0,
-        scale: 0.8,
-        ease: 'power2.out',
-      });
-    });
-
-    return () => {
-      ScrollTrigger.killAll();
-    };
-  }, []);
+  const accent = isGeekMode ? 'text-[#7ec0d6]' : 'text-white';
+  const subtitle = isGeekMode ? 'text-[#4a8fa8]' : 'text-[#818cf8]';
+  const body = isGeekMode ? 'text-[#7eaabb]' : 'text-gray-300';
+  const bullet = isGeekMode ? 'text-[#4a8fa8]' : 'text-gray-500';
+  const surface = isGeekMode
+    ? 'bg-[#0d1829]/70 border border-[#2a5060]/50 hover:border-[#4a8fa8]/60'
+    : 'bg-[#141428]/70 border border-gray-700/40 hover:border-gray-600/60';
+  const chip = isGeekMode
+    ? 'bg-[#0a1a22] text-[#5ba8c4] border border-[#2a5060]/60'
+    : 'bg-[#1a1a30] text-gray-400 border border-gray-700/50';
 
   return (
-    <section
-      id="projects"
-      ref={sectionRef}
-      className="py-20 relative overflow-hidden"
-    >
-      {/* Parallax Background Layer */}
-      <ParallaxLayer speed={-12} className="absolute top-20 right-20 opacity-10">
-        <div className={`w-80 h-80 rounded-full ${isGeekMode ? 'bg-geek-accent' : 'bg-dark-accent'} blur-3xl`} />
-      </ParallaxLayer>
-
-      <Container className="relative z-10">
+    <section id="projects" className="py-20 relative">
+      <Container>
         <motion.h2
-          className={`text-3xl md:text-4xl font-bold mb-12 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}
+          className={`text-3xl md:text-4xl font-bold mb-12 ${accent}`}
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
           variants={fadeInUp}
         >
-          {isGeekMode ? '> ' : ''}Featured Projects
+          {isGeekMode ? '> ' : ''}Projects
         </motion.h2>
 
-        {/* Scroll Hint */}
-        {!prefersReducedMotion() && (
-          <p className={`text-sm mb-6 ${isGeekMode ? 'text-geek-text/60' : 'text-gray-500'}`}>
-            ← Scroll to explore projects →
-          </p>
-        )}
-      </Container>
+        <motion.div
+          className="grid gap-6 lg:grid-cols-2 xl:grid-cols-3"
+          initial="hidden"
+          whileInView="visible"
+          viewport={scrollViewport}
+          variants={staggerContainer}
+        >
+          {PROJECTS.map(project => (
+            <motion.article
+              key={project.id}
+              variants={fadeInUp}
+              className={`rounded-xl p-6 flex flex-col gap-4 transition-colors duration-200 ${surface}`}
+            >
+              {/* Title + subtitle */}
+              <div>
+                <h3 className={`text-lg font-semibold leading-snug ${accent}`}>
+                  {isGeekMode ? '> ' : ''}{project.title}
+                </h3>
+                <p className={`text-xs font-medium mt-1 uppercase tracking-wider ${subtitle}`}>
+                  {project.subtitle}
+                </p>
+              </div>
 
-      {/* Horizontal Scroll Container */}
-      <div
-        ref={scrollContainerRef}
-        className="flex gap-6 px-4 sm:px-6 lg:px-8"
-        style={{ width: 'max-content' }}
-      >
-        {PROJECTS.map((project) => (
-          <article
-            key={project.id}
-            className="project-card"
-            style={{ width: '400px', maxWidth: '90vw' }}
-          >
-            <Card>
-              <h3 className={`text-xl font-bold mb-3 ${isGeekMode ? 'text-geek-accent' : 'text-white'}`}>
-                {isGeekMode ? '> ' : ''}{project.title}
-              </h3>
-
-              <p className={`mb-4 ${isGeekMode ? 'text-geek-text/80' : 'text-gray-400'}`}>
-                {project.description}
-              </p>
-
-              <div className="flex flex-wrap gap-2 mb-4">
-                {project.techStack.map((tech) => (
-                  <span
-                    key={tech}
-                    className={`text-sm px-3 py-1 rounded ${
-                      isGeekMode
-                        ? 'bg-geek-accent/20 text-geek-accent border border-geek-accent'
-                        : 'bg-dark-accent/20 text-dark-accent'
-                    }`}
-                  >
+              {/* Tech stack chips */}
+              <div className="flex flex-wrap gap-1.5">
+                {project.techStack.map(tech => (
+                  <span key={tech} className={`text-xs px-2 py-0.5 rounded-md border ${chip}`}>
                     {tech}
                   </span>
                 ))}
               </div>
 
-              <div className="flex gap-3">
-                {project.githubUrl && (
-                  <Button
-                    variant="ghost"
-                    className="text-sm px-4 py-2"
-                    onClick={() => window.open(project.githubUrl, '_blank')}
-                  >
-                    GitHub
-                  </Button>
-                )}
-                {project.liveUrl && (
-                  <Button
-                    variant="ghost"
-                    className="text-sm px-4 py-2"
-                    onClick={() => window.open(project.liveUrl, '_blank')}
-                  >
-                    Live Demo
-                  </Button>
-                )}
-              </div>
-            </Card>
-          </article>
-        ))}
-      </div>
+              {/* Bullets */}
+              <ul className="space-y-2 flex-1">
+                {project.bullets.map((b, i) => (
+                  <li key={i} className="flex gap-2 text-sm leading-relaxed">
+                    <span className={`mt-[3px] shrink-0 text-xs ${bullet}`}>▸</span>
+                    <span className={body}>{b}</span>
+                  </li>
+                ))}
+              </ul>
 
-      {/* Spacer for scroll height when reduced motion is disabled */}
-      {!prefersReducedMotion() && (
-        <div style={{ height: '50vh' }} aria-hidden="true" />
-      )}
+              {/* Links */}
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={`self-start text-xs font-medium transition-colors ${
+                    isGeekMode
+                      ? 'text-[#5ba8c4] hover:text-[#7ec0d6]'
+                      : 'text-[#818cf8] hover:text-[#a5b4fc]'
+                  }`}
+                >
+                  View on GitHub →
+                </a>
+              )}
+            </motion.article>
+          ))}
+        </motion.div>
+      </Container>
     </section>
   );
 };

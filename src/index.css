@@ -1,60 +1,51 @@
 @import "tailwindcss";
 
-/* Cyberpunk Color Palette */
+/* Muted professional palette — calm teal-blues, no neon */
 :root {
-  /* Primary Colors */
-  --color-cyber-cyan: #00f0ff;
-  --color-cyber-cyan-light: #00d9ff;
-  --color-cyber-pink: #ff006e;
-  --color-cyber-pink-light: #ff1744;
-  --color-cyber-purple: #b026ff;
-  --color-cyber-purple-dark: #7b2cbf;
+  --color-cyber-cyan: #5ba8c4;
+  --color-cyber-cyan-light: #7ec0d6;
+  --color-cyber-pink: #6a7a9a;
+  --color-cyber-pink-light: #7a8aaa;
+  --color-cyber-purple: #5a6898;
+  --color-cyber-purple-dark: #4a5878;
 
-  /* Backgrounds */
-  --color-cyber-bg-dark: #0a0e27;
-  --color-cyber-bg-darker: #0d1117;
+  --color-cyber-bg-dark: #080c1a;
+  --color-cyber-bg-darker: #05080f;
 
-  /* Text */
-  --color-cyber-text-primary: #00f0ff;
-  --color-cyber-text-secondary: #e0e0e0;
+  --color-cyber-text-primary: #8bbfd4;
+  --color-cyber-text-secondary: #c4d4e0;
 
-  /* Glow Effects */
-  --glow-cyan: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
-  --glow-pink: 0 0 10px rgba(255, 0, 110, 0.5), 0 0 20px rgba(255, 0, 110, 0.3);
-  --glow-purple: 0 0 10px rgba(176, 38, 255, 0.5), 0 0 20px rgba(176, 38, 255, 0.3);
+  /* Soft glow — barely perceptible */
+  --glow-cyan: 0 0 8px rgba(91, 168, 196, 0.25);
+  --glow-pink: 0 0 8px rgba(106, 122, 154, 0.2);
+  --glow-purple: 0 0 8px rgba(90, 104, 152, 0.2);
 }
 
 @theme {
-  /* Cyberpunk Theme Colors */
-  --color-cyber-cyan: #00f0ff;
-  --color-cyber-cyan-light: #00d9ff;
-  --color-cyber-pink: #ff006e;
-  --color-cyber-pink-light: #ff1744;
-  --color-cyber-purple: #b026ff;
-  --color-cyber-purple-dark: #7b2cbf;
+  --color-cyber-cyan: #5ba8c4;
+  --color-cyber-cyan-light: #7ec0d6;
+  --color-cyber-pink: #6a7a9a;
+  --color-cyber-pink-light: #7a8aaa;
+  --color-cyber-purple: #5a6898;
+  --color-cyber-purple-dark: #4a5878;
 
-  /* Backgrounds */
-  --color-cyber-bg-dark: #0a0e27;
-  --color-cyber-bg-darker: #0d1117;
-  --color-cyber-surface: #1a1f3a;
+  --color-cyber-bg-dark: #080c1a;
+  --color-cyber-bg-darker: #05080f;
+  --color-cyber-surface: #0f1629;
 
-  /* Text Colors */
-  --color-cyber-text: #00f0ff;
-  --color-cyber-text-light: #e0e0e0;
-  --color-cyber-text-dim: #8892b0;
+  --color-cyber-text: #8bbfd4;
+  --color-cyber-text-light: #c4d4e0;
+  --color-cyber-text-dim: #5a7888;
 
-  /* Legacy Dark Mode (Professional) */
   --color-dark-bg: #0a0a0a;
-  --color-dark-surface: #1a1a1a;
+  --color-dark-surface: #141414;
   --color-dark-accent: #646cff;
 
-  /* Legacy Geek Mode - Now Cyberpunk */
-  --color-geek-bg: #0a0e27;
-  --color-geek-text: #00f0ff;
-  --color-geek-accent: #00f0ff;
+  --color-geek-bg: #080c1a;
+  --color-geek-text: #8bbfd4;
+  --color-geek-accent: #5ba8c4;
 
-  /* Border Opacity */
-  --color-cyber-border: rgba(0, 240, 255, 0.3);
+  --color-cyber-border: rgba(91, 168, 196, 0.2);
 }
 
 @layer base {
@@ -77,90 +68,79 @@
   }
 
   code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-      monospace;
+    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
   }
 }
 
-/* Cyberpunk Glow Effects */
+/* Soft glow utilities — much less intense than before */
 @layer utilities {
   .glow-cyan {
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
+    box-shadow: 0 0 8px rgba(91, 168, 196, 0.3);
   }
 
   .glow-pink {
-    box-shadow: 0 0 10px rgba(255, 0, 110, 0.5), 0 0 20px rgba(255, 0, 110, 0.3);
+    box-shadow: 0 0 8px rgba(106, 122, 154, 0.25);
   }
 
   .glow-purple {
-    box-shadow: 0 0 10px rgba(176, 38, 255, 0.5), 0 0 20px rgba(176, 38, 255, 0.3);
+    box-shadow: 0 0 8px rgba(90, 104, 152, 0.25);
   }
 
   .text-glow-cyan {
-    text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.4);
+    text-shadow: 0 0 8px rgba(91, 168, 196, 0.4);
   }
 
   .text-glow-pink {
-    text-shadow: 0 0 10px rgba(255, 0, 110, 0.8), 0 0 20px rgba(255, 0, 110, 0.4);
+    text-shadow: 0 0 8px rgba(106, 122, 154, 0.35);
   }
 
   .text-glow-purple {
-    text-shadow: 0 0 10px rgba(176, 38, 255, 0.8), 0 0 20px rgba(176, 38, 255, 0.4);
+    text-shadow: 0 0 8px rgba(90, 104, 152, 0.35);
   }
 
   .gradient-cyber {
-    background: linear-gradient(135deg, #00f0ff 0%, #b026ff 50%, #ff006e 100%);
+    background: linear-gradient(135deg, #5ba8c4 0%, #4a5878 50%, #6a7a9a 100%);
   }
 
   .gradient-cyber-horizontal {
-    background: linear-gradient(90deg, #00f0ff 0%, #b026ff 50%, #ff006e 100%);
+    background: linear-gradient(90deg, #5ba8c4 0%, #4a5878 50%, #6a7a9a 100%);
   }
 
   .border-cyber {
-    border-color: rgba(0, 240, 255, 0.3);
+    border-color: rgba(91, 168, 196, 0.2);
   }
 
   .border-cyber-glow {
-    border-color: #00f0ff;
-    box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
+    border-color: #5ba8c4;
+    box-shadow: 0 0 6px rgba(91, 168, 196, 0.3);
   }
-}
 
-/* Animation Utilities */
-@layer utilities {
-  /* Neon Text Glow Effects */
+  /* Minimal glow — just a hint */
   .text-glow-neon {
-    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor;
+    text-shadow: 0 0 6px rgba(91, 168, 196, 0.3);
   }
 
   .text-glow-neon-strong {
-    text-shadow: 0 0 10px currentColor, 0 0 20px currentColor, 0 0 30px currentColor, 0 0 40px currentColor;
+    text-shadow: 0 0 8px rgba(91, 168, 196, 0.5);
   }
 
-  /* Neon Box Glow Effects */
   .box-glow-neon {
-    box-shadow: 0 0 20px rgba(0, 240, 255, 0.5), 0 0 40px rgba(255, 0, 110, 0.3);
+    box-shadow: 0 0 12px rgba(91, 168, 196, 0.2);
   }
 
   .box-glow-neon-pink {
-    box-shadow: 0 0 20px rgba(255, 0, 110, 0.6), 0 0 40px rgba(255, 0, 110, 0.4);
+    box-shadow: 0 0 12px rgba(106, 122, 154, 0.25);
   }
 
-  /* Pulse Glow Animation */
   @keyframes pulse-glow {
-    0%, 100% {
-      box-shadow: 0 0 10px rgba(0, 240, 255, 0.5), 0 0 20px rgba(0, 240, 255, 0.3);
-    }
-    50% {
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.8), 0 0 30px rgba(0, 240, 255, 0.5);
-    }
+    0%, 100% { box-shadow: 0 0 6px rgba(91, 168, 196, 0.2); }
+    50% { box-shadow: 0 0 12px rgba(91, 168, 196, 0.35); }
   }
 
   .animate-pulse-glow {
-    animation: pulse-glow 2s ease-in-out infinite;
+    animation: pulse-glow 3s ease-in-out infinite;
   }
 
-  /* Global Transition Settings */
   .transition-cyber {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -170,14 +150,7 @@
   }
 }
 
-/* Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
-  .animate-pulse-glow {
-    animation: none !important;
-  }
-
-  .transition-cyber,
-  .transition-cyber-slow {
-    transition-duration: 0.01ms !important;
-  }
+  .animate-pulse-glow { animation: none !important; }
+  .transition-cyber, .transition-cyber-slow { transition-duration: 0.01ms !important; }
 }

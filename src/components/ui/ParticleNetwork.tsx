@@ -6,213 +6,93 @@ import { isBrowser, prefersReducedMotion } from '../../utils';
 
 export const ParticleNetwork = () => {
   const [init, setInit] = useState(false);
-  const [isVisible, setIsVisible] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
-  const particlesContainerRef = useRef<Container | null>(null);
+  const particlesRef = useRef<Container | null>(null);
 
-  // Initialize particles engine
   useEffect(() => {
     if (!isBrowser) return;
-
     initParticlesEngine(async (engine: Engine) => {
       await loadSlim(engine);
-    }).then(() => {
-      setInit(true);
-    });
+    }).then(() => setInit(true));
   }, []);
 
-  // Intersection Observer for performance
   useEffect(() => {
     if (!isBrowser || !containerRef.current) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          setIsVisible(entry.isIntersecting);
-
-          // Pause/play particles based on visibility
-          if (particlesContainerRef.current) {
-            if (entry.isIntersecting) {
-              particlesContainerRef.current.play();
-            } else {
-              particlesContainerRef.current.pause();
-            }
-          }
-        });
-      },
-      { threshold: 0.1 }
-    );
-
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (!particlesRef.current) return;
+        if (entry.isIntersecting) particlesRef.current.play();
+        else particlesRef.current.pause();
+      });
+    }, { threshold: 0.1 });
     observer.observe(containerRef.current);
-
-    return () => {
-      observer.disconnect();
-    };
+    return () => observer.disconnect();
   }, []);
 
   const particlesLoaded = useCallback(async (container?: Container) => {
-    if (container) {
-      particlesContainerRef.current = container;
-    }
+    if (container) particlesRef.current = container;
   }, []);
 
-  // Don't render if reduced motion is preferred
-  if (prefersReducedMotion()) {
-    return null;
-  }
+  if (prefersReducedMotion()) return null;
 
   return (
-    <div
-      ref={containerRef}
-      className="absolute inset-0 pointer-events-none -z-10"
-      style={{ opacity: isVisible ? 1 : 0.3 }}
-    >
+    <div ref={containerRef} className="absolute inset-0 pointer-events-none -z-10">
       {init && (
         <Particles
           id="tsparticles"
           particlesLoaded={particlesLoaded}
           options={{
-            background: {
-              color: {
-                value: 'transparent',
-              },
-            },
+            background: { color: { value: 'transparent' } },
             fpsLimit: 60,
             interactivity: {
               events: {
-                // Mouse interaction: repulsion effect (push particles away)
-                onHover: {
-                  enable: true,
-                  mode: 'repulse', // Particles move away from cursor
-                },
-                onClick: {
-                  enable: false,
-                },
-                resize: {
-                  enable: true,
-                  delay: 0.5,
-                },
+                onHover: { enable: true, mode: 'repulse' },
+                onClick: { enable: false },
+                resize: { enable: true, delay: 0.5 },
               },
               modes: {
-                repulse: {
-                  distance: 100, // Repulsion radius: 100px from cursor
-                  duration: 0.4, // Smooth transition duration
-                  speed: 1, // Repulsion speed
-                  factor: 3, // Repulsion strength
-                  easing: 'ease-out-quad', // Smooth easing
-                  maxSpeed: 50, // Max repulsion velocity
-                },
+                repulse: { distance: 80, duration: 0.4, speed: 0.8, factor: 2, easing: 'ease-out-quad' },
               },
             },
             particles: {
-              color: {
-                value: ['#00f0ff', '#00ff88'], // Cyan and green glow
-              },
-              // Connection lines for network effect (dynamic breaking/reconnecting)
+              color: { value: ['#4a8fa8', '#3d7a94', '#5ba8c4'] },
               links: {
                 enable: true,
-                distance: 150, // Connect particles within 150px
-                color: '#00f0ff', // Cyan lines
-                opacity: 0.4, // Semi-transparent
-                width: 1, // 1px line thickness
-                triangles: {
-                  enable: false, // No triangular meshes
-                },
-                // Lines fade based on distance (closer = more opaque)
-                blink: false,
-                consent: false,
-                shadow: {
-                  enable: false,
-                },
-                // Lines break when mouse is nearby (creates "mouse cuts through network" effect)
-                warp: true,
+                distance: 140,
+                color: '#3d7a94',
+                opacity: 0.25,
+                width: 0.8,
+                warp: false,
               },
               move: {
-                // Random movement in all directions (like reference video)
-                direction: 'none', // No fixed direction - completely random
+                direction: 'none',
                 enable: true,
-                outModes: {
-                  default: 'bounce', // Bounce off edges (boundary bounce)
-                },
-                random: true, // Randomize movement for organic motion
-                speed: 1.2, // Increased from 0.5 for faster, more dynamic network
-                straight: false, // Curved, organic paths
-                attract: {
-                  enable: false,
-                },
-                trail: {
-                  enable: false,
-                },
-                vibrate: false,
-                bounce: true, // Enable boundary bouncing
+                outModes: { default: 'bounce' },
+                random: true,
+                speed: 0.7,
+                straight: false,
+                bounce: true,
               },
               number: {
-                density: {
-                  enable: true,
-                  width: 1920,
-                  height: 1080,
-                },
-                value: 60, // 50-80 particles as specified
+                density: { enable: true, width: 1920, height: 1080 },
+                value: 55,
               },
               opacity: {
-                value: 0.5, // 50% opacity
-                random: {
-                  enable: true,
-                  minimumValue: 0.3,
-                },
-                animation: {
-                  enable: true,
-                  speed: 1,
-                  sync: false,
-                  minimumValue: 0.2,
-                },
+                value: 0.35,
+                random: { enable: true, minimumValue: 0.15 },
+                animation: { enable: true, speed: 0.6, sync: false, minimumValue: 0.1 },
               },
-              shape: {
-                type: 'circle', // ONLY circles - tiny dots like stars
-              },
+              shape: { type: 'circle' },
               size: {
-                value: 3, // 3px dots
-                random: {
-                  enable: true,
-                  minimumValue: 2,
-                },
-                animation: {
-                  enable: true,
-                  speed: 2,
-                  sync: false,
-                  minimumValue: 1,
-                },
+                value: 2,
+                random: { enable: true, minimumValue: 1 },
+                animation: { enable: false },
               },
-              rotate: {
-                value: {
-                  min: 0,
-                  max: 360,
-                },
-                animation: {
-                  enable: true,
-                  speed: 1, // Very slow rotation
-                  sync: false,
-                },
-              },
-              // Add subtle glow effect
-              shadow: {
-                enable: true,
-                blur: 5,
-                color: {
-                  value: '#00f0ff',
-                },
-                offset: {
-                  x: 0,
-                  y: 0,
-                },
-              },
+              shadow: { enable: false },
             },
             detectRetina: true,
             smooth: true,
-            fullScreen: {
-              enable: false,
-              zIndex: -1,
-            },
+            fullScreen: { enable: false, zIndex: -1 },
           }}
         />
       )}

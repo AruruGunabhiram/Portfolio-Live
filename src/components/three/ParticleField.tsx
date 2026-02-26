@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/purity */
 import { useRef, useMemo } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
@@ -8,79 +7,70 @@ interface ParticleFieldProps {
   mousePosition: { x: number; y: number };
 }
 
-export const ParticleField = ({ count = 100, mousePosition }: ParticleFieldProps) => {
-  const meshRef = useRef<THREE.InstancedMesh>(null);
-  const dummy = useMemo(() => new THREE.Object3D(), []);
+export const ParticleField = ({ count = 200, mousePosition }: ParticleFieldProps) => {
+  const pointsRef = useRef<THREE.Points>(null);
 
-  // Generate random positions and scales for particles
+  // Generate particle data once
   const particles = useMemo(() => {
-    const temp = [];
+    const positions = new Float32Array(count * 3);
+    const velocities: Array<{ x: number; y: number; z: number }> = [];
+    const floatSpeeds: number[] = [];
+    const floatOffsets: number[] = [];
+
     for (let i = 0; i < count; i++) {
-      const position = new THREE.Vector3(
-        (Math.random() - 0.5) * 20,
-        (Math.random() - 0.5) * 20,
-        (Math.random() - 0.5) * 20
-      );
-      const scale = Math.random() * 0.3 + 0.1;
-      const rotationSpeed = {
-        x: (Math.random() - 0.5) * 0.02,
-        y: (Math.random() - 0.5) * 0.02,
-        z: (Math.random() - 0.5) * 0.02,
-      };
-      const floatSpeed = Math.random() * 0.5 + 0.2;
-      const floatOffset = Math.random() * Math.PI * 2;
-      temp.push({ position, scale, rotationSpeed, floatSpeed, floatOffset });
+      positions[i * 3] = (Math.random() - 0.5) * 24;
+      positions[i * 3 + 1] = (Math.random() - 0.5) * 24;
+      positions[i * 3 + 2] = (Math.random() - 0.5) * 24;
+      velocities.push({
+        x: (Math.random() - 0.5) * 0.008,
+        y: (Math.random() - 0.5) * 0.008,
+        z: (Math.random() - 0.5) * 0.004,
+      });
+      floatSpeeds.push(Math.random() * 0.3 + 0.1);
+      floatOffsets.push(Math.random() * Math.PI * 2);
     }
-    return temp;
+    return { positions, velocities, floatSpeeds, floatOffsets };
   }, [count]);
 
-  // Animate particles
-  useFrame((state) => {
-    if (!meshRef.current) return;
+  const geometry = useMemo(() => {
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute('position', new THREE.BufferAttribute(particles.positions.slice(), 3));
+    return geo;
+  }, [particles]);
 
-    const time = state.clock.getElapsedTime();
+  useFrame(state => {
+    if (!pointsRef.current) return;
+    const pos = pointsRef.current.geometry.attributes.position.array as Float32Array;
+    const t = state.clock.getElapsedTime();
+    const mx = mousePosition.x * 1.2;
+    const my = mousePosition.y * 1.2;
 
-    particles.forEach((particle, i) => {
-      // Float animation
-      const floatY = Math.sin(time * particle.floatSpeed + particle.floatOffset) * 0.5;
+    for (let i = 0; i < count; i++) {
+      // Slow drift
+      pos[i * 3] += particles.velocities[i].x + mx * 0.015;
+      pos[i * 3 + 1] += particles.velocities[i].y + my * 0.015 +
+        Math.sin(t * particles.floatSpeeds[i] + particles.floatOffsets[i]) * 0.003;
+      pos[i * 3 + 2] += particles.velocities[i].z;
 
-      // Apply mouse influence
-      const mouseInfluenceX = mousePosition.x * 2;
-      const mouseInfluenceY = mousePosition.y * 2;
-
-      dummy.position.set(
-        particle.position.x + mouseInfluenceX * 0.3,
-        particle.position.y + floatY + mouseInfluenceY * 0.3,
-        particle.position.z
-      );
-
-      // Rotate
-      dummy.rotation.x += particle.rotationSpeed.x;
-      dummy.rotation.y += particle.rotationSpeed.y;
-      dummy.rotation.z += particle.rotationSpeed.z;
-
-      dummy.scale.set(particle.scale, particle.scale, particle.scale);
-
-      dummy.updateMatrix();
-      meshRef.current!.setMatrixAt(i, dummy.matrix);
-    });
-
-    meshRef.current.instanceMatrix.needsUpdate = true;
+      // Wrap around bounds
+      if (pos[i * 3] > 12) pos[i * 3] = -12;
+      if (pos[i * 3] < -12) pos[i * 3] = 12;
+      if (pos[i * 3 + 1] > 12) pos[i * 3 + 1] = -12;
+      if (pos[i * 3 + 1] < -12) pos[i * 3 + 1] = 12;
+    }
+    pointsRef.current.geometry.attributes.position.needsUpdate = true;
   });
 
   return (
-    <instancedMesh ref={meshRef} args={[undefined, undefined, count]}>
-      {/* Geometry - mix of different shapes */}
-      <boxGeometry args={[1, 1, 1]} />
-      {/* Material with geek mode terminal green */}
-      <meshStandardMaterial
-        color="#00f0ff"
-        emissive="#00f0ff"
-        emissiveIntensity={0.5}
-        wireframe
+    <points ref={pointsRef} geometry={geometry}>
+      <pointsMaterial
+        color="#4a8fa8"
+        size={0.05}
         transparent
-        opacity={0.6}
+        opacity={0.55}
+        sizeAttenuation
+        depthWrite={false}
       />
-    </instancedMesh>
+    </points>
   );
 };
