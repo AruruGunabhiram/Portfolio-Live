@@ -5,7 +5,7 @@ import { CONTACT } from '../data/resume';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { theme, toggleTheme, isGeekMode } = useTheme();
+  const { theme, toggleTheme, isGeekMode, isTransitioning } = useTheme();
 
   const scrollToSection = (sectionId: string) => {
     document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
@@ -57,8 +57,15 @@ export const Header = () => {
 
           {/* Right side */}
           <div className="flex items-center gap-3">
-            <Button variant="ghost" onClick={toggleTheme} className="text-xs px-2 py-1" aria-label="Toggle theme">
-              {theme === 'dark' ? '🌙' : '💻'}
+            {/* Theme toggle — disabled during transition to prevent double-click */}
+            <Button
+              variant="ghost"
+              onClick={toggleTheme}
+              disabled={isTransitioning}
+              className={`text-xs px-2 py-1 transition-opacity ${isTransitioning ? 'opacity-40 cursor-not-allowed' : ''}`}
+              aria-label={`Switch to ${theme === 'dark' ? 'geek' : 'dark'} mode`}
+            >
+              {theme === 'dark' ? '🌙 Dark' : '💻 Geek'}
             </Button>
 
             {/* Mobile hamburger */}
@@ -66,6 +73,7 @@ export const Header = () => {
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               className="md:hidden p-1.5"
               aria-label="Toggle menu"
+              aria-expanded={isMenuOpen}
             >
               <div className="space-y-1">
                 {[0, 1, 2].map(i => (

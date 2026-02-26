@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 import { Container, Button, GlitchText } from '../components';
 import { useTheme } from '../hooks';
 import { heroAnimation } from '../utils';
-import { CONTACT, IMPACT_HIGHLIGHTS } from '../data/resume';
+import { CONTACT, TECH_CHIPS } from '../data/resume';
 
 const Scene3D = lazy(() =>
   import('../components/three').then(m => ({ default: m.Scene3D }))
@@ -20,8 +20,8 @@ export const Hero = () => {
   const sub = isGeekMode ? 'text-[#8bbfd4]' : 'text-gray-200';
   const dim = isGeekMode ? 'text-[#5a7888]' : 'text-gray-400';
   const chipBg = isGeekMode
-    ? 'bg-[#0d1829] border border-[#3a6a7a]/50 text-[#5ba8c4]'
-    : 'bg-[#1e2035] border border-gray-700/50 text-[#818cf8]';
+    ? 'bg-[#0d1829]/70 border border-[#3a6a7a]/40 text-[#6aacbf]'
+    : 'bg-[#14142a]/70 border border-gray-700/40 text-gray-400';
 
   return (
     <section id="hero" className="min-h-screen flex items-center relative overflow-hidden">
@@ -67,14 +67,17 @@ export const Hero = () => {
             {isGeekMode ? '> ' : ''}{CONTACT.valueProposition}
           </motion.p>
 
-          {/* Impact highlights strip */}
+          {/* Tech stack chips — professional, no metrics */}
           <motion.div
-            className="flex flex-wrap gap-2 pt-1"
+            className="flex flex-wrap gap-1.5 pt-1"
             variants={heroAnimation.description}
           >
-            {IMPACT_HIGHLIGHTS.map(h => (
-              <span key={h.label} className={`text-xs px-3 py-1.5 rounded-full font-medium ${chipBg}`}>
-                <strong>{h.metric}</strong> {h.label}
+            {TECH_CHIPS.map(chip => (
+              <span
+                key={chip}
+                className={`text-xs px-2.5 py-1 rounded-md font-medium tracking-wide ${chipBg}`}
+              >
+                {chip}
               </span>
             ))}
           </motion.div>
@@ -84,10 +87,7 @@ export const Hero = () => {
             <Button variant="primary" onClick={() => scrollTo('projects')}>
               View Projects
             </Button>
-            <Button
-              variant="secondary"
-              onClick={() => scrollTo('contact')}
-            >
+            <Button variant="secondary" onClick={() => scrollTo('contact')}>
               Contact
             </Button>
             <a

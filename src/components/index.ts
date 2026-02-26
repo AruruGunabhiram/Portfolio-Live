@@ -1,1 +1,1 @@
-export { Container, Button, Card, ParallaxLayer, AnimatedLogo, CodeBlock, CustomCursor, GlitchText, ParticleNetwork, ContactForm } from './ui';
+export { Container, Button, Card, ParallaxLayer, AnimatedLogo, CodeBlock, CustomCursor, GlitchText, ParticleNetwork, SpaceDustBackground, ContactForm } from './ui';

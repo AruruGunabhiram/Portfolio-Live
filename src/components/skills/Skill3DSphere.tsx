@@ -326,7 +326,6 @@ const Scene3DInner = ({
 
 export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
   // --- All hooks at top, unconditionally ---
-  const [dpr, setDpr] = useState(1.5);
   const [webGLStatus, setWebGLStatus] = useState<'checking' | 'ok' | 'fail'>('checking');
   const [tooltip, setTooltip] = useState<{ visible: boolean; x: number; y: number; skill: string | null }>({
     visible: false, x: 0, y: 0, skill: null,
@@ -367,14 +366,26 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
         <Suspense fallback={<LoadingSpinner isGeekMode={isGeekMode} />}>
           <Canvas
             camera={{ position: [0, 0, 6], fov: 60 }}
-            dpr={dpr}
-            gl={{ powerPreference: 'default', antialias: true, failIfMajorPerformanceCaveat: false }}
+            dpr={[1, 1.5]}
+            gl={{
+              powerPreference: 'high-performance',
+              antialias: false,
+              failIfMajorPerformanceCaveat: false,
+              alpha: true,
+            }}
             style={{ width: '100%', height: '600px' }}
             aria-label="3D sphere showing skills"
             role="img"
-            onCreated={() => console.log('[3D Sphere] Canvas created')}
+            onCreated={({ gl }) => {
+              // Listen for WebGL context loss; fall back to Canvas2D
+              gl.domElement.addEventListener('webglcontextlost', (e) => {
+                e.preventDefault();
+                console.warn('[3D Sphere] WebGL context lost — switching to Canvas2D fallback');
+                setWebGLStatus('fail');
+              }, { once: true });
+            }}
           >
-            <PerformanceMonitor onIncline={() => setDpr(2)} onDecline={() => setDpr(1)}>
+            <PerformanceMonitor>
               <Scene3DInner
                 skills={skills}
                 isGeekMode={isGeekMode}

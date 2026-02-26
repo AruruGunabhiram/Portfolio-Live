@@ -1,5 +1,5 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useState, useEffect } from 'react';
+import { createContext, useState, useEffect, useCallback, useRef } from 'react';
 import type { ReactNode } from 'react';
 import type { Theme, ThemeContextType } from '../types';
 
@@ -9,11 +9,24 @@ interface ThemeProviderProps {
   children: ReactNode;
 }
 
+function checkReducedMotion() {
+  if (typeof window === 'undefined') return false;
+  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
 export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(() => {
-    const savedTheme = localStorage.getItem('portfolio-theme') as Theme;
-    return savedTheme || 'dark';
+    try {
+      const saved = localStorage.getItem('portfolio-theme') as Theme;
+      return saved === 'dark' || saved === 'geek' ? saved : 'dark';
+    } catch {
+      return 'dark';
+    }
   });
+
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [transitionTarget, setTransitionTarget] = useState<Theme | null>(null);
+  const timerRefs = useRef<ReturnType<typeof setTimeout>[]>([]);
 
   useEffect(() => {
     const root = document.documentElement;
@@ -21,17 +34,40 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
     root.classList.add(theme);
     document.body.classList.remove('dark', 'geek');
     document.body.classList.add(theme);
-    localStorage.setItem('portfolio-theme', theme);
+    try { localStorage.setItem('portfolio-theme', theme); } catch { /* noop */ }
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme((prev) => (prev === 'dark' ? 'geek' : 'dark'));
-  };
+  useEffect(() => {
+    return () => { timerRefs.current.forEach(clearTimeout); };
+  }, []);
+
+  const toggleTheme = useCallback(() => {
+    if (isTransitioning) return;
+    const next: Theme = theme === 'dark' ? 'geek' : 'dark';
+
+    if (checkReducedMotion()) {
+      setTheme(next);
+      return;
+    }
+
+    setTransitionTarget(next);
+    setIsTransitioning(true);
+
+    // Switch theme at midpoint of overlay animation
+    const t1 = setTimeout(() => setTheme(next), 360);
+    // End transition after full overlay cycle
+    const t2 = setTimeout(() => {
+      setIsTransitioning(false);
+      setTransitionTarget(null);
+    }, 820);
+
+    timerRefs.current = [t1, t2];
+  }, [theme, isTransitioning]);
 
   const isGeekMode = theme === 'geek';
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isGeekMode }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, isGeekMode, isTransitioning, transitionTarget }}>
       {children}
     </ThemeContext.Provider>
   );

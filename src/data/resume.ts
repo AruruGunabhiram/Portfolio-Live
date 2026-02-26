@@ -84,6 +84,18 @@ export const IMPACT_HIGHLIGHTS: ImpactHighlight[] = [
   { metric: '20%', label: 'faster delivery' },
 ];
 
+// Professional tech stack chips shown in hero (replaces metric pills)
+export const TECH_CHIPS: string[] = [
+  'Java',
+  'Spring Boot',
+  'Python',
+  'PostgreSQL',
+  'REST APIs',
+  'OAuth 2.0',
+  'LLM Integration',
+  'Docker',
+];
+
 export const EDUCATION: EducationEntry[] = [
   {
     id: 1,

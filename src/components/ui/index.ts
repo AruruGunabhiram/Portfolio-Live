@@ -7,4 +7,5 @@ export { CodeBlock } from './CodeBlock';
 export { CustomCursor } from './CustomCursor';
 export { GlitchText } from './GlitchText';
 export { ParticleNetwork } from './ParticleNetwork';
+export { SpaceDustBackground } from './SpaceDustBackground';
 export { ContactForm } from './ContactForm';
