@@ -18,15 +18,18 @@ const COUNT    = 260;
 const PARALLAX = 7;           // max px shift at z=0
 
 // ─── Dotted network — tune these ─────────────────────────────────────────────
-const MAX_DIST         = 110;    // px — reduced range → fewer long-reach edges
-const MAX_DIST_SQ      = MAX_DIST * MAX_DIST;
-const DASH             = 3;      // dash length (canvas px)
-const GAP              = 7;      // gap length — slightly wider gaps = lighter texture
-const EDGE_ALPHA_MIN   = 0.04;   // floor: far edges almost invisible
-const EDGE_ALPHA_MAX_NEAR = 0.17; // cap: near edges still subtle (not screaming)
-const EDGE_WIDTH       = 0.65;   // stroke width (CSS px, before DPR)
-const MAX_EPP          = 2;      // max edges per particle — key knob for density
-const MAX_TOTAL_EDGES  = 300;    // hard frame cap — keeps fps smooth
+const MIN_LINE_DIST      = 25;     // px — skip micro-connections (noisy)
+const MAX_LINE_DIST      = 150;    // px — connection reach
+const MIN_LINE_DIST_SQ   = MIN_LINE_DIST * MIN_LINE_DIST;
+const MAX_LINE_DIST_SQ   = MAX_LINE_DIST * MAX_LINE_DIST;
+const DASH               = 3;     // dash length (canvas px)
+const GAP                = 5;     // gap length
+const LINE_ALPHA_MIN     = 0.13;  // floor: far edges visible when you look
+const LINE_ALPHA_BOOST   = 0.32;  // quadratic boost for near edges
+const LINE_ALPHA_MAX     = 0.45;  // cap: near edges clear but not dominating
+const LINE_WIDTH         = 0.8;   // stroke width (CSS px)
+const MAX_EPP            = 4;     // max edges per particle — density knob
+const MAX_TOTAL_EDGES    = 500;   // hard frame cap
 
 // ─── Hover split / reattach ───────────────────────────────────────────────────
 const HOVER_DIST    = 28;   // px cursor→segment distance that triggers a split
@@ -49,7 +52,7 @@ const Z_PARALLAX_MIN = 0.4;
 const Z_PARALLAX_MAX = 2.0;
 
 // ─── Spatial grid cell size ───────────────────────────────────────────────────
-const CELL = MAX_DIST;   // one cell = one connection radius
+const CELL = MAX_LINE_DIST;   // one cell = one connection radius
 
 // ─── Utility: squared distance from point P to segment AB ────────────────────
 function ptSegDistSq(
@@ -216,19 +219,14 @@ export const SpaceDustBackground = () => {
               const dx = p.x - particles[j].x;
               const dy = p.y - particles[j].y;
               const distSq = dx * dx + dy * dy;
-              if (distSq >= MAX_DIST_SQ) continue;
+              if (distSq < MIN_LINE_DIST_SQ) continue;  // too short — skip noisy micro-edges
+              if (distSq >= MAX_LINE_DIST_SQ) continue;
 
               const dist = Math.sqrt(distSq);
-              const t    = 1 - dist / MAX_DIST;              // 1 = near, 0 = far
-              // depth factor: lines between far-z particles are dimmer
-              const depthZ = (particles[i].z + particles[j].z) * 0.5; // 0=far bg, 1=front
-              const depthFade = 0.35 + depthZ * 0.65;                  // 0.35–1.0
-              // cubic falloff keeps near lines readable, far lines near-invisible
-              const op = Math.min(
-                EDGE_ALPHA_MAX_NEAR,
-                (EDGE_ALPHA_MIN + t * t * t * (EDGE_ALPHA_MAX_NEAR - EDGE_ALPHA_MIN)) * depthFade,
-              );
-              if (op < 0.018) continue;
+              const t    = 1 - dist / MAX_LINE_DIST;     // 1 = near, 0 = far
+              // quadratic falloff — mid-range lines stay readable, no depth penalty
+              const op = Math.min(LINE_ALPHA_MAX, LINE_ALPHA_MIN + t * t * LINE_ALPHA_BOOST);
+              if (op < 0.01) continue;
 
               const bx = sx[j];
               const by = sy[j];
@@ -245,9 +243,19 @@ export const SpaceDustBackground = () => {
                 }
               }
 
-              // Single thin stroke — no two-pass (keeps it firmly in the background)
-              ctx.strokeStyle = `rgba(175,200,215,${op.toFixed(3)})`;
-              ctx.lineWidth   = EDGE_WIDTH;
+              // Star-shine gradient: transparent at both ends, bright at center
+              // Each line twinkles independently via a unique phase offset
+              const phase   = (i * 17 + j * 31) * 0.04;
+              const twinkle = 0.72 + 0.28 * Math.sin(now * 0.0011 + phase);
+              const peak    = op * twinkle;
+              const grad    = ctx.createLinearGradient(ax, ay, bx, by);
+              grad.addColorStop(0,    `rgba(210,228,255,0)`);
+              grad.addColorStop(0.3,  `rgba(210,228,255,${(peak * 0.55).toFixed(3)})`);
+              grad.addColorStop(0.5,  `rgba(210,228,255,${peak.toFixed(3)})`);
+              grad.addColorStop(0.7,  `rgba(210,228,255,${(peak * 0.55).toFixed(3)})`);
+              grad.addColorStop(1,    `rgba(210,228,255,0)`);
+              ctx.strokeStyle = grad;
+              ctx.lineWidth   = LINE_WIDTH;
               ctx.beginPath();
               ctx.moveTo(ax, ay);
               ctx.lineTo(bx, by);
