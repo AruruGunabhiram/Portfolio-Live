@@ -53,8 +53,12 @@ export const Experience = () => {
                   {/* Header row */}
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-5">
                     <div>
-                      <h3 className={`text-xl font-semibold ${accent}`}>{job.role}</h3>
-                      <p className={`text-sm font-medium mt-0.5 ${roleColor}`}>{job.company}</p>
+                      <h3 className={`text-xl font-semibold ${accent}`}>
+                        {job.role}{job.techLabel ? ` (${job.techLabel})` : ''}{' '}
+                        <span className={`font-normal ${roleColor}`}>
+                          — {job.companyShort ?? job.company}
+                        </span>
+                      </h3>
                     </div>
                     <div className={`text-sm text-right shrink-0 ${meta}`}>
                       <p>{job.period}</p>

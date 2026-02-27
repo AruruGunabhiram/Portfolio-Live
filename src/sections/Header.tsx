@@ -16,8 +16,10 @@ export const Header = () => {
     { id: 'about', label: 'About' },
     { id: 'experience', label: 'Experience' },
     { id: 'projects', label: 'Projects' },
+    { id: 'practices', label: 'Practices' },
     { id: 'skills', label: 'Skills' },
     { id: 'education', label: 'Education' },
+    { id: 'leadership', label: 'Leadership' },
     { id: 'contact', label: 'Contact' },
   ];
 

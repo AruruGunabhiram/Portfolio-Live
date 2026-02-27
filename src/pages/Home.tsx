@@ -3,9 +3,11 @@ import {
   About,
   Experience,
   Projects,
+  EngineeringPractices,
   Skills,
   Education,
   Publications,
+  Leadership,
   Contact,
 } from '../sections';
 
@@ -16,9 +18,11 @@ export const Home = () => {
       <About />
       <Experience />
       <Projects />
+      <EngineeringPractices />
       <Skills />
       <Education />
       <Publications />
+      <Leadership />
       <Contact />
     </>
   );
