@@ -31,16 +31,16 @@ export const Hero = () => {
         </Suspense>
       )}
 
-      <Container className="relative z-10 py-24">
+      <Container className="relative z-10 py-16 sm:py-24">
         <motion.div
-          className="space-y-7 max-w-3xl"
+          className="space-y-5 sm:space-y-7 max-w-3xl"
           variants={heroAnimation.container}
           initial="hidden"
           animate="visible"
         >
           {/* Name */}
           <motion.h1
-            className={`text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight ${accent}`}
+            className={`text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-tight tracking-tight ${accent}`}
             variants={heroAnimation.heading}
           >
             {isGeekMode ? '> ' : ''}
@@ -53,7 +53,7 @@ export const Hero = () => {
 
           {/* Role */}
           <motion.p
-            className={`text-xl md:text-2xl font-medium tracking-wide ${sub}`}
+            className={`text-base sm:text-xl md:text-2xl font-medium tracking-wide ${sub}`}
             variants={heroAnimation.subheading}
           >
             {isGeekMode ? '> ' : ''}{CONTACT.headline}
@@ -91,14 +91,13 @@ export const Hero = () => {
               Contact
             </Button>
             <a
-              href="#"
-              onClick={e => e.preventDefault()}
+              href={CONTACT.resumeUrl}
+              download="Gunabhiram_Resume.pdf"
               className={`inline-flex items-center gap-1.5 text-sm px-4 py-2 rounded-lg border font-medium transition-colors ${
                 isGeekMode
                   ? 'border-[#3a6a7a]/60 text-[#7ec0d6] hover:bg-[#3a6a7a]/15'
                   : 'border-gray-600/60 text-gray-300 hover:bg-gray-700/30'
               }`}
-              title="PDF will be linked here"
             >
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>

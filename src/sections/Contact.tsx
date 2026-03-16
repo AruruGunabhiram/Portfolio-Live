@@ -33,7 +33,7 @@ const OpenToBanner = ({ isGeekMode }: { isGeekMode: boolean }) => {
             Backend / Full-Stack &bull; Boulder / Remote &bull; Fast response via email
           </p>
         </div>
-        <div className="flex flex-wrap gap-2 shrink-0">
+        <div className="flex flex-wrap gap-2">
           <a
             href={`mailto:${CONTACT.email}`}
             className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${btnPrimary}`}
@@ -49,9 +49,8 @@ const OpenToBanner = ({ isGeekMode }: { isGeekMode: boolean }) => {
             LinkedIn
           </a>
           <a
-            href="#"
-            onClick={e => e.preventDefault()}
-            title="Resume PDF — link coming soon"
+            href={CONTACT.resumeUrl}
+            download="Gunabhiram_Resume.pdf"
             className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border transition-colors ${btnSecondary}`}
           >
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -105,7 +104,7 @@ export const Contact = () => {
           <OpenToBanner isGeekMode={isGeekMode} />
 
           <motion.h2
-            className={`text-3xl md:text-4xl font-bold mb-4 ${accent}`}
+            className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${accent}`}
             variants={fadeInUp}
           >
             {isGeekMode ? '> ' : ''}Contact
@@ -120,7 +119,7 @@ export const Contact = () => {
             className={`rounded-xl divide-y ${surface} ${divider}`}
           >
             {links.map(link => (
-              <div key={link.label} className="px-6 py-4 flex items-center justify-between gap-4">
+              <div key={link.label} className="px-4 sm:px-6 py-4 flex items-center justify-between gap-2 sm:gap-4">
                 <span className={`text-xs font-semibold uppercase tracking-widest w-20 shrink-0 ${
                   isGeekMode ? 'text-[#3a6a7a]' : 'text-gray-600'
                 }`}>
@@ -130,7 +129,7 @@ export const Contact = () => {
                   href={link.href}
                   target={link.external ? '_blank' : undefined}
                   rel={link.external ? 'noopener noreferrer' : undefined}
-                  className={`text-sm font-medium transition-colors ${linkColor}`}
+                  className={`text-sm font-medium transition-colors break-all sm:break-normal ${linkColor}`}
                 >
                   {link.value}
                 </a>

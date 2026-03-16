@@ -18,9 +18,9 @@ export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(() => {
     try {
       const saved = localStorage.getItem('portfolio-theme') as Theme;
-      return saved === 'dark' || saved === 'geek' ? saved : 'dark';
+      return saved === 'dark' || saved === 'geek' ? saved : 'geek';
     } catch {
-      return 'dark';
+      return 'geek';
     }
   });
 

@@ -1,8 +1,8 @@
-import { useRef, useEffect, useState, memo, useCallback } from 'react';
+import { useRef, useEffect, useState, memo } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { isBrowser, prefersReducedMotion } from '../../utils';
+import { isBrowser } from '../../utils';
 import { SKILLS, SKILL_CATEGORIES, getSkillsByCategory } from '../../data/skills';
 import { SkillTooltip } from './SkillTooltip';
 
@@ -41,7 +41,7 @@ const SkillGridViewComponent = ({ isGeekMode }: SkillGridViewProps) => {
         ref={gridRef}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
       >
-      {SKILL_CATEGORIES.map((categoryConfig, index) => {
+      {SKILL_CATEGORIES.map((categoryConfig) => {
         const categorySkills = getSkillsByCategory(categoryConfig.key);
 
         return (

@@ -44,7 +44,7 @@ export const Skills = () => {
       <Container>
         {/* Section title */}
         <motion.h2
-          className={`text-3xl md:text-4xl font-bold mb-8 ${accent}`}
+          className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-8 ${accent}`}
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
@@ -55,7 +55,7 @@ export const Skills = () => {
 
         {/* Mode switcher */}
         <motion.div
-          className="flex gap-6 mb-10 border-b border-gray-800/50"
+          className="flex gap-4 sm:gap-6 mb-10 border-b border-gray-800/50"
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
@@ -112,8 +112,7 @@ export const Skills = () => {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.28, ease: 'easeOut' }}
-              className={`w-full rounded-xl overflow-hidden ${surface}`}
-              style={{ height: '520px' }}
+              className={`w-full rounded-xl overflow-hidden h-[300px] sm:h-[420px] md:h-[520px] ${surface}`}
             >
               <SkillConstellation isGeekMode={isGeekMode} />
             </motion.div>

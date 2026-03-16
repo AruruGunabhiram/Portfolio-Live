@@ -9,7 +9,7 @@ export const Leadership = () => {
 
   const accent = isGeekMode ? 'text-[#7ec0d6]' : 'text-white';
   const roleColor = isGeekMode ? 'text-[#5ba8c4]' : 'text-[#818cf8]';
-  const orgColor = isGeekMode ? 'text-[#4a7080]' : 'text-gray-500';
+  // const orgColor = isGeekMode ? 'text-[#4a7080]' : 'text-gray-500';
   const body = isGeekMode ? 'text-[#7eaabb]' : 'text-gray-300';
   const surface = isGeekMode
     ? 'bg-[#0d1829]/70 border border-[#2a5060]/50'
@@ -20,7 +20,7 @@ export const Leadership = () => {
     <section id="leadership" className="py-20 relative">
       <Container>
         <motion.h2
-          className={`text-3xl md:text-4xl font-bold mb-10 ${accent}`}
+          className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-10 ${accent}`}
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
@@ -40,7 +40,7 @@ export const Leadership = () => {
             <motion.div
               key={entry.id}
               variants={fadeInUp}
-              className={`rounded-xl p-6 flex gap-4 items-start ${surface}`}
+              className={`rounded-xl p-4 sm:p-6 flex gap-3 sm:gap-4 items-start ${surface}`}
             >
               <div className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${dot}`} />
               <div>

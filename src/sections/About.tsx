@@ -19,7 +19,7 @@ export const About = () => {
           viewport={scrollViewport}
           variants={fadeInUp}
         >
-          <h2 className={`text-3xl md:text-4xl font-bold mb-6 ${accent}`}>
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-6 ${accent}`}>
             {isGeekMode ? '> ' : ''}About
           </h2>
           <p className={`text-base md:text-lg leading-relaxed ${body}`}>

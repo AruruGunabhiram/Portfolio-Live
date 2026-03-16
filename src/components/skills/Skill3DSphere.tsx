@@ -120,7 +120,7 @@ const Canvas2DFallback = ({ isGeekMode, skills }: { isGeekMode: boolean; skills:
   }, [isGeekMode]);
 
   return (
-    <div className="w-full h-[600px] relative rounded-xl overflow-hidden">
+    <div className="w-full h-[300px] sm:h-[420px] md:h-[600px] relative rounded-xl overflow-hidden">
       <canvas ref={canvasRef} className="w-full h-full" />
       {/* Skill tags overlay */}
       <div className="absolute inset-0 flex flex-wrap content-center justify-center gap-2 p-8">
@@ -143,7 +143,7 @@ const Canvas2DFallback = ({ isGeekMode, skills }: { isGeekMode: boolean; skills:
 
 // Loading spinner
 const LoadingSpinner = ({ isGeekMode }: { isGeekMode: boolean }) => (
-  <div className="h-[500px] flex items-center justify-center">
+  <div className="h-[300px] sm:h-[420px] md:h-[500px] flex items-center justify-center">
     <div className="relative w-12 h-12">
       <div
         className={`absolute inset-0 rounded-full border-2 border-transparent ${
@@ -362,7 +362,7 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
     <ThreeErrorBoundary
       fallback={<Canvas2DFallback isGeekMode={isGeekMode} skills={skills} />}
     >
-      <div ref={containerRef} className="w-full h-[600px] min-h-[600px] relative">
+      <div ref={containerRef} className="w-full h-[300px] sm:h-[420px] md:h-[600px] relative">
         <Suspense fallback={<LoadingSpinner isGeekMode={isGeekMode} />}>
           <Canvas
             camera={{ position: [0, 0, 6], fov: 60 }}
@@ -373,7 +373,7 @@ export const Skill3DSphere = ({ skills, isGeekMode }: Skill3DSphereProps) => {
               failIfMajorPerformanceCaveat: false,
               alpha: true,
             }}
-            style={{ width: '100%', height: '600px' }}
+            style={{ width: '100%', height: '100%' }}
             aria-label="3D sphere showing skills"
             role="img"
             onCreated={({ gl }) => {

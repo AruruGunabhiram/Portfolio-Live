@@ -10,6 +10,7 @@ export interface ContactInfo {
   linkedinUrl: string;
   github: string;
   githubUrl: string;
+  resumeUrl: string;
   headline: string;
   valueProposition: string;
 }
@@ -73,6 +74,7 @@ export interface Publication {
   venue: string;
   year: number;
   highlights: string[];
+  paperUrl?: string;
 }
 
 export interface EngineeringPractice {
@@ -98,6 +100,7 @@ export const CONTACT: ContactInfo = {
   linkedinUrl: 'https://www.linkedin.com/in/gunabhiram-aruru/',
   github: 'github.com/AruruGunabhiram',
   githubUrl: 'https://github.com/AruruGunabhiram',
+  resumeUrl: '/Gunabhiram_Resume.pdf',
   headline: 'Software Engineer — Backend & Full-Stack Systems',
   valueProposition:
     'Building production-grade backend systems with Java, Python, and cloud infrastructure. MS CS candidate at CU Boulder.',
@@ -172,7 +175,7 @@ export const PROJECTS: ProjectEntry[] = [
       'Normalized PostgreSQL schema for channel/video/time-series snapshots enabling historical trend analysis',
       'REST APIs for analytics and debugging with structured logging and input validation',
     ],
-    githubUrl: 'https://github.com/AruruGunabhiram',
+    githubUrl: 'https://github.com/AruruGunabhiram/SocialLens',
     caseStudy: {
       oneLiner:
         'A production-style analytics backend that ingests YouTube metrics, stores time-series snapshots, and serves clean APIs for dashboards and insights.',
@@ -236,7 +239,48 @@ export const PROJECTS: ProjectEntry[] = [
       'Strategy + Factory patterns enabling swappable analysis/transformation engines without touching core logic',
       'Python CLI engine with VS Code extension integration for editor-native developer workflows',
     ],
-    githubUrl: 'https://github.com/AruruGunabhiram',
+    githubUrl: 'https://github.com/paudelnirajan/zenco-vscode-extension',
+  },
+  {
+    id: 4,
+    title: 'Code Battlegrounds',
+    subtitle: 'Full-Stack Collaborative Coding Platform',
+    techStack: ['React', 'TypeScript', 'Vite', 'Node.js', 'Express', 'Socket.IO', 'Supabase', 'PostgreSQL', 'Judge0', 'Gemini API', 'ElevenLabs', 'SCSS'],
+    bullets: [
+      'Real-time collaborative editor using Socket.IO with multi-user synchronization and conflict resolution',
+      'Multi-language code execution through Judge0 API supporting immediate feedback and testing',
+      'Google OAuth authentication with Supabase backend and PostgreSQL for secure data persistence',
+      'AI-powered hints via Gemini API and voice integration through ElevenLabs for accessible learning',
+      'Fullstack: React 19 + TypeScript frontend on Vite, Node.js/Express backend with structured APIs',
+    ],
+    githubUrl: 'https://github.com/Kanyarasi2026/code-battle-grounds',
+    liveUrl: 'https://code-battle-grounds.vercel.app',
+  },
+  {
+    id: 5,
+    title: 'TimeSling',
+    subtitle: 'macOS Productivity App',
+    techStack: ['Swift', 'SwiftUI', 'macOS'],
+    bullets: [
+      'Native macOS menu bar utility designed for speed — launch preset timers and session-named tasks instantly',
+      'Drag-based custom timer creation with support for stacking multiple simultaneous sessions',
+      'Fullscreen-capable notifications that surface reminders above active applications',
+      'Zero-dock design philosophy: lightweight UI optimized for repetitive timer use without visual clutter',
+    ],
+    githubUrl: 'https://github.com/AruruGunabhiram/TimeSling-fresh',
+  },
+  {
+    id: 6,
+    title: 'Nostalgia',
+    subtitle: 'Browser Extension / Productivity Tool',
+    techStack: ['React', 'TypeScript', 'SCSS', 'Chrome Extension APIs'],
+    bullets: [
+      'Save, organize, and search copied text snippets with persistent local storage via chrome.storage.local',
+      'Quick copy-paste reuse workflow eliminating repetitive clipboard searches and manual re-typing',
+      'Clean popup and options-page interfaces for session-based snippet management and organization',
+      'Lightweight productivity extension built for real clipboard workflow friction, not theoretical features',
+    ],
+    githubUrl: 'https://github.com/Meghan31/nostalgia-copy-paste-extension',
   },
 ];
 
@@ -287,6 +331,7 @@ export const PUBLICATIONS: Publication[] = [
     highlights: [
       'Worked on a deep-learning based diagnostic system for lung CT scans using transfer learning and explainability (Grad-CAM), achieving strong classification performance.',
     ],
+    paperUrl: 'https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10940411',
   },
 ];
 

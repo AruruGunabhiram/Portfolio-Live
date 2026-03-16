@@ -71,7 +71,7 @@ export const ParticleNetwork = () => {
                 random: true,
                 speed: 0.7,
                 straight: false,
-                bounce: true,
+                // bounce: true,
               },
               number: {
                 density: { enable: true, width: 1920, height: 1080 },
@@ -79,13 +79,13 @@ export const ParticleNetwork = () => {
               },
               opacity: {
                 value: 0.35,
-                random: { enable: true, minimumValue: 0.15 },
-                animation: { enable: true, speed: 0.6, sync: false, minimumValue: 0.1 },
+                // random: { enable: true, minimumValue: 0.15 },
+                animation: { enable: true, speed: 0.6, sync: false,  },
               },
               shape: { type: 'circle' },
               size: {
                 value: 2,
-                random: { enable: true, minimumValue: 1 },
+                // random: { enable: true, minimumValue: 1 },
                 animation: { enable: false },
               },
               shadow: { enable: false },

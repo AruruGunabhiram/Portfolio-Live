@@ -479,7 +479,7 @@ const DesktopNarrative = ({ isGeekMode }: { isGeekMode: boolean }) => {
       >
         {/* Section title row */}
         <div className="mb-10">
-          <h2 className={`text-3xl md:text-4xl font-bold ${accent}`}>
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold ${accent}`}>
             {isGeekMode ? '> ' : ''}Projects
           </h2>
           <p
@@ -512,6 +512,8 @@ const DesktopNarrative = ({ isGeekMode }: { isGeekMode: boolean }) => {
                 index={activeIndex}
                 isGeekMode={isGeekMode}
                 onCaseStudyToggle={handleCaseStudyToggle}
+                onGoToNext={activeIndex < n - 1 ? () => goToProject(activeIndex + 1) : undefined}
+                nextProjectTitle={activeIndex < n - 1 ? PROJECTS[activeIndex + 1].title : undefined}
               />
             </AnimatePresence>
           </div>
@@ -565,7 +567,7 @@ const MobileCards = ({ isGeekMode }: { isGeekMode: boolean }) => {
   return (
     <div>
       <motion.h2
-        className={`text-3xl md:text-4xl font-bold mb-10 ${accent}`}
+        className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-10 ${accent}`}
         initial="hidden"
         whileInView="visible"
         viewport={scrollViewport}
@@ -585,7 +587,7 @@ const MobileCards = ({ isGeekMode }: { isGeekMode: boolean }) => {
           <motion.article
             key={project.id}
             variants={fadeInUp}
-            className={`rounded-xl p-6 flex flex-col gap-4 ${surface}`}
+            className={`rounded-xl p-4 sm:p-6 flex flex-col gap-4 ${surface}`}
           >
             <div>
               <h3 className={`text-lg font-semibold leading-snug ${accent}`}>

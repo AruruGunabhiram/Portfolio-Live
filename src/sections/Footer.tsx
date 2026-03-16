@@ -25,10 +25,10 @@ export const Footer = () => {
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <div className={`text-sm ${isGeekMode ? 'text-cyber-cyan' : 'text-gray-400'}`}>
-            {isGeekMode ? '> ' : ''}© {currentYear} Your Name. All rights reserved.
+            {isGeekMode ? '> ' : ''}© {currentYear} Gunabhiram Aruru. All rights reserved.
           </div>
 
-          <nav className="flex flex-wrap gap-6 justify-center">
+          <nav className="flex flex-wrap gap-3 sm:gap-6 justify-center">
             {navLinks.map((link) => (
               <button
                 key={link.id}
@@ -45,7 +45,7 @@ export const Footer = () => {
           </nav>
 
           <div className={`text-sm ${isGeekMode ? 'text-cyber-cyan/60' : 'text-gray-500'}`}>
-            Built with <span className={isGeekMode ? 'text-cyber-pink' : ''}>React</span> + <span className={isGeekMode ? 'text-cyber-purple' : ''}>TypeScript</span>
+             <a href="https://github.com/gunabhiram-aruru" target="_blank" rel="noopener noreferrer" className={isGeekMode ? 'text-cyber-pink hover:underline' : 'hover:underline'}>gunabhiram-aruru</a> - <span className={isGeekMode ? 'text-cyber-purple' : ''}>🤖</span>
           </div>
         </div>
       </Container>

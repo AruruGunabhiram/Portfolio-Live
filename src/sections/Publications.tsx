@@ -8,7 +8,7 @@ export const Publications = () => {
   const { isGeekMode } = useTheme();
 
   const accent = isGeekMode ? 'text-[#7ec0d6]' : 'text-white';
-  const venueColor = isGeekMode ? 'text-[#4a8fa8]' : 'text-[#818cf8]';
+  // const venueColor = isGeekMode ? 'text-[#4a8fa8]' : 'text-[#818cf8]';
   const body = isGeekMode ? 'text-[#7eaabb]' : 'text-gray-300';
   const bullet = isGeekMode ? 'text-[#4a8fa8]' : 'text-gray-500';
   const surface = isGeekMode
@@ -19,7 +19,7 @@ export const Publications = () => {
     <section id="publications" className="py-20 relative">
       <Container>
         <motion.h2
-          className={`text-3xl md:text-4xl font-bold mb-10 ${accent}`}
+          className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-10 ${accent}`}
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
@@ -36,7 +36,7 @@ export const Publications = () => {
           variants={staggerContainer}
         >
           {PUBLICATIONS.map(pub => (
-            <motion.div key={pub.id} variants={fadeInUp} className={`rounded-xl p-6 ${surface}`}>
+            <motion.div key={pub.id} variants={fadeInUp} className={`rounded-xl p-4 sm:p-6 ${surface}`}>
               <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-4">
                 <p className={`font-semibold text-base leading-snug max-w-xl ${accent}`}>
                   {pub.title}
@@ -57,6 +57,18 @@ export const Publications = () => {
                   </li>
                 ))}
               </ul>
+              {pub.paperUrl && (
+                <a
+                  href={pub.paperUrl}
+                  target="_blank"
+                  rel="noreferrer noopener"
+                  className={`inline-flex items-center gap-1.5 text-xs font-medium mt-4 transition-colors ${
+                    isGeekMode ? 'text-[#5ba8c4] hover:text-[#7ec0d6]' : 'text-[#818cf8] hover:text-[#a5b4fc]'
+                  }`}
+                >
+                  View Paper →
+                </a>
+              )}
             </motion.div>
           ))}
         </motion.div>

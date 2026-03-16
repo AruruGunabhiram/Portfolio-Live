@@ -22,7 +22,7 @@ export const Experience = () => {
     <section id="experience" className="py-20 relative">
       <Container>
         <motion.h2
-          className={`text-3xl md:text-4xl font-bold mb-12 ${accent}`}
+          className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-10 sm:mb-12 ${accent}`}
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
@@ -49,18 +49,18 @@ export const Experience = () => {
                   <div className="w-2 h-2 rounded-full bg-[#080c1a]" />
                 </div>
 
-                <div className={`rounded-xl p-6 ${surface}`}>
+                <div className={`rounded-xl p-4 sm:p-6 ${surface}`}>
                   {/* Header row */}
                   <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-5">
                     <div>
-                      <h3 className={`text-xl font-semibold ${accent}`}>
+                      <h3 className={`text-lg sm:text-xl font-semibold ${accent}`}>
                         {job.role}{job.techLabel ? ` (${job.techLabel})` : ''}{' '}
                         <span className={`font-normal ${roleColor}`}>
                           — {job.companyShort ?? job.company}
                         </span>
                       </h3>
                     </div>
-                    <div className={`text-sm text-right shrink-0 ${meta}`}>
+                    <div className={`text-sm sm:text-right shrink-0 ${meta}`}>
                       <p>{job.period}</p>
                       <p>{job.location}</p>
                     </div>

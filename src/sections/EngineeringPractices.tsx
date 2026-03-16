@@ -19,7 +19,7 @@ export const EngineeringPractices = () => {
     <section id="practices" className="py-20 relative">
       <Container>
         <motion.h2
-          className={`text-3xl md:text-4xl font-bold mb-4 ${accent}`}
+          className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-4 ${accent}`}
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}

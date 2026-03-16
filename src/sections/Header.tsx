@@ -67,13 +67,13 @@ export const Header = () => {
               className={`text-xs px-2 py-1 transition-opacity ${isTransitioning ? 'opacity-40 cursor-not-allowed' : ''}`}
               aria-label={`Switch to ${theme === 'dark' ? 'geek' : 'dark'} mode`}
             >
-              {theme === 'dark' ? '🌙 Dark' : '💻 Geek'}
+              {theme === 'dark' ? '/dark-mode' : '/geek-mode'}
             </Button>
 
             {/* Mobile hamburger */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden p-1.5"
+              className="md:hidden p-2 min-h-[44px] min-w-[44px] flex items-center justify-center"
               aria-label="Toggle menu"
               aria-expanded={isMenuOpen}
             >

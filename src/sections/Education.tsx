@@ -20,7 +20,7 @@ export const Education = () => {
     <section id="education" className="py-20 relative">
       <Container>
         <motion.h2
-          className={`text-3xl md:text-4xl font-bold mb-10 ${accent}`}
+          className={`text-2xl sm:text-3xl md:text-4xl font-bold mb-10 ${accent}`}
           initial="hidden"
           whileInView="visible"
           viewport={scrollViewport}
@@ -40,13 +40,13 @@ export const Education = () => {
             <motion.div
               key={e.id}
               variants={fadeInUp}
-              className="px-6 py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+              className="px-4 sm:px-6 py-4 sm:py-6 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
             >
               <div>
                 <p className={`font-semibold text-base ${school}`}>{e.school}</p>
                 <p className={`text-sm mt-0.5 ${meta}`}>{e.degree}</p>
               </div>
-              <div className="text-right shrink-0">
+              <div className="sm:text-right shrink-0">
                 <p className={`text-sm font-semibold ${gpaColor}`}>GPA {e.gpa}</p>
                 <p className={`text-xs mt-0.5 ${meta}`}>{e.period}</p>
                 <p className={`text-xs ${meta}`}>{e.location}</p>
