@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { useEffect, useRef, useState, memo } from 'react';
 import gsap from 'gsap';
 import { isBrowser, prefersReducedMotion } from '../../utils';

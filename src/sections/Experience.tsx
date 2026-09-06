@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
-import { EXPERIENCE } from '../data/resume';
+import { EXPERIENCE } from '../data/experience';
 
 export const Experience = () => {
   return (

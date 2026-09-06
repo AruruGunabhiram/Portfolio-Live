@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
-import { CONTACT } from '../data/resume';
+import { CONTACT } from '../data/contact';
 
 const OpenToBanner = () => {
   return (

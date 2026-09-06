@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { fadeInUp, scrollViewport } from '../utils';
-import { CONTACT } from '../data/resume';
+import { PROFILE } from '../data/profile';
 
 export const About = () => {
   return (
@@ -18,7 +18,7 @@ export const About = () => {
             About
           </h2>
           <p className="text-base md:text-lg leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
-            {CONTACT.valueProposition} I work at the intersection of backend engineering and applied AI —
+            {PROFILE.valueProposition} I work at the intersection of backend engineering and applied AI —
             building systems that are reliable, well-structured, and designed to scale. Previously at
             InfiniAI Technologies; currently open to full-time and internship opportunities.
           </p>

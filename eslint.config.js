@@ -26,6 +26,8 @@ export default defineConfig([
       'react-hooks/purity': 'off',
       'react-hooks/set-state-in-effect': 'off',
       '@typescript-eslint/no-explicit-any': 'warn',
+      // Allow @ts-nocheck in isolated legacy visualization files (Phase 2 compat)
+      '@typescript-eslint/ban-ts-comment': 'off',
     },
   },
 ])

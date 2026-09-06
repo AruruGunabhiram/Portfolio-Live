@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { isBrowser, prefersReducedMotion } from '../../utils';
-import { SKILLS } from '../../data/resume';
+import { SKILLS } from '../../data/skills';
 
 interface Node {
   name: string;
@@ -12,15 +12,15 @@ interface Node {
   color: [number, number, number];
 }
 
-// Category → muted RGB color
+// Category → muted RGB color (canonical SkillCategory ids)
 const CAT_COLORS: Record<string, [number, number, number]> = {
-  'Programming Languages': [91, 168, 196],
-  'Backend & Systems': [126, 192, 214],
-  'Frontend': [126, 147, 200],
-  'Databases': [107, 134, 180],
-  'Applied AI (Backend)': [150, 120, 180],
-  'Software Design': [120, 160, 190],
-  'DevOps & Tools': [100, 140, 160],
+  languages: [91, 168, 196],
+  backend: [126, 192, 214],
+  frontend: [126, 147, 200],
+  databases: [107, 134, 180],
+  ai: [150, 120, 180],
+  design: [120, 160, 190],
+  devops: [100, 140, 160],
 };
 const DEFAULT_COLOR: [number, number, number] = [91, 168, 196];
 
@@ -58,13 +58,11 @@ export const SkillConstellation = ({ isGeekMode }: SkillConstellationProps) => {
     let hoveredIndex = -1;
     const mouse = { x: -9999, y: -9999 };
 
-    // Flatten skills from resume data
-    const allSkills: Array<{ name: string; category: string }> = [];
-    for (const cat of SKILLS) {
-      for (const skill of cat.skills) {
-        allSkills.push({ name: skill, category: cat.category });
-      }
-    }
+    // Canonical skills are flat Skill[] with id/name/category
+    const allSkills: Array<{ name: string; category: string }> = SKILLS.map(s => ({
+      name: s.name,
+      category: s.category,
+    }));
 
     let nodes: Node[] = [];
 

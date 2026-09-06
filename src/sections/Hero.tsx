@@ -1,7 +1,8 @@
 import { motion } from 'framer-motion';
 import { Container, Button } from '../components';
 import { heroAnimation } from '../utils';
-import { CONTACT, TECH_CHIPS } from '../data/resume';
+import { PROFILE, TECH_CHIPS } from '../data/profile';
+import { CONTACT } from '../data/contact';
 
 export const Hero = () => {
   const scrollTo = (id: string) => {
@@ -22,7 +23,7 @@ export const Hero = () => {
             style={{ color: 'var(--text)' }}
             variants={heroAnimation.heading}
           >
-            {CONTACT.name}
+            {PROFILE.name}
           </motion.h1>
 
           <motion.p
@@ -30,7 +31,7 @@ export const Hero = () => {
             style={{ color: 'var(--text-secondary)' }}
             variants={heroAnimation.subheading}
           >
-            {CONTACT.headline}
+            {PROFILE.headline}
           </motion.p>
 
           <motion.p
@@ -38,7 +39,7 @@ export const Hero = () => {
             style={{ color: 'var(--text-muted)' }}
             variants={heroAnimation.description}
           >
-            {CONTACT.valueProposition}
+            {PROFILE.valueProposition}
           </motion.p>
 
           <motion.div className="flex flex-wrap gap-1.5 pt-1" variants={heroAnimation.description}>

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
-import { EDUCATION } from '../data/resume';
+import { EDUCATION } from '../data/education';
 
 export const Education = () => {
   return (
@@ -34,7 +34,7 @@ export const Education = () => {
               style={{ borderColor: 'var(--border)' }}
             >
               <div>
-                <p className="font-semibold text-base" style={{ color: 'var(--text)' }}>{e.school}</p>
+                <p className="font-semibold text-base" style={{ color: 'var(--text)' }}>{e.institution}</p>
                 <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>{e.degree}</p>
               </div>
               <div className="sm:text-right shrink-0">

@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
-import { PUBLICATIONS } from '../data/resume';
+import { PUBLICATIONS } from '../data/publications';
 
 export const Publications = () => {
   return (

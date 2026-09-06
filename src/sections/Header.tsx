@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Container, Button } from '../components';
 import { useTheme } from '../hooks';
-import { CONTACT } from '../data/resume';
+import { PROFILE } from '../data/profile';
 
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -40,7 +40,7 @@ export const Header = () => {
             className="flex items-center gap-2 text-sm font-semibold tracking-tight"
             style={{ color: 'var(--text)' }}
           >
-            {CONTACT.nameShort}
+            {PROFILE.shortName}
           </button>
 
           <nav className="hidden md:flex items-center gap-6 text-sm">

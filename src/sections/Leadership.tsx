@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
-import { LEADERSHIP } from '../data/resume';
+import { LEADERSHIP } from '../data/leadership';
 
 export const Leadership = () => {
   return (
@@ -29,7 +29,7 @@ export const Leadership = () => {
               <div className="mt-1.5 w-2 h-2 rounded-full shrink-0" style={{ background: 'var(--accent)' }} />
               <div>
                 <p className="font-semibold text-base" style={{ color: 'var(--text)' }}>
-                  {entry.role} <span className="font-normal text-sm" style={{ color: 'var(--accent)' }}>— {entry.org}</span>
+                  {entry.role} <span className="font-normal text-sm" style={{ color: 'var(--accent)' }}>— {entry.organization}</span>
                 </p>
                 <p className="text-sm mt-1 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{entry.description}</p>
               </div>

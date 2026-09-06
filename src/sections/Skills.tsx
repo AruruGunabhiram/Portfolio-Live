@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Container } from '../components';
 import { Skill3DSphere } from '../components/skills/Skill3DSphere';
 import { SkillConstellation } from '../components/skills/SkillConstellation';
 import { fadeInUp, scrollViewport } from '../utils';
-import { SKILLS } from '../data/resume';
-import { SKILLS as SKILLS_DETAIL } from '../data/skills';
+import { SKILLS, SKILL_CATEGORIES } from '../data/skills';
 
 type SkillMode = 'grid' | 'constellation' | 'sphere';
 
@@ -15,10 +14,18 @@ const MODES: { id: SkillMode; label: string }[] = [
   { id: 'sphere', label: '3D Sphere' },
 ];
 
-const sphereSkills = SKILLS_DETAIL.map(s => ({ name: s.name, level: s.level ?? 50 }));
-
 export const Skills = () => {
   const [mode, setMode] = useState<SkillMode>('grid');
+
+  const grouped = useMemo(() => {
+    const map = new Map<string, typeof SKILLS>();
+    for (const cat of SKILL_CATEGORIES) {
+      map.set(cat.id, SKILLS.filter(s => s.category === cat.id));
+    }
+    return map;
+  }, []);
+
+  const sphereSkills = useMemo(() => SKILLS.map(s => ({ name: s.name, level: 50 })), []);
 
   return (
     <section id="skills" className="py-20 relative">
@@ -67,28 +74,31 @@ export const Skills = () => {
               transition={{ duration: 0.24, ease: 'easeOut' }}
               className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
             >
-              {SKILLS.map(cat => (
-                <div
-                  key={cat.id}
-                  className="rounded-md p-5"
-                  style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-                >
-                  <h3 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--accent)' }}>
-                    {cat.category}
-                  </h3>
-                  <div className="flex flex-wrap gap-1.5">
-                    {cat.skills.map(skill => (
-                      <span
-                        key={skill}
-                        className="text-xs px-2.5 py-1 rounded-md border"
-                        style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
-                      >
-                        {skill}
-                      </span>
-                    ))}
+              {SKILL_CATEGORIES.map(cat => {
+                const skills = grouped.get(cat.id) ?? [];
+                return (
+                  <div
+                    key={cat.id}
+                    className="rounded-md p-5"
+                    style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+                  >
+                    <h3 className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color: 'var(--accent)' }}>
+                      {cat.label}
+                    </h3>
+                    <div className="flex flex-wrap gap-1.5">
+                      {skills.map(skill => (
+                        <span
+                          key={skill.id}
+                          className="text-xs px-2.5 py-1 rounded-md border"
+                          style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
+                        >
+                          {skill.name}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </motion.div>
           )}
 

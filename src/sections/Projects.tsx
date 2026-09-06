@@ -2,8 +2,8 @@ import { useRef, useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Container } from '../components';
 import { fadeInUp, staggerContainer, scrollViewport, prefersReducedMotion } from '../utils';
-import { PROJECTS } from '../data/resume';
-import type { ProjectEntry, CaseStudy } from '../data/resume';
+import { PROJECTS } from '../data/projects';
+import type { Project, CaseStudy } from '../types/portfolio';
 
 // ─── SocialLens case study collapsible ────────────────────────────────────────
 
@@ -147,7 +147,7 @@ const ProgressIndicator = ({ activeIndex, total }: ProgressIndicatorProps) => {
 // ─── Single project panel ─────────────────────────────
 
 interface ProjectPanelProps {
-  project: ProjectEntry;
+  project: Project;
   index: number;
   onCaseStudyToggle?: (open: boolean) => void;
   onGoToNext?: () => void;
@@ -191,7 +191,7 @@ const ProjectPanel = ({ project, index, onCaseStudyToggle, onGoToNext, nextProje
       </motion.p>
 
       <motion.div className="flex flex-wrap gap-1.5 mb-5" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.14, duration: 0.38 }}>
-        {project.techStack.map(tech => (
+        {project.technologies.map(tech => (
           <span
             key={tech}
             className="text-xs px-2 py-0.5 rounded-md border"
@@ -203,7 +203,7 @@ const ProjectPanel = ({ project, index, onCaseStudyToggle, onGoToNext, nextProje
       </motion.div>
 
       <ul className="space-y-2.5 mb-6">
-        {project.bullets.map((b, i) => (
+        {project.highlights.map((b, i) => (
           <motion.li
             key={i}
             className="flex gap-2.5 text-sm leading-relaxed"
@@ -217,16 +217,16 @@ const ProjectPanel = ({ project, index, onCaseStudyToggle, onGoToNext, nextProje
         ))}
       </ul>
 
-      {project.githubUrl && (
+      {project.links.github && (
         <motion.a
-          href={project.githubUrl}
+          href={project.links.github}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1.5 text-xs font-medium transition-colors"
           style={{ color: 'var(--accent)' }}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.35 + project.bullets.length * 0.07, duration: 0.3 }}
+          transition={{ delay: 0.35 + project.highlights.length * 0.07, duration: 0.3 }}
         >
           View on GitHub →
         </motion.a>
@@ -416,22 +416,22 @@ const MobileCards = () => {
               <p className="text-xs font-medium mt-1 uppercase tracking-wider" style={{ color: 'var(--accent)' }}>{project.subtitle}</p>
             </div>
             <div className="flex flex-wrap gap-1.5">
-              {project.techStack.map(tech => (
+              {project.technologies.map(tech => (
                 <span key={tech} className="text-xs px-2 py-0.5 rounded-md border" style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}>
                   {tech}
                 </span>
               ))}
             </div>
             <ul className="space-y-2 flex-1">
-              {project.bullets.map((b, i) => (
+              {project.highlights.map((b, i) => (
                 <li key={i} className="flex gap-2 text-sm leading-relaxed">
                   <span className="mt-[3px] shrink-0 text-xs" style={{ color: 'var(--accent)' }}>▸</span>
                   <span style={{ color: 'var(--text-secondary)' }}>{b}</span>
                 </li>
               ))}
             </ul>
-            {project.githubUrl && (
-              <a href={project.githubUrl} target="_blank" rel="noopener noreferrer" className="self-start text-xs font-medium" style={{ color: 'var(--accent)' }}>
+            {project.links.github && (
+              <a href={project.links.github} target="_blank" rel="noopener noreferrer" className="self-start text-xs font-medium" style={{ color: 'var(--accent)' }}>
                 View on GitHub →
               </a>
             )}

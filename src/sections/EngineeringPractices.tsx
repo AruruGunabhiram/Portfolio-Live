@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
-import { ENGINEERING_PRACTICES } from '../data/resume';
+import { ENGINEERING_PRACTICES } from '../data/practices';
 
 export const EngineeringPractices = () => {
   return (
