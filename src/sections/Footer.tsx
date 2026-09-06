@@ -1,15 +1,11 @@
 import { Container } from '../components';
-import { useTheme } from '../hooks';
 
 export const Footer = () => {
-  const { isGeekMode } = useTheme();
   const currentYear = new Date().getFullYear();
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
+    if (element) element.scrollIntoView({ behavior: 'smooth' });
   };
 
   const navLinks = [
@@ -21,31 +17,32 @@ export const Footer = () => {
   ];
 
   return (
-    <footer className={`py-8 ${isGeekMode ? 'border-t border-cyber-cyan/30' : 'border-t border-gray-800'}`}>
+    <footer className="py-8 border-t" style={{ borderColor: 'var(--border)', background: 'var(--bg-secondary)' }}>
       <Container>
         <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-          <div className={`text-sm ${isGeekMode ? 'text-cyber-cyan' : 'text-gray-400'}`}>
-            {isGeekMode ? '> ' : ''}© {currentYear} Gunabhiram Aruru. All rights reserved.
+          <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            © {currentYear} Gunabhiram Aruru. All rights reserved.
           </div>
 
           <nav className="flex flex-wrap gap-3 sm:gap-6 justify-center">
-            {navLinks.map((link) => (
+            {navLinks.map(link => (
               <button
                 key={link.id}
                 onClick={() => scrollToSection(link.id)}
-                className={`text-sm transition-cyber ${
-                  isGeekMode
-                    ? 'text-cyber-cyan hover:text-cyber-pink hover:text-glow-neon'
-                    : 'text-gray-400 hover:text-dark-accent'
-                }`}
+                className="text-sm transition-colors"
+                style={{ color: 'var(--text-muted)' }}
+                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--accent)'; }}
+                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-muted)'; }}
               >
                 {link.label}
               </button>
             ))}
           </nav>
 
-          <div className={`text-sm ${isGeekMode ? 'text-cyber-cyan/60' : 'text-gray-500'}`}>
-             <a href="https://github.com/gunabhiram-aruru" target="_blank" rel="noopener noreferrer" className={isGeekMode ? 'text-cyber-pink hover:underline' : 'hover:underline'}>gunabhiram-aruru</a> - <span className={isGeekMode ? 'text-cyber-purple' : ''}>🤖</span>
+          <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
+            <a href="https://github.com/AruruGunabhiram" target="_blank" rel="noopener noreferrer" className="link-accent">
+              AruruGunabhiram
+            </a>
           </div>
         </div>
       </Container>

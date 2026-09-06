@@ -9,3 +9,9 @@ export const useTheme = (): ThemeContextType => {
   }
   return context;
 };
+
+// Convenience: returns effective light/dark even if legacy code checks isGeekMode
+export const useIsDark = (): boolean => {
+  const { isDark } = useTheme();
+  return isDark;
+};

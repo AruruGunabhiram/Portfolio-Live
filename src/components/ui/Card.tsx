@@ -1,7 +1,6 @@
 import { memo } from 'react';
 import type { ReactNode } from 'react';
 import { motion } from 'framer-motion';
-import { useTheme } from '../../hooks';
 
 interface CardProps {
   children: ReactNode;
@@ -9,16 +8,11 @@ interface CardProps {
 }
 
 export const Card = memo(({ children, className = '' }: CardProps) => {
-  const { isGeekMode } = useTheme();
-
-  const cardStyles = isGeekMode
-    ? 'border border-geek-accent bg-geek-bg hover:border-geek-text'
-    : 'bg-dark-surface border border-gray-800 hover:border-dark-accent';
-
   return (
     <motion.div
-      className={`rounded-lg p-6 transition-all duration-200 ${cardStyles} ${className}`}
-      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+      className={`rounded-md p-6 transition-colors ${className}`}
+      style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
+      whileHover={{ y: -2, transition: { duration: 0.18 } }}
     >
       {children}
     </motion.div>

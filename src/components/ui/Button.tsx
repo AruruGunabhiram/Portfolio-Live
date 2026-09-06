@@ -2,46 +2,58 @@ import { memo } from 'react';
 import type { ButtonHTMLAttributes } from 'react';
 import { motion } from 'framer-motion';
 import type { MotionProps } from 'framer-motion';
-import { useTheme } from '../../hooks';
-import { hoverScale, tapScale } from '../../utils';
 
 type MotionButtonProps = Omit<MotionProps, 'children'>;
-type HTMLButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'onAnimationStart' | 'onDragStart' | 'onDragEnd' | 'onDrag'>;
+type HTMLButtonProps = Omit<
+  ButtonHTMLAttributes<HTMLButtonElement>,
+  'onAnimationStart' | 'onDragStart' | 'onDragEnd' | 'onDrag'
+>;
 
 interface ButtonProps extends HTMLButtonProps {
   variant?: 'primary' | 'secondary' | 'ghost';
 }
 
-export const Button = memo(({
-  variant = 'primary',
-  className = '',
-  children,
-  ...props
-}: ButtonProps) => {
-  const { isGeekMode } = useTheme();
+export const Button = memo(({ variant = 'primary', className = '', children, ...props }: ButtonProps) => {
+  const baseStyles =
+    'inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium transition-colors duration-[var(--motion-normal)] focus-visible:outline-none';
 
-  const baseStyles = 'px-6 py-3 rounded-lg font-medium transition-all duration-200';
+  const variantStyles: Record<string, string> = {
+    primary:
+      'text-white border border-transparent shadow-sm hover:opacity-[0.96] active:opacity-[0.92] disabled:opacity-50 disabled:cursor-not-allowed',
+    secondary:
+      'bg-transparent border disabled:opacity-50 disabled:cursor-not-allowed',
+    ghost:
+      'bg-transparent border border-transparent disabled:opacity-50 disabled:cursor-not-allowed',
+  };
 
-  const variantStyles = {
-    primary: isGeekMode
-      ? 'bg-cyber-cyan text-cyber-bg-dark border border-cyber-cyan glow-cyan hover:glow-pink hover:bg-cyber-pink hover:border-cyber-pink'
-      : 'bg-dark-accent text-white hover:bg-blue-500',
-    secondary: isGeekMode
-      ? 'border-2 border-cyber-cyan text-cyber-cyan hover:bg-cyber-cyan/10 hover:border-cyber-pink hover:text-cyber-pink glow-cyan hover:glow-pink'
-      : 'border border-dark-accent text-dark-accent hover:bg-dark-accent hover:text-white',
-    ghost: isGeekMode
-      ? 'text-cyber-cyan hover:bg-cyber-cyan/10 hover:text-cyber-pink'
-      : 'text-gray-300 hover:bg-dark-surface',
+  // Semantic inline colors to guarantee contrast in both themes
+  const styleForVariant = (): React.CSSProperties => {
+    if (variant === 'primary') {
+      return { background: 'var(--accent)', color: '#ffffff', borderColor: 'var(--accent)' };
+    }
+    if (variant === 'secondary') {
+      return {
+        background: 'transparent',
+        color: 'var(--text)',
+        borderColor: 'var(--border-strong)',
+      };
+    }
+    return {
+      background: 'transparent',
+      color: 'var(--text-secondary)',
+      borderColor: 'transparent',
+    };
   };
 
   const motionProps: MotionButtonProps = {
-    whileHover: hoverScale,
-    whileTap: tapScale,
+    whileHover: { scale: 1.01, transition: { duration: 0.12 } },
+    whileTap: { scale: 0.99, transition: { duration: 0.08 } },
   };
 
   return (
     <motion.button
       className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+      style={styleForVariant()}
       {...motionProps}
       {...props}
     >

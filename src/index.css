@@ -1,156 +1,63 @@
 @import "tailwindcss";
+@import "./styles/tokens.css";
+@import "./styles/globals.css";
 
-/* Muted professional palette — calm teal-blues, no neon */
-:root {
-  --color-cyber-cyan: #5ba8c4;
-  --color-cyber-cyan-light: #7ec0d6;
-  --color-cyber-pink: #6a7a9a;
-  --color-cyber-pink-light: #7a8aaa;
-  --color-cyber-purple: #5a6898;
-  --color-cyber-purple-dark: #4a5878;
-
-  --color-cyber-bg-dark: #080c1a;
-  --color-cyber-bg-darker: #05080f;
-
-  --color-cyber-text-primary: #8bbfd4;
-  --color-cyber-text-secondary: #c4d4e0;
-
-  /* Soft glow — barely perceptible */
-  --glow-cyan: 0 0 8px rgba(91, 168, 196, 0.25);
-  --glow-pink: 0 0 8px rgba(106, 122, 154, 0.2);
-  --glow-purple: 0 0 8px rgba(90, 104, 152, 0.2);
-}
-
+/* ─── Compatibility: keep a couple legacy token aliases so
+      non-migrated sections don't crash; will be removed Phase 2+ ─── */
 @theme {
-  --color-cyber-cyan: #5ba8c4;
-  --color-cyber-cyan-light: #7ec0d6;
-  --color-cyber-pink: #6a7a9a;
-  --color-cyber-pink-light: #7a8aaa;
-  --color-cyber-purple: #5a6898;
-  --color-cyber-purple-dark: #4a5878;
-
-  --color-cyber-bg-dark: #080c1a;
-  --color-cyber-bg-darker: #05080f;
-  --color-cyber-surface: #0f1629;
-
-  --color-cyber-text: #8bbfd4;
-  --color-cyber-text-light: #c4d4e0;
-  --color-cyber-text-dim: #5a7888;
-
-  --color-dark-bg: #0a0a0a;
-  --color-dark-surface: #141414;
-  --color-dark-accent: #646cff;
-
-  --color-geek-bg: #080c1a;
-  --color-geek-text: #8bbfd4;
-  --color-geek-accent: #5ba8c4;
-
-  --color-cyber-border: rgba(91, 168, 196, 0.2);
+  /* Legacy cyber tokens → map to semantic via CSS vars */
+  --color-cyber-cyan: var(--accent);
+  --color-cyber-cyan-light: var(--accent-hover);
+  --color-cyber-pink: var(--text-muted);
+  --color-cyber-purple: var(--text-muted);
+  --color-cyber-bg-dark: var(--bg);
+  --color-cyber-bg-darker: var(--bg-secondary);
+  --color-cyber-surface: var(--surface);
+  --color-cyber-text: var(--text-secondary);
+  --color-cyber-text-light: var(--text);
+  --color-cyber-text-dim: var(--text-muted);
+  --color-dark-bg: var(--bg);
+  --color-dark-surface: var(--surface);
+  --color-dark-accent: var(--accent);
+  --color-geek-bg: var(--bg);
+  --color-geek-text: var(--text);
+  --color-geek-accent: var(--accent);
+  --color-cyber-border: var(--border);
 }
 
-@layer base {
-  body {
-    @apply bg-cyber-bg-dark text-cyber-text-light;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-
-  body.dark {
-    @apply bg-dark-bg text-gray-100;
-  }
-
-  body.geek {
-    @apply bg-cyber-bg-dark text-cyber-text;
-    font-family: 'Courier New', Courier, monospace;
-  }
-
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
-  }
-}
-
-/* Soft glow utilities — much less intense than before */
+/* ─── Utilities kept for gradual migration (not for new code) ──── */
 @layer utilities {
-  .glow-cyan {
-    box-shadow: 0 0 8px rgba(91, 168, 196, 0.3);
-  }
-
-  .glow-pink {
-    box-shadow: 0 0 8px rgba(106, 122, 154, 0.25);
-  }
-
-  .glow-purple {
-    box-shadow: 0 0 8px rgba(90, 104, 152, 0.25);
-  }
-
-  .text-glow-cyan {
-    text-shadow: 0 0 8px rgba(91, 168, 196, 0.4);
-  }
-
-  .text-glow-pink {
-    text-shadow: 0 0 8px rgba(106, 122, 154, 0.35);
-  }
-
-  .text-glow-purple {
-    text-shadow: 0 0 8px rgba(90, 104, 152, 0.35);
-  }
-
+  .glow-cyan { box-shadow: none; }
+  .glow-pink { box-shadow: none; }
+  .glow-purple { box-shadow: none; }
+  .text-glow-cyan { text-shadow: none; }
+  .text-glow-pink { text-shadow: none; }
+  .text-glow-purple { text-shadow: none; }
   .gradient-cyber {
-    background: linear-gradient(135deg, #5ba8c4 0%, #4a5878 50%, #6a7a9a 100%);
+    background: var(--accent);
   }
-
   .gradient-cyber-horizontal {
-    background: linear-gradient(90deg, #5ba8c4 0%, #4a5878 50%, #6a7a9a 100%);
+    background: var(--accent);
   }
-
-  .border-cyber {
-    border-color: rgba(91, 168, 196, 0.2);
-  }
-
+  .border-cyber { border-color: var(--border); }
   .border-cyber-glow {
-    border-color: #5ba8c4;
-    box-shadow: 0 0 6px rgba(91, 168, 196, 0.3);
+    border-color: var(--accent);
+    box-shadow: none;
   }
-
-  /* Minimal glow — just a hint */
-  .text-glow-neon {
-    text-shadow: 0 0 6px rgba(91, 168, 196, 0.3);
-  }
-
-  .text-glow-neon-strong {
-    text-shadow: 0 0 8px rgba(91, 168, 196, 0.5);
-  }
-
-  .box-glow-neon {
-    box-shadow: 0 0 12px rgba(91, 168, 196, 0.2);
-  }
-
-  .box-glow-neon-pink {
-    box-shadow: 0 0 12px rgba(106, 122, 154, 0.25);
-  }
-
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: 0 0 6px rgba(91, 168, 196, 0.2); }
-    50% { box-shadow: 0 0 12px rgba(91, 168, 196, 0.35); }
-  }
-
-  .animate-pulse-glow {
-    animation: pulse-glow 3s ease-in-out infinite;
-  }
+  .text-glow-neon { text-shadow: none; }
+  .text-glow-neon-strong { text-shadow: none; }
+  .box-glow-neon { box-shadow: var(--shadow-sm); }
+  .box-glow-neon-pink { box-shadow: var(--shadow-sm); }
 
   .transition-cyber {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--motion-normal) var(--ease-standard);
   }
-
   .transition-cyber-slow {
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all var(--motion-slow) var(--ease-standard);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .animate-pulse-glow { animation: none !important; }
-  .transition-cyber, .transition-cyber-slow { transition-duration: 0.01ms !important; }
+  .transition-cyber,
+  .transition-cyber-slow { transition-duration: 0.01ms !important; }
 }

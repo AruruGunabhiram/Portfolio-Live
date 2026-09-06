@@ -141,6 +141,7 @@ export const SpaceDustBackground = () => {
     const draw = () => {
       const now = performance.now();
       ctx.clearRect(0, 0, w, h);
+      const isLight = document.documentElement.getAttribute('data-theme') === 'light';
 
       const ox = (mouse.x - 0.5) * PARALLAX;
       const oy = (mouse.y - 0.5) * PARALLAX;
@@ -248,12 +249,14 @@ export const SpaceDustBackground = () => {
               const phase   = (i * 17 + j * 31) * 0.04;
               const twinkle = 0.72 + 0.28 * Math.sin(now * 0.0011 + phase);
               const peak    = op * twinkle;
+              const baseRgb = isLight ? [100, 130, 145] as const : [210, 228, 255] as const;
+              const [br, bg, bb] = baseRgb;
               const grad    = ctx.createLinearGradient(ax, ay, bx, by);
-              grad.addColorStop(0,    `rgba(210,228,255,0)`);
-              grad.addColorStop(0.3,  `rgba(210,228,255,${(peak * 0.55).toFixed(3)})`);
-              grad.addColorStop(0.5,  `rgba(210,228,255,${peak.toFixed(3)})`);
-              grad.addColorStop(0.7,  `rgba(210,228,255,${(peak * 0.55).toFixed(3)})`);
-              grad.addColorStop(1,    `rgba(210,228,255,0)`);
+              grad.addColorStop(0,    `rgba(${br},${bg},${bb},0)`);
+              grad.addColorStop(0.3,  `rgba(${br},${bg},${bb},${(peak * 0.55).toFixed(3)})`);
+              grad.addColorStop(0.5,  `rgba(${br},${bg},${bb},${peak.toFixed(3)})`);
+              grad.addColorStop(0.7,  `rgba(${br},${bg},${bb},${(peak * 0.55).toFixed(3)})`);
+              grad.addColorStop(1,    `rgba(${br},${bg},${bb},0)`);
               ctx.strokeStyle = grad;
               ctx.lineWidth   = LINE_WIDTH;
               ctx.beginPath();
@@ -324,9 +327,10 @@ export const SpaceDustBackground = () => {
 
         ctx.beginPath();
         ctx.arc(px, py, effectiveR, 0, Math.PI * 2);
+        const mutedOp = isLight ? effectiveOp * 0.45 : effectiveOp;
         ctx.fillStyle = p.isTeal
-          ? `rgba(91,168,196,${effectiveOp.toFixed(3)})`
-          : `rgba(216,230,238,${effectiveOp.toFixed(3)})`;
+          ? `rgba(63,125,144,${mutedOp.toFixed(3)})`
+          : isLight ? `rgba(160,170,175,${mutedOp.toFixed(3)})` : `rgba(216,230,238,${effectiveOp.toFixed(3)})`;
         ctx.fill();
       }
 

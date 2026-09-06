@@ -1,0 +1,85 @@
+/* ──────────────────────────────────────────────────────────────
+   Semantic Design Tokens — light / dark
+   Two themes as two versions of the same product.
+   No implementation names (cyber/geek) exposed.
+   ────────────────────────────────────────────────────────────── */
+
+/* ─── Light — warm neutral off-white ───────────────────────── */
+:root,
+[data-theme='light'] {
+  --bg: #f6f6f3;
+  --bg-secondary: #efefeb;
+  --surface: #ffffff;
+  --surface-raised: #ffffff;
+  --surface-subtle: #f0f0ec;
+  --surface-interactive: #ffffff;
+
+  --text: #15191b;
+  --text-secondary: #4f585d;
+  --text-muted: #7a8387;
+
+  --border: #dde0df;
+  --border-strong: #c9cecc;
+
+  --accent: #3f7d90;
+  --accent-hover: #32667a;
+  --accent-muted: #e7eff2;
+  --accent-subtle: #edf3f5;
+
+  --focus: #3f7d90;
+
+  --selection-bg: rgba(63, 125, 144, 0.22);
+  --selection-text: #15191b;
+
+  --shadow-sm: 0 1px 2px rgba(16, 21, 24, 0.06), 0 1px 3px rgba(16, 21, 24, 0.04);
+  --shadow-md: 0 4px 12px rgba(16, 21, 24, 0.07), 0 1px 4px rgba(16, 21, 24, 0.05);
+
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --content-width: 72rem; /* 1152px — max-w-6xl */
+  --section-spacing: 5rem; /* 80px */
+  --section-spacing-sm: 3.5rem;
+}
+
+/* ─── Dark — deep charcoal/blue-charcoal, not pure black ───── */
+[data-theme='dark'] {
+  --bg: #0e1418;
+  --bg-secondary: #0a0f13;
+  --surface: #182028;
+  --surface-raised: #1c262f;
+  --surface-subtle: #141c23;
+  --surface-interactive: #1e2b37;
+
+  --text: #e6ecef;
+  --text-secondary: #9aa8b0;
+  --text-muted: #6d7a81;
+
+  --border: #23313b;
+  --border-strong: #2e404e;
+
+  --accent: #5ba8c4;
+  --accent-hover: #7ec0d6;
+  --accent-muted: rgba(91, 168, 196, 0.14);
+  --accent-subtle: rgba(91, 168, 196, 0.08);
+
+  --focus: #5ba8c4;
+
+  --selection-bg: rgba(91, 168, 196, 0.28);
+  --selection-text: #e6ecef;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+/* ─── Motion tokens ────────────────────────────────────────── */
+:root {
+  --motion-fast: 150ms;
+  --motion-normal: 220ms;
+  --motion-slow: 360ms;
+
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-enter: cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}

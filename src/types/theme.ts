@@ -1,8 +1,10 @@
-export type Theme = 'dark' | 'geek';
+export type Theme = 'light' | 'dark';
 
 export interface ThemeContextType {
   theme: Theme;
-  toggleTheme: (rect?: DOMRect) => void;
+  toggleTheme: () => void;
+  isDark: boolean;
+  /** @deprecated — use isDark or theme === 'dark' */
   isGeekMode: boolean;
   isTransitioning: boolean;
   transitionTarget: Theme | null;
