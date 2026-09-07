@@ -1,6 +1,5 @@
 import {
   Hero,
-  About,
   Experience,
   Projects,
   EngineeringPractices,
@@ -15,7 +14,6 @@ export const Home = () => {
   return (
     <>
       <Hero />
-      <About />
       <Experience />
       <Projects />
       <EngineeringPractices />

@@ -1,78 +1,126 @@
 import { motion } from 'framer-motion';
 import { Container } from '../components';
-import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
 import { EXPERIENCE } from '../data/experience';
+import { prefersReducedMotion } from '../utils';
 
 export const Experience = () => {
+  const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
+
+  if (!EXPERIENCE.length) return null;
+
+  const container = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduced ? 0 : 0.08,
+        delayChildren: reduced ? 0 : 0.04,
+      },
+    },
+  };
+
+  const item = {
+    hidden: reduced ? { opacity: 1 } : { opacity: 0, y: 12 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: reduced ? 0 : 0.38, ease: 'easeOut' as const },
+    },
+  };
+
   return (
-    <section id="experience" className="py-20 relative">
+    <section id="experience" className="py-16 sm:py-20 relative">
       <Container>
-        <motion.h2
-          className="text-2xl sm:text-3xl md:text-4xl font-bold mb-10 sm:mb-12 tracking-tight"
-          style={{ color: 'var(--text)' }}
-          initial="hidden"
-          whileInView="visible"
-          viewport={scrollViewport}
-          variants={fadeInUp}
-        >
-          Experience
-        </motion.h2>
-
         <motion.div
-          className="relative"
           initial="hidden"
           whileInView="visible"
-          viewport={scrollViewport}
-          variants={staggerContainer}
+          viewport={{ once: true, amount: 0.2, margin: '0px 0px -80px 0px' }}
+          variants={container}
         >
-          <div className="absolute left-3 top-2 bottom-2 w-px hidden sm:block" style={{ background: 'var(--border)' }} />
+          <motion.h2
+            variants={item}
+            className="text-2xl sm:text-3xl font-bold tracking-tight"
+            style={{ color: 'var(--text)', letterSpacing: '-0.02em' }}
+          >
+            Experience
+          </motion.h2>
 
-          <div className="space-y-8">
-            {EXPERIENCE.map(job => (
-              <motion.div key={job.id} variants={fadeInUp} className="sm:pl-12 relative">
-                <div
-                  className="absolute left-0 top-1.5 w-6 h-6 rounded-full hidden sm:flex items-center justify-center"
-                  style={{ background: 'var(--accent)' }}
-                >
-                  <div className="w-2 h-2 rounded-full" style={{ background: 'var(--bg)' }} />
-                </div>
+          {/* subtle divider under heading — not a graphic */}
+          <motion.div
+            variants={item}
+            className="mt-4 h-px max-w-[640px]"
+            style={{ background: 'var(--border)' }}
+            aria-hidden="true"
+          />
 
-                <div
-                  className="rounded-md p-4 sm:p-6"
-                  style={{
-                    background: 'var(--surface)',
-                    border: '1px solid var(--border)',
-                  }}
+          <div className="mt-8 sm:mt-10 space-y-0">
+            {EXPERIENCE.map(job => {
+              const year = job.period.match(/\d{4}/)?.[0] ?? '';
+
+              return (
+                <motion.div
+                  key={job.id}
+                  variants={item}
+                  className="grid lg:grid-cols-[200px_1fr] gap-5 lg:gap-10 items-start"
                 >
-                  <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-5">
-                    <div>
-                      <h3 className="text-lg sm:text-xl font-semibold" style={{ color: 'var(--text)' }}>
-                        {job.role}
-                        {job.techLabel ? ` (${job.techLabel})` : ''}{' '}
-                        <span className="font-normal" style={{ color: 'var(--accent)' }}>
-                          — {job.companyShort ?? job.company}
-                        </span>
-                      </h3>
-                    </div>
-                    <div className="text-sm sm:text-right shrink-0" style={{ color: 'var(--text-muted)' }}>
-                      <p>{job.period}</p>
-                      <p>{job.location}</p>
-                    </div>
+                  {/* Left — date metadata (flattened on mobile) */}
+                  <div className="lg:pt-1 min-w-0">
+                    {year && (
+                      <p
+                        className="text-[11px] font-semibold tracking-[0.12em] uppercase"
+                        style={{ color: 'var(--text-muted)' }}
+                      >
+                        {year}
+                      </p>
+                    )}
+                    <p className="text-sm font-medium mt-1 leading-snug" style={{ color: 'var(--text-secondary)' }}>
+                      {job.period}
+                    </p>
+                    <p className="text-sm leading-snug" style={{ color: 'var(--text-muted)' }}>
+                      {job.location}
+                    </p>
                   </div>
 
-                  <ul className="space-y-2.5">
-                    {job.bullets.map((b, i) => (
-                      <li key={i} className="flex gap-2.5 text-sm leading-relaxed">
-                        <span className="mt-[3px] shrink-0 text-xs" style={{ color: 'var(--accent)' }}>
-                          ▸
-                        </span>
-                        <span style={{ color: 'var(--text-secondary)' }}>{b}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </motion.div>
-            ))}
+                  {/* Right — experience content (editorial, no giant card) */}
+                  <article className="min-w-0 pb-8 lg:pb-0 border-b lg:border-b-0" style={{ borderColor: 'var(--border)' }}>
+                    <h3
+                      className="text-[17px] sm:text-lg font-semibold leading-tight tracking-tight"
+                      style={{ color: 'var(--text)' }}
+                    >
+                      {job.companyShort ?? job.company}
+                    </h3>
+                    <p
+                      className="text-sm font-medium mt-1 leading-snug"
+                      style={{ color: 'var(--text-secondary)' }}
+                    >
+                      {job.role}
+                    </p>
+
+                    <ul className="mt-4 space-y-2.5">
+                      {job.bullets.map((b, i) => (
+                        <li key={i} className="flex gap-2.5 text-sm leading-relaxed">
+                          <span
+                            className="mt-[7px] w-1 h-1 rounded-full shrink-0"
+                            style={{ background: 'var(--text-muted)' }}
+                            aria-hidden="true"
+                          />
+                          <span style={{ color: 'var(--text-secondary)' }}>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+
+                    {job.technologies && job.technologies.length > 0 && (
+                      <p
+                        className="mt-5 pt-3 border-t text-sm"
+                        style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+                      >
+                        <span className="sr-only">Technologies: </span>
+                        {job.technologies.join(' · ')}
+                      </p>
+                    )}
+                  </article>
+                </motion.div>
+              );
+            })}
           </div>
         </motion.div>
       </Container>
