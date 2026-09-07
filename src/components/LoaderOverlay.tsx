@@ -3,22 +3,23 @@ import { prefersReducedMotion } from '../utils';
 
 interface LoaderOverlayProps {
   isLoading: boolean;
+  shouldRender: boolean;
 }
 
-const LETTERS = 'LOADING'.split('');
-
-export const LoaderOverlay = ({ isLoading }: LoaderOverlayProps) => {
+export const LoaderOverlay = ({ isLoading, shouldRender }: LoaderOverlayProps) => {
   const reduced = prefersReducedMotion();
+
+  if (!shouldRender) return null;
 
   return (
     <AnimatePresence>
       {isLoading && (
         <motion.div
           key="loader-overlay"
-          initial={{ opacity: 0 }}
+          initial={{ opacity: 1 }}
           animate={{ opacity: 1 }}
-          exit={reduced ? { opacity: 0 } : { opacity: 0 }}
-          transition={{ duration: reduced ? 0.12 : 0.2, ease: 'easeInOut' }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: reduced ? 0.08 : 0.2, ease: 'easeOut' }}
           style={{
             position: 'fixed',
             inset: 0,
@@ -28,52 +29,43 @@ export const LoaderOverlay = ({ isLoading }: LoaderOverlayProps) => {
             alignItems: 'center',
             justifyContent: 'center',
             flexDirection: 'column',
-            gap: '1.75rem',
-            pointerEvents: 'all',
+            gap: '1rem',
+            pointerEvents: 'none',
             overflow: 'hidden',
           }}
-          aria-live="polite"
-          aria-label="Loading"
+          aria-hidden="true"
         >
-          <div style={{ display: 'flex', gap: '0.5em', letterSpacing: '0.28em' }}>
-            {LETTERS.map((letter, i) => (
-              <motion.span
-                key={i}
-                style={{
-                  display: 'inline-block',
-                  fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
-                  fontSize: '0.95rem',
-                  fontWeight: 500,
-                  color: 'var(--text-muted)',
-                  opacity: 0.4,
-                  userSelect: 'none',
-                }}
-                animate={
-                  reduced
-                    ? { opacity: 0.6 }
-                    : { opacity: [0.3, 0.75, 0.3] }
-                }
-                transition={
-                  reduced
-                    ? { duration: 0.2 }
-                    : { duration: 1.8, ease: 'easeInOut', delay: i * 0.08, repeat: Infinity, repeatDelay: 0.3 }
-                }
-              >
-                {letter}
-              </motion.span>
-            ))}
-          </div>
-
-          {!reduced && (
-            <motion.div
+          <div
+            aria-hidden="true"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              gap: '0.9rem',
+            }}
+          >
+            <span
               style={{
-                width: '96px',
+                fontFamily: 'ui-monospace, SFMono-Regular, Menlo, monospace',
+                fontSize: '0.78rem',
+                fontWeight: 600,
+                letterSpacing: '0.32em',
+                color: 'var(--text-muted)',
+                userSelect: 'none',
+              }}
+            >
+              GUNA
+            </span>
+            <div
+              style={{
+                width: '84px',
                 height: '1px',
                 backgroundColor: 'var(--border)',
                 borderRadius: '1px',
                 overflow: 'hidden',
                 position: 'relative',
               }}
+              aria-hidden="true"
             >
               <motion.div
                 style={{
@@ -81,15 +73,19 @@ export const LoaderOverlay = ({ isLoading }: LoaderOverlayProps) => {
                   top: 0,
                   left: 0,
                   height: '100%',
-                  width: '40%',
+                  width: '38%',
                   backgroundColor: 'var(--accent)',
                   borderRadius: '1px',
                 }}
-                animate={{ x: ['-40%', '210%'] }}
-                transition={{ duration: 1.4, ease: 'easeInOut', repeat: Infinity, repeatDelay: 0.2 }}
+                animate={reduced ? undefined : { x: ['-38%', '220%'] }}
+                transition={
+                  reduced
+                    ? undefined
+                    : { duration: 1.1, ease: 'easeInOut', repeat: Infinity, repeatDelay: 0.15 }
+                }
               />
-            </motion.div>
-          )}
+            </div>
+          </div>
         </motion.div>
       )}
     </AnimatePresence>

@@ -3,39 +3,31 @@ import { Container } from '../components';
 export const Footer = () => {
   const currentYear = new Date().getFullYear();
 
-  const scrollToSection = (sectionId: string) => {
-    const element = document.getElementById(sectionId);
-    if (element) element.scrollIntoView({ behavior: 'smooth' });
-  };
-
   const navLinks = [
-    { id: 'hero', label: 'Home' },
-    { id: 'about', label: 'About' },
+    { id: 'experience', label: 'Experience' },
     { id: 'projects', label: 'Projects' },
-    { id: 'skills', label: 'Skills' },
+    { id: 'education', label: 'Education' },
     { id: 'contact', label: 'Contact' },
   ];
 
   return (
     <footer className="py-8 border-t" style={{ borderColor: 'var(--border)', background: 'var(--bg-secondary)' }}>
       <Container>
-        <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
           <div className="text-sm" style={{ color: 'var(--text-muted)' }}>
             © {currentYear} Gunabhiram Aruru. All rights reserved.
           </div>
 
-          <nav className="flex flex-wrap gap-3 sm:gap-6 justify-center">
+          <nav className="flex flex-wrap gap-4 sm:gap-6 justify-center" aria-label="Footer">
             {navLinks.map(link => (
-              <button
+              <a
                 key={link.id}
-                onClick={() => scrollToSection(link.id)}
+                href={`#${link.id}`}
                 className="text-sm transition-colors"
                 style={{ color: 'var(--text-muted)' }}
-                onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--accent)'; }}
-                onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.color = 'var(--text-muted)'; }}
               >
                 {link.label}
-              </button>
+              </a>
             ))}
           </nav>
 
