@@ -28,7 +28,7 @@ export const Leadership = () => {
   };
 
   return (
-    <section id="leadership" className="py-16 sm:py-20 relative">
+    <section id="leadership" className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
         <motion.div
           initial="hidden"
@@ -87,8 +87,8 @@ export const Leadership = () => {
                   {/* Right — organization + description */}
                   <article className="min-w-0">
                     <h3
-                      className="text-[17px] sm:text-lg font-semibold leading-tight tracking-tight"
-                      style={{ color: 'var(--text)' }}
+                      className="text-[17px] sm:text-lg font-semibold leading-tight tracking-tight break-words"
+                      style={{ color: 'var(--text)', overflowWrap: 'anywhere' as const }}
                     >
                       {entry.organization}
                     </h3>

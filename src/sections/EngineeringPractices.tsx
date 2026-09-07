@@ -5,7 +5,7 @@ import { ENGINEERING_PRACTICES } from '../data/practices';
 
 export const EngineeringPractices = () => {
   return (
-    <section id="practices" className="py-20 relative">
+    <section id="practices" className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
         <motion.h2
           className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 tracking-tight"

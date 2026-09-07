@@ -32,6 +32,7 @@ export const LoaderOverlay = ({ isLoading, shouldRender }: LoaderOverlayProps) =
             gap: '1rem',
             pointerEvents: 'none',
             overflow: 'hidden',
+            padding: 'max(1rem, env(safe-area-inset-top, 0px)) max(1rem, env(safe-area-inset-right, 0px)) max(1rem, env(safe-area-inset-bottom, 0px)) max(1rem, env(safe-area-inset-left, 0px))',
           }}
           aria-hidden="true"
         >

@@ -28,7 +28,7 @@ export const Experience = () => {
   };
 
   return (
-    <section id="experience" className="py-16 sm:py-20 relative">
+    <section id="experience" className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
         <motion.div
           initial="hidden"
@@ -83,8 +83,8 @@ export const Experience = () => {
                   {/* Right — experience content (editorial, no giant card) */}
                   <article className="min-w-0 pb-8 lg:pb-0 border-b lg:border-b-0" style={{ borderColor: 'var(--border)' }}>
                     <h3
-                      className="text-[17px] sm:text-lg font-semibold leading-tight tracking-tight"
-                      style={{ color: 'var(--text)' }}
+                      className="text-[17px] sm:text-lg font-semibold leading-tight tracking-tight break-words"
+                      style={{ color: 'var(--text)', overflowWrap: 'anywhere' as const }}
                     >
                       {job.companyShort ?? job.company}
                     </h3>
@@ -110,8 +110,8 @@ export const Experience = () => {
 
                     {job.technologies && job.technologies.length > 0 && (
                       <p
-                        className="mt-5 pt-3 border-t text-sm"
-                        style={{ borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+                        className="mt-5 pt-3 border-t text-sm break-words"
+                        style={{ borderColor: 'var(--border)', color: 'var(--text-muted)', overflowWrap: 'anywhere' as const }}
                       >
                         <span className="sr-only">Technologies: </span>
                         {job.technologies.join(' · ')}

@@ -100,20 +100,21 @@ export const Header = () => {
         WebkitBackdropFilter: 'blur(8px)',
         borderColor: 'var(--border)',
         height: '56px',
+        paddingTop: 'env(safe-area-inset-top, 0px)',
       }}
     >
       <Container className="h-full">
-        <div className="flex items-center justify-between h-full">
+        <div className="flex items-center justify-between h-full gap-2 min-w-0">
           <a
             href="#hero"
-            className="text-sm font-semibold tracking-tight"
-            style={{ color: 'var(--text)' }}
+            className="text-sm font-semibold tracking-tight shrink-0"
+            style={{ color: 'var(--text)', minWidth: 0 }}
             aria-label="Go to top"
           >
             {PROFILE.shortName}
           </a>
 
-          <nav className="hidden md:flex items-center gap-5 text-sm" aria-label="Primary">
+          <nav className="hidden md:flex items-center gap-4 lg:gap-5 text-sm min-w-0" aria-label="Primary">
             {navItems.map(item => {
               const isActive = activeId === item.id;
               return (
@@ -147,13 +148,13 @@ export const Header = () => {
             })}
           </nav>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-1 sm:gap-1.5 shrink-0">
             <button
               type="button"
               onClick={toggleMode}
               aria-pressed={isRecruiter}
               aria-label={isRecruiter ? 'Switch to standard view' : 'Switch to recruiter view'}
-              className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium border transition-colors focus-visible:outline-none"
+              className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium border transition-colors focus-visible:outline-none shrink-0"
               style={
                 isRecruiter
                   ? { background: 'var(--accent-subtle)', borderColor: 'var(--accent)', color: 'var(--accent)' }
@@ -168,7 +169,7 @@ export const Header = () => {
               aria-label={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
               aria-pressed={theme === 'dark'}
               title={theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'}
-              className="min-h-[36px] min-w-[36px] flex items-center justify-center rounded-md !px-2 !py-1"
+              className="min-h-[40px] min-w-[40px] flex items-center justify-center rounded-md !px-2 !py-1 shrink-0"
             >
               {theme === 'dark' ? (
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -228,10 +229,12 @@ export const Header = () => {
             animate={{ opacity: 1, y: 0 }}
             exit={reduced ? { opacity: 0 } : { opacity: 0, y: -4 }}
             transition={{ duration: reduced ? 0 : 0.16, ease: 'easeOut' }}
-            className="md:hidden border-t"
+            className="md:hidden border-t overflow-y-auto overscroll-contain"
             style={{
               background: 'var(--surface)',
               borderColor: 'var(--border)',
+              maxHeight: 'calc(100dvh - 56px)',
+              paddingBottom: 'env(safe-area-inset-bottom, 0px)',
             }}
           >
             <Container>

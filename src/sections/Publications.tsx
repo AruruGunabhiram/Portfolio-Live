@@ -31,7 +31,7 @@ export const Publications = () => {
   const sorted = [...PUBLICATIONS].sort((a, b) => b.year - a.year);
 
   return (
-    <section id="publications" className="py-16 sm:py-20 relative">
+    <section id="publications" className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
         <motion.div
           initial="hidden"
@@ -75,8 +75,8 @@ export const Publications = () => {
                 {/* Right — publication content */}
                 <article className="min-w-0">
                   <h3
-                    className="text-[17px] sm:text-lg font-semibold leading-snug tracking-tight"
-                    style={{ color: 'var(--text)', textWrap: 'balance' as const }}
+                    className="text-[17px] sm:text-lg font-semibold leading-snug tracking-tight break-words"
+                    style={{ color: 'var(--text)', overflowWrap: 'anywhere' as const }}
                   >
                     {pub.title}
                   </h3>

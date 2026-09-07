@@ -176,6 +176,9 @@ html { scroll-behavior: smooth; }
   html { scroll-behavior: auto; }
 }
 
+/* ─── Touch targets: ensure interactive elements trend 40px+ ─── */
+button, a { touch-action: manipulation; }
+
 /* ─── Motion: reduced-motion ───────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
   *,

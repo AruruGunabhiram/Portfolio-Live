@@ -16,7 +16,7 @@ function humanCategory(c: string) {
 export function ProjectDetail({ project, onClose }: { project: Project; onClose: () => void }) {
   return (
     <div
-      className="mt-4 rounded-md border p-4 sm:p-6"
+      className="mt-4 rounded-md border p-4 sm:p-6 min-w-0 overflow-hidden"
       style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)' }}
     >
       <div className="flex items-start justify-between gap-4">
@@ -34,7 +34,7 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
         <button
           onClick={onClose}
           aria-label={`Close ${project.title} details`}
-          className="shrink-0 inline-flex items-center justify-center w-8 h-8 rounded-md border text-sm"
+          className="shrink-0 inline-flex items-center justify-center w-8 h-8 min-w-[32px] min-h-[32px] rounded-md border text-sm"
           style={{ borderColor: 'var(--border)', color: 'var(--text-muted)', background: 'var(--surface)' }}
         >
           <span aria-hidden="true">×</span>
@@ -61,11 +61,11 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
         </div>
       )}
 
-      <div className="mt-5">
+      <div className="mt-5 min-w-0">
         <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
           Technologies
         </p>
-        <p className="text-sm mt-1.5 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+        <p className="text-sm mt-1.5 leading-relaxed break-words" style={{ color: 'var(--text-secondary)', overflowWrap: 'anywhere' as const }}>
           {project.technologies.join(' · ')}
         </p>
       </div>

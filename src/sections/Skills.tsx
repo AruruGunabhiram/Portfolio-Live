@@ -94,7 +94,7 @@ export const Skills = () => {
   };
 
   return (
-    <section id="skills" className="py-16 sm:py-20 relative">
+    <section id="skills" className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
         <motion.div
           initial="hidden"
@@ -128,11 +128,11 @@ export const Skills = () => {
                     <h3 className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
                       {cat.label}
                     </h3>
-                    <p className="mt-2 text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+                    <p className="mt-2 text-sm leading-relaxed break-words" style={{ color: 'var(--text-secondary)', overflowWrap: 'anywhere' as const }}>
                       {ordered.map(s => s.name).join(' · ')}
                     </p>
                     {withEvidence.length > 0 && (
-                      <p className="mt-1.5 text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+                      <p className="mt-1.5 text-xs leading-relaxed break-words" style={{ color: 'var(--text-muted)', overflowWrap: 'anywhere' as const }}>
                         {withEvidence
                           .slice(0, 2)
                           .map(s => {
@@ -165,13 +165,13 @@ export const Skills = () => {
                           const isSelected = selectedId === skill.id;
                           const hasEvidence = !!skill.evidence?.length;
                           return (
-                            <button
+                              <button
                               key={skill.id}
                               type="button"
                               aria-pressed={isSelected}
                               aria-label={`${skill.name}${hasEvidence ? ', has evidence' : ''}`}
                               onClick={() => setSelectedId(skill.id)}
-                              className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium border transition-colors focus-visible:outline-none"
+                              className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium border transition-colors focus-visible:outline-none min-h-[32px]"
                               style={
                                 isSelected
                                   ? { background: 'var(--accent-subtle)', borderColor: 'var(--accent)', color: 'var(--text)' }
@@ -198,7 +198,7 @@ export const Skills = () => {
               {/* Right — evidence panel */}
               <motion.div variants={item} className="min-w-0 lg:pt-1">
                 <div
-                  className="rounded-md border p-4 sm:p-5"
+                  className="rounded-md border p-4 sm:p-5 min-w-0 overflow-hidden"
                   style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)' }}
                   aria-live="polite"
                 >
@@ -248,8 +248,8 @@ export const Skills = () => {
                                   </p>
                                   <ul className="mt-1.5 space-y-1.5">
                                     {items.map((r, idx) => (
-                                      <li key={`${r.label}-${idx}`} className="flex items-start justify-between gap-3">
-                                        <span className="text-sm leading-snug min-w-0" style={{ color: 'var(--text-secondary)' }}>
+                                      <li key={`${r.label}-${idx}`} className="flex items-start justify-between gap-3 min-w-0">
+                                        <span className="text-sm leading-snug min-w-0 break-words" style={{ color: 'var(--text-secondary)', overflowWrap: 'anywhere' as const }}>
                                           {r.label}
                                         </span>
                                         {r.href && (

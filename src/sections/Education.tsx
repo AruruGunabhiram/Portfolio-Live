@@ -31,7 +31,7 @@ export const Education = () => {
   // If canonical order changes, sorting by period string would be fragile; keep explicit order as stored.
 
   return (
-    <section id="education" className="py-16 sm:py-20 relative">
+    <section id="education" className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
         <motion.div
           initial="hidden"
@@ -82,10 +82,10 @@ export const Education = () => {
 
                   {/* Right — institution + degree */}
                   <article className="min-w-0">
-                    <h3 className="text-[17px] sm:text-lg font-semibold leading-tight tracking-tight" style={{ color: 'var(--text)' }}>
+                    <h3 className="text-[17px] sm:text-lg font-semibold leading-tight tracking-tight break-words" style={{ color: 'var(--text)', overflowWrap: 'anywhere' as const }}>
                       {entry.institution}
                     </h3>
-                    <p className="text-sm font-medium mt-1 leading-snug" style={{ color: 'var(--text-secondary)' }}>
+                    <p className="text-sm font-medium mt-1 leading-snug break-words" style={{ color: 'var(--text-secondary)', overflowWrap: 'anywhere' as const }}>
                       {entry.degree}
                     </p>
                   </article>

@@ -61,3 +61,14 @@
   .transition-cyber,
   .transition-cyber-slow { transition-duration: 0.01ms !important; }
 }
+
+/* ─── Phase 17: responsive utilities ─────────────────────────── */
+@layer utilities {
+  @media (max-width: 374px) {
+    .xs\:flex-row { flex-direction: row; }
+    .xs\:w-auto { width: auto; }
+    .xs\:flex-none { flex: none; }
+    .xs\:items-center { align-items: center; }
+    .xs\:flex-wrap { flex-wrap: wrap; }
+  }
+}

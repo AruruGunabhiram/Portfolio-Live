@@ -1,5 +1,6 @@
 import type { Project } from '../../types/portfolio';
 import { ProjectDemo } from './demo/ProjectDemo';
+import { usePortfolioMode } from '../../context/PortfolioModeContext';
 
 const CATEGORY_LABEL: Record<string, string> = {
   backend: 'Backend',
@@ -28,6 +29,11 @@ export function FeaturedProject({
 }) {
   const cats = project.categories.map(c => CATEGORY_LABEL[c] ?? c).join(' · ');
   const hasDemo = !!project.demo;
+  const { isRecruiter } = usePortfolioMode();
+  const flowSummary =
+    hasDemo && project.demo!.type === 'flow' && 'steps' in project.demo!
+      ? (project.demo as { steps: { label: string }[] }).steps.map(s => s.label).join(' → ')
+      : null;
 
   return (
     <article className="py-7 sm:py-8">
@@ -62,7 +68,7 @@ export function FeaturedProject({
             ))}
           </ul>
 
-          <p className="text-xs mt-4" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-xs mt-4 break-words" style={{ color: 'var(--text-muted)', overflowWrap: 'anywhere' as const }}>
             {formatTechs(project.technologies)}
           </p>
 
@@ -72,7 +78,7 @@ export function FeaturedProject({
               onClick={onToggle}
               aria-expanded={isExpanded}
               aria-controls={`detail-${project.id}`}
-              className="inline-flex items-center gap-1.5 text-sm font-medium border rounded-md px-3.5 py-2 transition-colors focus-visible:outline-none"
+              className="inline-flex items-center gap-1.5 text-sm font-medium border rounded-md px-3.5 py-2 transition-colors focus-visible:outline-none min-h-[40px]"
               style={
                 isExpanded
                   ? {
@@ -120,7 +126,22 @@ export function FeaturedProject({
 
         {hasDemo && (
           <div className="min-w-0">
-            <ProjectDemo demo={project.demo!} />
+            {/* Recruiter mobile: compact flow text instead of full demo (17AE) */}
+            {isRecruiter && flowSummary ? (
+              <>
+                <p
+                  className="sm:hidden text-xs leading-relaxed rounded-md border px-3 py-2.5"
+                  style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)', color: 'var(--text-muted)' }}
+                >
+                  {flowSummary}
+                </p>
+                <div className="hidden sm:block">
+                  <ProjectDemo demo={project.demo!} />
+                </div>
+              </>
+            ) : (
+              <ProjectDemo demo={project.demo!} />
+            )}
           </div>
         )}
       </div>

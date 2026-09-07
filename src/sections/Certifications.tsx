@@ -28,7 +28,7 @@ export const Certifications = () => {
   };
 
   return (
-    <section id="certifications" className="py-16 sm:py-20 relative">
+    <section id="certifications" className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
         <motion.div
           initial="hidden"

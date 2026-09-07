@@ -25,16 +25,16 @@ export function ProjectListItem({
 }) {
   const cats = project.categories.map(c => LABEL[c] ?? c).join(' · ');
   return (
-    <article className="py-5 border-t" style={{ borderColor: 'var(--border)' }}>
-      <div className="flex items-start justify-between gap-3">
+    <article className="py-5 border-t min-w-0" style={{ borderColor: 'var(--border)' }}>
+      <div className="flex items-start justify-between gap-3 min-w-0">
         <div className="min-w-0 flex-1">
-          <h3 className="text-sm font-semibold leading-tight" style={{ color: 'var(--text)' }}>
+          <h3 className="text-sm font-semibold leading-tight break-words" style={{ color: 'var(--text)', overflowWrap: 'anywhere' as const }}>
             {project.title}
           </h3>
-          <p className="text-xs mt-1 leading-snug" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-xs mt-1 leading-snug break-words" style={{ color: 'var(--text-muted)', overflowWrap: 'anywhere' as const }}>
             {project.subtitle}
           </p>
-          <p className="text-xs mt-2" style={{ color: 'var(--text-muted)' }}>
+          <p className="text-xs mt-2 break-words leading-relaxed" style={{ color: 'var(--text-muted)', overflowWrap: 'anywhere' as const }}>
             {formatTechs(project.technologies)} <span aria-hidden="true">·</span> {cats}
           </p>
         </div>
@@ -43,7 +43,7 @@ export function ProjectListItem({
           onClick={onToggle}
           aria-expanded={isExpanded}
           aria-controls={`detail-${project.id}`}
-          className="shrink-0 text-xs font-medium underline-offset-4 hover:underline"
+          className="shrink-0 text-xs font-medium underline-offset-4 hover:underline min-h-[32px] px-1"
           style={{ color: isExpanded ? 'var(--accent)' : 'var(--text-secondary)' }}
         >
           {isExpanded ? 'Hide' : 'View details →'}

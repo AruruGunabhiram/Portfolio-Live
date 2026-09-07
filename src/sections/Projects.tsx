@@ -43,7 +43,7 @@ export const Projects = () => {
   };
 
   return (
-    <section id="projects" className="py-16 sm:py-20 relative">
+    <section id="projects" className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
         <motion.div
           initial={reduced ? undefined : { opacity: 0, y: 12 }}

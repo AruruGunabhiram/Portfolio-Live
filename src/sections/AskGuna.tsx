@@ -65,7 +65,7 @@ export const AskGuna = () => {
   };
 
   return (
-    <section id="ask-guna" className={isRecruiter ? 'py-10 sm:py-12 relative' : 'py-16 sm:py-20 relative'}>
+    <section id="ask-guna" className={isRecruiter ? 'py-8 sm:py-10 lg:py-12 relative' : 'py-12 sm:py-16 lg:py-20 relative'}>
       <Container>
         <motion.div
           initial={reduced ? undefined : { opacity: 0, y: 12 }}
@@ -87,34 +87,36 @@ export const AskGuna = () => {
           <div className="mt-8 grid lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-10 items-start">
             {/* Left: input + suggestions */}
             <div className="min-w-0">
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form onSubmit={handleSubmit} className="space-y-3 min-w-0">
                 <label htmlFor="ask-guna-input" className="block text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
                   Your question
                 </label>
-                <input
-                  id="ask-guna-input"
-                  type="text"
-                  value={question}
-                  onChange={e => setQuestion(e.target.value)}
-                  placeholder="Ask about Guna's projects, experience, or skills"
-                  maxLength={800}
-                  autoComplete="off"
-                  className="w-full rounded-md border px-3 py-2.5 text-sm focus-visible:outline-none"
-                  style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
-                  aria-describedby="ask-guna-help"
-                  disabled={loading}
-                />
+                <div className="flex flex-col xs:flex-row gap-2 min-w-0">
+                  <input
+                    id="ask-guna-input"
+                    type="text"
+                    value={question}
+                    onChange={e => setQuestion(e.target.value)}
+                    placeholder="Ask about Guna's projects, experience, or skills"
+                    maxLength={800}
+                    autoComplete="off"
+                    className="w-full flex-1 min-w-0 rounded-md border px-3 py-2.5 text-sm focus-visible:outline-none min-h-[44px]"
+                    style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
+                    aria-describedby="ask-guna-help"
+                    disabled={loading}
+                  />
+                  <button
+                    type="submit"
+                    disabled={loading || !question.trim()}
+                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none min-h-[44px] shrink-0 xs:w-auto w-full"
+                    style={{ background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }}
+                  >
+                    {loading ? 'Checking portfolio…' : 'Ask'}
+                  </button>
+                </div>
                 <p id="ask-guna-help" className="text-xs" style={{ color: 'var(--text-muted)' }}>
                   Single question · 800 character limit
                 </p>
-                <button
-                  type="submit"
-                  disabled={loading || !question.trim()}
-                  className="inline-flex items-center justify-center px-4 py-2 rounded-md text-sm font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none"
-                  style={{ background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }}
-                >
-                  {loading ? 'Checking portfolio…' : 'Ask'}
-                </button>
               </form>
 
               {!isRecruiter && (
@@ -146,7 +148,7 @@ export const AskGuna = () => {
             {/* Right: answer */}
             <div className="min-w-0">
               <div
-                className="rounded-md border p-4 sm:p-5 min-h-[180px]"
+                className="rounded-md border p-4 sm:p-5 min-h-[140px] sm:min-h-[180px] min-w-0 overflow-hidden"
                 style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)' }}
                 aria-live="polite"
                 aria-busy={loading ? 'true' : 'false'}
@@ -161,7 +163,7 @@ export const AskGuna = () => {
                     {error}
                   </p>
                 )}
-                {!loading && !error && answer && <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: 'var(--text-secondary)' }}>{answer}</p>}
+                {!loading && !error && answer && <p className="text-sm leading-relaxed whitespace-pre-wrap break-words" style={{ color: 'var(--text-secondary)', overflowWrap: 'anywhere' as const }}>{answer}</p>}
                 {!loading && !error && !answer && (
                   <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
                     Your answer will appear here. For example, try asking which projects use Java or what Guna built at InfiniAI.

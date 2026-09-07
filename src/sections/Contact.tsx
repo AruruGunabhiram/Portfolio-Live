@@ -29,7 +29,7 @@ export const Contact = () => {
   };
 
   return (
-    <section id="contact" className="py-16 sm:py-20 relative">
+    <section id="contact" className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
         <motion.div
           initial="hidden"
@@ -57,10 +57,10 @@ export const Contact = () => {
             <p className="text-xs font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
               Email
             </p>
-            <div className="mt-2 flex flex-wrap items-center gap-3">
+            <div className="mt-2 flex flex-col xs:flex-row flex-wrap items-start xs:items-center gap-3 min-w-0">
               <a
                 href={`mailto:${CONTACT.email}`}
-                className="text-sm sm:text-base font-medium break-all focus-visible:outline-none link-accent"
+                className="text-sm sm:text-base font-medium break-all focus-visible:outline-none link-accent min-w-0"
                 style={{ overflowWrap: 'anywhere' }}
               >
                 {CONTACT.email}
@@ -68,7 +68,7 @@ export const Contact = () => {
               <button
                 type="button"
                 onClick={handleCopy}
-                className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border transition-colors focus-visible:outline-none"
+                className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border transition-colors focus-visible:outline-none min-h-[32px] min-w-[88px] justify-center shrink-0"
                 style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)', background: 'var(--surface)' }}
                 aria-live="polite"
                 aria-label={copied ? 'Email copied' : 'Copy email address'}
@@ -84,7 +84,7 @@ export const Contact = () => {
             <div className="mt-4">
               <a
                 href={`mailto:${CONTACT.email}`}
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none"
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none min-h-[44px]"
                 style={{ background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }}
               >
                 Email Guna

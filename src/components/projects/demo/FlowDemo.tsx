@@ -159,11 +159,12 @@ export function FlowDemo({ demo }: FlowDemoProps) {
       ref={containerRef}
       aria-label={demo.ariaLabel ?? `Flow: ${summary}`}
       role="img"
-      className="rounded-md border p-4 sm:p-5"
+      className="rounded-md border p-3 sm:p-5 min-w-0"
       style={{
         background: 'var(--surface-subtle)',
         borderColor: 'var(--border)',
-        minHeight: '220px', // stable height, avoids layout shift
+        minHeight: '200px',
+        overflowWrap: 'anywhere' as const,
       }}
     >
       <p className="sr-only">{summary}</p>
@@ -180,15 +181,16 @@ export function FlowDemo({ demo }: FlowDemoProps) {
           return (
             <div key={step.id} className="flex flex-col items-center w-full">
               <div
-                className="w-full max-w-[300px] rounded-md border px-3 py-3 text-center transition-colors"
+                className="w-full max-w-[280px] rounded-md border px-3 py-2.5 sm:py-3 text-center transition-colors min-w-0"
                 style={{
                   background: isCompleted && !isActive ? 'var(--accent-subtle)' : 'var(--surface)',
                   borderColor: isActive ? 'var(--border-strong)' : isCompleted ? 'var(--border)' : 'var(--border)',
                   opacity: state === 'idle' ? 0.72 : 1,
-                  transform: 'translateZ(0)', // composite
+                  transform: 'translateZ(0)',
+                  overflowWrap: 'anywhere' as const,
                 }}
               >
-                <div className="flex items-center justify-center gap-2">
+                <div className="flex items-center justify-center gap-2 min-w-0">
                   <span
                     className="w-1.5 h-1.5 rounded-full shrink-0"
                     style={{
@@ -197,12 +199,12 @@ export function FlowDemo({ demo }: FlowDemoProps) {
                     }}
                     aria-hidden="true"
                   />
-                  <p className="text-xs font-semibold leading-tight" style={{ color: isActive || isCompleted ? 'var(--text)' : 'var(--text-muted)' }}>
+                  <p className="text-xs font-semibold leading-snug break-words min-w-0" style={{ color: isActive || isCompleted ? 'var(--text)' : 'var(--text-muted)', overflowWrap: 'anywhere' as const }}>
                     {step.label}
                   </p>
                 </div>
                 {step.detail && (
-                  <p className="text-[11px] leading-snug mt-1" style={{ color: 'var(--text-muted)' }}>
+                  <p className="text-[11px] leading-snug mt-1 break-words" style={{ color: 'var(--text-muted)', overflowWrap: 'anywhere' as const }}>
                     {step.detail}
                   </p>
                 )}
