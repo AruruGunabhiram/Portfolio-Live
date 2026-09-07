@@ -1,3 +1,4 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 
@@ -158,6 +159,13 @@ Answer only questions about Guna using the supplied portfolio context inside <po
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), askGunaDevPlugin()],
+  test: {
+    globals: true,
+    environment: 'jsdom',
+    setupFiles: ['./src/test/setup.ts'],
+    include: ['tests/unit/**/*.test.{ts,tsx}', 'tests/**/*.test.{ts,tsx}'],
+    exclude: ['tests/e2e/**', 'node_modules/**'],
+  },
   build: {
     // Production optimizations
     target: 'es2015',

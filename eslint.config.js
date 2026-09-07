@@ -6,7 +6,7 @@ import tseslint from 'typescript-eslint'
 import { defineConfig, globalIgnores } from 'eslint/config'
 
 export default defineConfig([
-  globalIgnores(['dist']),
+  globalIgnores(['dist', 'playwright-report', 'test-results', 'tests/**', 'scripts/**', 'playwright.config.ts']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -28,6 +28,17 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'warn',
       // Allow @ts-nocheck in isolated legacy visualization files (Phase 2 compat)
       '@typescript-eslint/ban-ts-comment': 'off',
+    },
+  },
+  {
+    files: ['tests/**/*.{ts,tsx}', 'scripts/**/*.{mjs,ts}', 'playwright.config.ts'],
+    languageOptions: {
+      globals: { ...globals.browser, ...globals.node },
+    },
+    rules: {
+      'react-hooks/purity': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
     },
   },
 ])
