@@ -167,8 +167,8 @@ afterEach(() => {
 
 // ─── 1–3 · Registry ─────────────────────────────────────────────────────────
 describe('A9 — registry', () => {
-  it('1 — registry contains exactly Ember and SocialLens', () => {
-    expect(registeredStoryIds()).toEqual(['ember', 'sociallens']);
+  it('1 — registry preserves Ember and SocialLens after A10', () => {
+    expect(registeredStoryIds()).toEqual(['ember', 'sociallens', 'incidentpilot']);
     expect(hasProjectStory('ember')).toBe(true);
     expect(hasProjectStory('sociallens')).toBe(true);
   });
@@ -189,7 +189,7 @@ describe('A9 — registry', () => {
   });
 
   it('3 — unknown and unregistered ids remain safe', () => {
-    for (const id of ['incidentpilot', 'zenco', 'nope', 'constructor', '__proto__', 'toString']) {
+    for (const id of ['zenco', 'nope', 'constructor', '__proto__', 'toString']) {
       expect(hasProjectStory(id), id).toBe(false);
       expect(PROJECT_STORY_COMPONENTS[id], id).toBeUndefined();
     }

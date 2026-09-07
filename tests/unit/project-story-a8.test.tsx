@@ -126,13 +126,13 @@ afterEach(() => {
 
 // ─── 1–3 · Registry ─────────────────────────────────────────────────────────
 describe('A8 — project story registry', () => {
-  it('1 — registry exposes Ember (A9 added SocialLens alongside it)', () => {
-    expect(registeredStoryIds()).toEqual(['ember', 'sociallens']);
+  it('1 — registry preserves Ember as later visual worlds are added', () => {
+    expect(registeredStoryIds()).toEqual(['ember', 'sociallens', 'incidentpilot']);
     expect(hasProjectStory('ember')).toBe(true);
   });
 
   it('2 — unknown / unregistered project ids safely return no custom story', () => {
-    for (const id of ['incidentpilot', 'zenco', 'nope', 'constructor', '__proto__']) {
+    for (const id of ['zenco', 'nope', 'constructor', '__proto__']) {
       expect(hasProjectStory(id), id).toBe(false);
       expect(PROJECT_STORY_COMPONENTS[id], id).toBeUndefined();
     }
@@ -173,7 +173,7 @@ describe('A8 — existing demo compatibility', () => {
     expect(flow!.getAttribute('aria-label')).toContain('Code Battlegrounds');
   });
 
-  it('19 — a demo-only project and a visual-less project are unaffected by the story layer', async () => {
+  it('19 — a demo-only project and a later custom story remain compatible', async () => {
     const a = renderFeatured(CODE_BATTLEGROUNDS);
     await settle();
     expect(a.container.textContent).toContain('Code Battlegrounds');
@@ -181,12 +181,12 @@ describe('A8 — existing demo compatibility', () => {
     a.unmount();
     __resetStoryLifecycleForTests();
 
-    // IncidentPilot has no demo and no story — no visual, no placeholder, content intact
+    // A10 adds IncidentPilot as a custom story without altering its card content.
     const b = renderFeatured(INCIDENTPILOT);
     await settle();
     expect(b.container.textContent).toContain('IncidentPilot');
     expect(b.container.textContent).toContain('Approval-Gated Incident Investigator');
-    expect(b.container.querySelector('[role="img"]')).toBeNull();
+    expect(hasProjectStory('incidentpilot')).toBe(true);
   });
 });
 
@@ -430,12 +430,12 @@ describe('A8 — story failure isolation', () => {
     warn.mockRestore();
   });
 
-  it('20b — a project with no story and no demo renders content without a placeholder', async () => {
+  it('20b — IncidentPilot content remains intact after its A10 story registration', async () => {
     const { container } = renderFeatured(INCIDENTPILOT);
     await settle();
     expect(container.textContent).toContain('IncidentPilot');
     expect(container.textContent).toContain('Verifies cited file paths and line numbers');
-    expect(container.querySelector('[role="img"]')).toBeNull();
+    expect(container.querySelector('[role="img"]')).not.toBeNull();
   });
 
   it('20c — ProjectStory renders the fallback for an unregistered id', async () => {
