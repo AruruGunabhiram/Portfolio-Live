@@ -87,7 +87,7 @@ export const AskGuna = () => {
           <div className="mt-8 grid lg:grid-cols-[1.1fr_0.9fr] gap-8 lg:gap-10 items-start">
             {/* Left: input + suggestions */}
             <div className="min-w-0">
-              <form onSubmit={handleSubmit} className="space-y-3 min-w-0">
+              <form onSubmit={handleSubmit} className="space-y-3 min-w-0" noValidate>
                 <label htmlFor="ask-guna-input" className="block text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
                   Your question
                 </label>
@@ -101,15 +101,16 @@ export const AskGuna = () => {
                     maxLength={800}
                     autoComplete="off"
                     className="w-full flex-1 min-w-0 rounded-md border px-3 py-2.5 text-sm focus-visible:outline-none min-h-[44px]"
-                    style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text)' }}
-                    aria-describedby="ask-guna-help"
+                    style={{ background: 'var(--surface)', borderColor: error ? 'var(--error)' : 'var(--border)', color: 'var(--text)' }}
+                    aria-describedby={error ? 'ask-guna-help ask-guna-error' : 'ask-guna-help'}
+                    aria-invalid={error ? 'true' : undefined}
                     disabled={loading}
                   />
                   <button
                     type="submit"
                     disabled={loading || !question.trim()}
                     className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none min-h-[44px] shrink-0 xs:w-auto w-full"
-                    style={{ background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }}
+                    style={{ background: 'var(--accent-button)', borderColor: 'var(--accent-button)', color: '#fff' }}
                   >
                     {loading ? 'Checking portfolio…' : 'Ask'}
                   </button>
@@ -117,6 +118,11 @@ export const AskGuna = () => {
                 <p id="ask-guna-help" className="text-xs" style={{ color: 'var(--text-muted)' }}>
                   Single question · 800 character limit
                 </p>
+                {error && (
+                  <p id="ask-guna-error" className="text-xs" style={{ color: 'var(--error)' }} role="alert">
+                    {error}
+                  </p>
+                )}
               </form>
 
               {!isRecruiter && (
@@ -154,12 +160,12 @@ export const AskGuna = () => {
                 aria-busy={loading ? 'true' : 'false'}
               >
                 {loading && (
-                  <p className="text-sm" style={{ color: 'var(--text-muted)' }} role="status">
+                  <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
                     Checking portfolio…
                   </p>
                 )}
                 {!loading && error && (
-                  <p className="text-sm" style={{ color: '#b42318' }} role="alert">
+                  <p className="text-sm" style={{ color: 'var(--error)' }}>
                     {error}
                   </p>
                 )}

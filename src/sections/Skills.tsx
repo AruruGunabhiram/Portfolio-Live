@@ -255,6 +255,7 @@ export const Skills = () => {
                                         {r.href && (
                                           <a
                                             href={r.href}
+                                            aria-label={`View ${r.typeLabel}: ${r.label}`}
                                             className="shrink-0 text-xs underline-offset-4 hover:underline"
                                             style={{ color: 'var(--text-muted)' }}
                                           >

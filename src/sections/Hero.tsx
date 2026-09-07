@@ -229,9 +229,9 @@ export const Hero = () => {
                     download="Gunabhiram_Resume.pdf"
                     className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 xs:flex-none"
                     style={{
-                      background: 'var(--accent)',
+                      background: 'var(--accent-button)',
                       color: '#ffffff',
-                      borderColor: 'var(--accent)',
+                      borderColor: 'var(--accent-button)',
                     }}
                   >
                     <svg
@@ -268,9 +268,9 @@ export const Hero = () => {
                     href="#projects"
                     className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 xs:flex-none"
                     style={{
-                      background: 'var(--accent)',
+                      background: 'var(--accent-button)',
                       color: '#ffffff',
-                      borderColor: 'var(--accent)',
+                      borderColor: 'var(--accent-button)',
                     }}
                   >
                     Explore Projects
@@ -294,6 +294,7 @@ export const Hero = () => {
                       strokeLinecap="round"
                       strokeLinejoin="round"
                       aria-hidden="true"
+                      focusable="false"
                     >
                       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
                       <polyline points="7 10 12 15 17 10" />

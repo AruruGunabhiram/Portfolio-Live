@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Container } from '../components';
 import { PROJECTS } from '../data/projects';
@@ -15,12 +15,23 @@ export const Projects = () => {
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'all'>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const { isRecruiter } = usePortfolioMode();
+  const explorerButtonRef = useRef<HTMLButtonElement>(null);
 
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
 
   useEffect(() => {
     if (isRecruiter && explorerOpen) setExplorerOpen(false);
   }, [isRecruiter, explorerOpen]);
+
+  // When explorer collapses, return focus if it was inside
+  useEffect(() => {
+    if (!explorerOpen) {
+      const explorer = document.getElementById('project-explorer');
+      if (explorer && explorer.contains(document.activeElement)) {
+        explorerButtonRef.current?.focus();
+      }
+    }
+  }, [explorerOpen]);
 
   const featured = useMemo(
     () => PROJECTS.filter(p => p.featured).sort((a, b) => (a.featuredOrder ?? 99) - (b.featuredOrder ?? 99)),
@@ -40,6 +51,17 @@ export const Projects = () => {
 
   const toggleDetail = (id: string) => {
     setSelectedId(prev => (prev === id ? null : id));
+  };
+
+  const handleCloseFromDetail = (id: string) => {
+    setSelectedId(null);
+    // return focus to trigger after collapse
+    requestAnimationFrame(() => {
+      const trigger =
+        document.querySelector<HTMLElement>(`[aria-controls="featured-detail-${id}"]`) ??
+        document.querySelector<HTMLElement>(`[aria-controls="explorer-detail-${id}"]`);
+      trigger?.focus();
+    });
   };
 
   return (
@@ -65,18 +87,18 @@ export const Projects = () => {
               const isExpanded = selectedId === project.id;
               return (
                 <div key={project.id} className="border-b" style={{ borderColor: 'var(--border)' }}>
-                  <FeaturedProject project={project} index={idx} isExpanded={isExpanded} onToggle={() => toggleDetail(project.id)} />
+                  <FeaturedProject project={project} index={idx} isExpanded={isExpanded} onToggle={() => toggleDetail(project.id)} detailId={`featured-detail-${project.id}`} />
                   <AnimatePresence initial={false}>
                     {isExpanded && (
                       <motion.div
-                        id={`detail-${project.id}`}
+                        id={`featured-detail-${project.id}`}
                         initial={reduced ? { opacity: 1 } : { opacity: 0, y: 8 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
                         transition={{ duration: reduced ? 0 : 0.22, ease: 'easeOut' }}
                         className="pb-6"
                       >
-                        <ProjectDetail project={project} onClose={() => setSelectedId(null)} />
+                        <ProjectDetail project={project} onClose={() => handleCloseFromDetail(project.id)} />
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -89,6 +111,7 @@ export const Projects = () => {
           <div className="mt-8 flex justify-start">
             {isRecruiter ? (
               <button
+                ref={explorerButtonRef}
                 type="button"
                 aria-expanded={explorerOpen}
                 aria-controls="project-explorer"
@@ -103,6 +126,7 @@ export const Projects = () => {
               </button>
             ) : (
               <button
+                ref={explorerButtonRef}
                 type="button"
                 aria-expanded={explorerOpen}
                 aria-controls="project-explorer"
@@ -111,7 +135,7 @@ export const Projects = () => {
                 style={
                   explorerOpen
                     ? { background: 'var(--surface-subtle)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }
-                    : { background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }
+                    : { background: 'var(--accent-button)', borderColor: 'var(--accent-button)', color: '#fff' }
                 }
               >
                 {explorerOpen ? 'Show fewer projects' : 'Explore all projects'}
@@ -146,18 +170,18 @@ export const Projects = () => {
                       const isExpanded = selectedId === project.id;
                       return (
                         <div key={project.id} className="min-w-0">
-                          <ProjectListItem project={project} isExpanded={isExpanded} onToggle={() => toggleDetail(project.id)} />
+                          <ProjectListItem project={project} isExpanded={isExpanded} onToggle={() => toggleDetail(project.id)} detailId={`explorer-detail-${project.id}`} />
                           <AnimatePresence initial={false}>
                             {isExpanded && (
                               <motion.div
-                                id={`detail-${project.id}`}
+                                id={`explorer-detail-${project.id}`}
                                 initial={reduced ? { opacity: 1 } : { opacity: 0, y: 8 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={reduced ? { opacity: 0 } : { opacity: 0, y: 6 }}
                                 transition={{ duration: reduced ? 0 : 0.22, ease: 'easeOut' }}
                                 className="pb-4"
                               >
-                                <ProjectDetail project={project} onClose={() => setSelectedId(null)} />
+                                <ProjectDetail project={project} onClose={() => handleCloseFromDetail(project.id)} />
                               </motion.div>
                             )}
                           </AnimatePresence>

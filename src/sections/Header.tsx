@@ -66,12 +66,13 @@ export const Header = () => {
   const navItems = isRecruiter ? RECRUITER_NAV_ITEMS : NAV_ITEMS;
   const activeId = useActiveSection(navItems.map(n => n.id));
 
-  // Close on Escape and on resize to desktop
+  // Close on Escape and on resize to desktop + focus management (18M)
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isMenuOpen) {
         setIsMenuOpen(false);
-        buttonRef.current?.focus();
+        // return focus to trigger after animation
+        requestAnimationFrame(() => buttonRef.current?.focus());
       }
     };
     window.addEventListener('keydown', onKey);
@@ -86,6 +87,18 @@ export const Header = () => {
       window.removeEventListener('keydown', onKey);
       mq.removeEventListener('change', onChange);
     };
+  }, [isMenuOpen]);
+
+  // When menu opens, move focus to first link/button inside (disclosure pattern)
+  useEffect(() => {
+    if (isMenuOpen) {
+      // wait for DOM mount after AnimatePresence
+      const id = window.setTimeout(() => {
+        const first = menuRef.current?.querySelector<HTMLElement>('a, button');
+        first?.focus();
+      }, 20);
+      return () => window.clearTimeout(id);
+    }
   }, [isMenuOpen]);
 
   // Lock body scroll only when menu acts as modal (covers content). Here it's inline dropdown, so no lock needed.
@@ -172,11 +185,11 @@ export const Header = () => {
               className="min-h-[40px] min-w-[40px] flex items-center justify-center rounded-md !px-2 !py-1 shrink-0"
             >
               {theme === 'dark' ? (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : (
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" focusable="false">
                   <circle cx="12" cy="12" r="4" />
                   <path d="M12 2v1.5M12 20.5V22M4.93 4.93l1.06 1.06M17.66 17.66l1.06 1.06M2 12h1.5M20.5 12H22M4.93 19.07l1.06-1.06M17.66 6.34l1.06-1.06" />
                 </svg>

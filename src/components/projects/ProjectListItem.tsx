@@ -18,10 +18,12 @@ export function ProjectListItem({
   project,
   isExpanded,
   onToggle,
+  detailId,
 }: {
   project: Project;
   isExpanded: boolean;
   onToggle: () => void;
+  detailId?: string;
 }) {
   const cats = project.categories.map(c => LABEL[c] ?? c).join(' · ');
   return (
@@ -42,7 +44,7 @@ export function ProjectListItem({
           type="button"
           onClick={onToggle}
           aria-expanded={isExpanded}
-          aria-controls={`detail-${project.id}`}
+          aria-controls={detailId ?? `detail-${project.id}`}
           className="shrink-0 text-xs font-medium underline-offset-4 hover:underline min-h-[32px] px-1"
           style={{ color: isExpanded ? 'var(--accent)' : 'var(--text-secondary)' }}
         >

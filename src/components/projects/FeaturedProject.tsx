@@ -21,11 +21,13 @@ export function FeaturedProject({
   index,
   isExpanded,
   onToggle,
+  detailId,
 }: {
   project: Project;
   index: number;
   isExpanded: boolean;
   onToggle: () => void;
+  detailId?: string;
 }) {
   const cats = project.categories.map(c => CATEGORY_LABEL[c] ?? c).join(' · ');
   const hasDemo = !!project.demo;
@@ -77,13 +79,13 @@ export function FeaturedProject({
               type="button"
               onClick={onToggle}
               aria-expanded={isExpanded}
-              aria-controls={`detail-${project.id}`}
+              aria-controls={detailId ?? `detail-${project.id}`}
               className="inline-flex items-center gap-1.5 text-sm font-medium border rounded-md px-3.5 py-2 transition-colors focus-visible:outline-none min-h-[40px]"
               style={
                 isExpanded
                   ? {
-                      background: 'var(--accent)',
-                      borderColor: 'var(--accent)',
+                      background: 'var(--accent-button)',
+                      borderColor: 'var(--accent-button)',
                       color: '#fff',
                     }
                   : {

@@ -29,7 +29,7 @@ export const Button = memo(({ variant = 'primary', className = '', children, ...
   // Semantic inline colors to guarantee contrast in both themes
   const styleForVariant = (): React.CSSProperties => {
     if (variant === 'primary') {
-      return { background: 'var(--accent)', color: '#ffffff', borderColor: 'var(--accent)' };
+      return { background: 'var(--accent-button)', color: '#ffffff', borderColor: 'var(--accent-button)' };
     }
     if (variant === 'secondary') {
       return {

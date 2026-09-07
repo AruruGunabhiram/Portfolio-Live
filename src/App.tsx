@@ -27,9 +27,20 @@ function AppContent() {
     duration: reducedMotion ? 0 : 0.22,
   };
 
+  const handleSkip = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault();
+    const target = document.getElementById('main-content');
+    if (target) {
+      target.focus({ preventScroll: true });
+      target.scrollIntoView({ behavior: prefersReducedMotion() ? 'auto' : 'smooth', block: 'start' });
+      // ensure hash updates for history
+      history.replaceState(null, '', '#main-content');
+    }
+  };
+
   return (
     <>
-      <a href="#main-content" className="skip-link">
+      <a href="#main-content" className="skip-link" onClick={handleSkip}>
         Skip to main content
       </a>
 

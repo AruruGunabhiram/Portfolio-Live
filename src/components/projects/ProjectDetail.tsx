@@ -15,11 +15,13 @@ function humanCategory(c: string) {
 
 export function ProjectDetail({ project, onClose }: { project: Project; onClose: () => void }) {
   return (
-    <div
+    <section
       className="mt-4 rounded-md border p-4 sm:p-6 min-w-0 overflow-hidden"
       style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)' }}
+      aria-label={`${project.title} details`}
     >
       <div className="flex items-start justify-between gap-4">
+
         <div className="min-w-0">
           <h4 className="text-base font-semibold leading-tight" style={{ color: 'var(--text)' }}>
             {project.title}
@@ -47,9 +49,9 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
 
       {project.highlights.length > 0 && (
         <div className="mt-5">
-          <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
+          <h5 className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
             Highlights
-          </p>
+          </h5>
           <ul className="mt-2 space-y-2">
             {project.highlights.map((h, i) => (
               <li key={i} className="flex gap-2.5 text-sm leading-relaxed">
@@ -62,9 +64,9 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
       )}
 
       <div className="mt-5 min-w-0">
-        <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
+        <h5 className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
           Technologies
-        </p>
+        </h5>
         <p className="text-sm mt-1.5 leading-relaxed break-words" style={{ color: 'var(--text-secondary)', overflowWrap: 'anywhere' as const }}>
           {project.technologies.join(' · ')}
         </p>
@@ -72,18 +74,18 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
 
       {project.caseStudy && (
         <div className="mt-6 pt-5 border-t" style={{ borderColor: 'var(--border)' }}>
-          <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
+          <h5 className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
             Case study
-          </p>
+          </h5>
           <p className="text-sm leading-relaxed mt-2 italic" style={{ color: 'var(--text-muted)' }}>
             {project.caseStudy.oneLiner}
           </p>
           <div className="mt-4 space-y-4">
             {project.caseStudy.sections.map(sec => (
               <div key={sec.heading}>
-                <p className="text-xs font-semibold uppercase tracking-[0.08em]" style={{ color: 'var(--text)' }}>
+                <h6 className="text-xs font-semibold uppercase tracking-[0.08em]" style={{ color: 'var(--text)' }}>
                   {sec.heading}
-                </p>
+                </h6>
                 {sec.content && (
                   <p className="text-sm leading-relaxed mt-1.5" style={{ color: 'var(--text-secondary)' }}>
                     {sec.content}
@@ -107,9 +109,9 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
 
       {project.architecture?.summary && (
         <div className="mt-6 pt-5 border-t" style={{ borderColor: 'var(--border)' }}>
-          <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
+          <h5 className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
             Architecture
-          </p>
+          </h5>
           <p className="text-sm leading-relaxed mt-2" style={{ color: 'var(--text-secondary)' }}>
             {project.architecture.summary}
           </p>
@@ -123,6 +125,7 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
               href={project.links.github}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`View ${project.title} repository on GitHub`}
               className="inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
               style={{ color: 'var(--accent)' }}
             >
@@ -134,6 +137,7 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
               href={project.links.live}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`View ${project.title} live demo`}
               className="inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
               style={{ color: 'var(--accent)' }}
             >
@@ -145,6 +149,7 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
               href={project.links.paper}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`View paper for ${project.title}`}
               className="inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
               style={{ color: 'var(--accent)' }}
             >
@@ -156,6 +161,7 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
               href={project.links.documentation}
               target="_blank"
               rel="noopener noreferrer"
+              aria-label={`View documentation for ${project.title}`}
               className="inline-flex items-center gap-1.5 text-sm font-medium underline-offset-4 hover:underline"
               style={{ color: 'var(--accent)' }}
             >
@@ -164,6 +170,6 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
           )}
         </div>
       )}
-    </div>
+    </section>
   );
 }

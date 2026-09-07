@@ -71,7 +71,10 @@ export const SpaceDustBackground = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (!isBrowser || prefersReducedMotion()) return;
+    if (!isBrowser) return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const isReduced = () => mq.matches || prefersReducedMotion();
+    if (isReduced()) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -348,9 +351,19 @@ export const SpaceDustBackground = () => {
     });
     if (canvas.parentElement) ro.observe(canvas.parentElement);
 
+    const onReducedChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        cancelAnimationFrame(rafId);
+        ctx.clearRect(0, 0, w, h);
+        window.removeEventListener('mousemove', onMouse);
+      }
+    };
+    mq.addEventListener('change', onReducedChange);
+
     return () => {
       cancelAnimationFrame(rafId);
       window.removeEventListener('mousemove', onMouse);
+      mq.removeEventListener('change', onReducedChange);
       ro.disconnect();
     };
   }, []);

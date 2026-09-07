@@ -85,7 +85,7 @@ export const Contact = () => {
               <a
                 href={`mailto:${CONTACT.email}`}
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none min-h-[44px]"
-                style={{ background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }}
+                style={{ background: 'var(--accent-button)', borderColor: 'var(--accent-button)', color: '#fff' }}
               >
                 Email Guna
               </a>
@@ -115,6 +115,7 @@ export const Contact = () => {
             <a
               href={CONTACT.resumeUrl}
               download="Gunabhiram_Resume.pdf"
+              aria-label="Download résumé (PDF)"
               className="inline-flex items-center gap-1 underline-offset-4 hover:underline focus-visible:outline-none"
               style={{ color: 'var(--text-secondary)' }}
             >
@@ -123,6 +124,7 @@ export const Contact = () => {
             {/* Phone retained but de-emphasized per privacy flag — not primary */}
             <a
               href={`tel:${CONTACT.phone.replace(/\s/g, '')}`}
+              aria-label={`Call ${CONTACT.phone}`}
               className="inline-flex items-center gap-1 underline-offset-4 hover:underline focus-visible:outline-none"
               style={{ color: 'var(--text-muted)' }}
             >
