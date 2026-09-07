@@ -1,10 +1,17 @@
-import { motion } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useTransform } from 'framer-motion';
 import { Container } from '../components';
 import { EXPERIENCE } from '../data/experience';
 import { prefersReducedMotion } from '../utils';
+import { useExperienceEntryProgress } from '../hooks/useSectionTransitionProgress';
 
 export const Experience = () => {
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
+  const expRef = useRef<HTMLElement>(null);
+  const entryProgress = useExperienceEntryProgress(expRef);
+  const bridgeScaleX = useTransform(entryProgress, [0, 1], [0.78, 1]);
+  const bridgeOpacity = useTransform(entryProgress, [0, 0.5, 1], [0.42, 0.85, 1]);
+  const signalX = useTransform(entryProgress, [0.3, 0.9], [0, 240]);
 
   if (!EXPERIENCE.length) return null;
 
@@ -28,8 +35,25 @@ export const Experience = () => {
   };
 
   return (
-    <section id="experience" className="py-12 sm:py-16 lg:py-20 relative">
+    <section id="experience" ref={expRef} className="py-12 sm:py-16 lg:py-20 relative">
       <Container>
+        {/* Bridge: subtle continuation from Hero → Experience (bounded scroll, transform only) */}
+        <motion.div
+          className="h-px max-w-[640px] mb-0 pointer-events-none"
+          style={{ background: 'var(--border)', scaleX: bridgeScaleX, opacity: bridgeOpacity, transformOrigin: 'left' } as unknown as React.CSSProperties}
+          aria-hidden="true"
+        />
+        <motion.div
+          className="relative h-[2px] max-w-[640px] pointer-events-none"
+          style={{ opacity: bridgeOpacity } as unknown as React.CSSProperties}
+          aria-hidden="true"
+        >
+          <motion.span
+            className="absolute top-0 w-1.5 h-1.5 rounded-full"
+            style={{ background: 'var(--accent)', x: signalX, y: '-2px' } as unknown as React.CSSProperties}
+          />
+        </motion.div>
+
         <motion.div
           initial="hidden"
           whileInView="visible"
@@ -48,7 +72,7 @@ export const Experience = () => {
           <motion.div
             variants={item}
             className="mt-4 h-px max-w-[640px]"
-            style={{ background: 'var(--border)' }}
+            style={{ background: 'var(--border)', scaleX: bridgeScaleX, transformOrigin: 'left' } as unknown as React.CSSProperties}
             aria-hidden="true"
           />
 

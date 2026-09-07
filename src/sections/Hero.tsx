@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { PROFILE } from '../data/profile';
@@ -8,6 +9,8 @@ import { EXPERIENCE } from '../data/experience';
 import { PROJECTS } from '../data/projects';
 import { prefersReducedMotion } from '../utils';
 import { usePortfolioMode } from '../context/PortfolioModeContext';
+import { HeroEngineeringScene } from '../components/hero/HeroEngineeringScene';
+import { useHeroExperienceProgress } from '../hooks/useSectionTransitionProgress';
 
 // Compact credibility block — typography + separators, no cards
 function HeroProof() {
@@ -118,6 +121,8 @@ function HeroProofRow() {
 export const Hero = () => {
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
   const { isRecruiter } = usePortfolioMode();
+  const heroRef = useRef<HTMLElement>(null);
+  const transitionProgress = useHeroExperienceProgress(heroRef);
 
   const container = {
     hidden: {},
@@ -141,6 +146,7 @@ export const Hero = () => {
   return (
     <section
       id="hero"
+      ref={heroRef}
       className="relative overflow-hidden"
       style={{ minHeight: 'min(82svh, 760px)' }}
       aria-labelledby="hero-heading"
@@ -338,6 +344,11 @@ export const Hero = () => {
               </a>
             </motion.div>
 
+            {/* Compact engineering system — below CTAs on tablet/mobile, above proof */}
+            <motion.div variants={item} className="lg:hidden pt-6 min-w-0">
+              <HeroEngineeringScene transitionProgress={transitionProgress} />
+            </motion.div>
+
             {/* Mobile/tablet credibility — horizontal row; hidden on lg where vertical block is used */}
             <motion.div variants={item} className="lg:hidden">
               <HeroProofRow />
@@ -356,8 +367,9 @@ export const Hero = () => {
             </motion.div>
           </div>
 
-          {/* Right — meaningful proof, desktop only */}
-          <motion.div variants={item} className="hidden lg:block min-w-0">
+          {/* Right — engineering system + proof, desktop only */}
+          <motion.div variants={item} className="hidden lg:block min-w-0 space-y-6">
+            <HeroEngineeringScene transitionProgress={transitionProgress} />
             <HeroProof />
           </motion.div>
         </motion.div>
