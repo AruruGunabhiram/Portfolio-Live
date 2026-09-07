@@ -4,6 +4,8 @@ import { Container } from '../components';
 import { EXPERIENCE } from '../data/experience';
 import { prefersReducedMotion } from '../utils';
 import { useExperienceEntryProgress } from '../hooks/useSectionTransitionProgress';
+import { ProjxonExperienceStory } from '../components/experience/ProjxonExperienceStory';
+import { InfiniAIExperienceStory } from '../components/experience/InfiniAIExperienceStory';
 
 export const Experience = () => {
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
@@ -76,9 +78,10 @@ export const Experience = () => {
             aria-hidden="true"
           />
 
-          <div className="mt-8 sm:mt-10 space-y-0">
+          <div className="mt-8 sm:mt-10 space-y-12 sm:space-y-16">
             {EXPERIENCE.map(job => {
               const year = job.period.match(/\d{4}/)?.[0] ?? '';
+              const isProjxon = job.id === 'projxon-ai-intern';
 
               return (
                 <motion.div
@@ -102,10 +105,15 @@ export const Experience = () => {
                     <p className="text-sm leading-snug" style={{ color: 'var(--text-muted)' }}>
                       {job.location}
                     </p>
+                    {isProjxon && (
+                      <p className="mt-3 text-[11px] font-medium tracking-wide" style={{ color: 'var(--text-muted)' }} aria-hidden="true">
+                        Current
+                      </p>
+                    )}
                   </div>
 
-                  {/* Right — experience content (editorial, no giant card) */}
-                  <article className="min-w-0 pb-8 lg:pb-0 border-b lg:border-b-0" style={{ borderColor: 'var(--border)' }}>
+                  {/* Right — experience content + visual (professional narrative, not cards) */}
+                  <article className="min-w-0 pb-2 lg:pb-0" style={{ borderColor: 'var(--border)' }}>
                     <h3
                       className="text-[17px] sm:text-lg font-semibold leading-tight tracking-tight break-words"
                       style={{ color: 'var(--text)', overflowWrap: 'anywhere' as const }}
@@ -119,7 +127,12 @@ export const Experience = () => {
                       {job.role}
                     </p>
 
-                    <ul className="mt-4 space-y-2.5">
+                    {/* Visual — compact engineering system */}
+                    <div className="mt-5 min-w-0">
+                      {isProjxon ? <ProjxonExperienceStory /> : <InfiniAIExperienceStory />}
+                    </div>
+
+                    <ul className="mt-5 space-y-2.5">
                       {job.bullets.map((b, i) => (
                         <li key={i} className="flex gap-2.5 text-sm leading-relaxed">
                           <span
