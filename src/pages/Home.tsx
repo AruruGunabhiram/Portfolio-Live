@@ -6,6 +6,7 @@ import {
   Skills,
   Education,
   Publications,
+  Certifications,
   Leadership,
   Contact,
 } from '../sections';
@@ -17,9 +18,10 @@ export const Home = () => {
       <Experience />
       <Projects />
       <EngineeringPractices />
-      <Skills />
       <Education />
       <Publications />
+      <Certifications />
+      <Skills />
       <Leadership />
       <Contact />
     </>

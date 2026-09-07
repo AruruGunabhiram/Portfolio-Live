@@ -7,6 +7,7 @@ export { EngineeringPractices } from './EngineeringPractices';
 export { Skills } from './Skills';
 export { Education } from './Education';
 export { Publications } from './Publications';
+export { Certifications } from './Certifications';
 export { Leadership } from './Leadership';
 export { Contact } from './Contact';
 export { Footer } from './Footer';
