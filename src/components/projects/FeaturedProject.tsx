@@ -1,0 +1,125 @@
+import type { Project } from '../../types/portfolio';
+
+const CATEGORY_LABEL: Record<string, string> = {
+  backend: 'Backend',
+  'full-stack': 'Full Stack',
+  ai: 'AI',
+  'developer-tools': 'Developer Tools',
+  desktop: 'Desktop',
+  'browser-extension': 'Browser Extension',
+};
+
+function formatTechs(techs: string[], max = 5) {
+  if (techs.length <= max) return techs.join(' · ');
+  return `${techs.slice(0, max).join(' · ')} · +${techs.length - max}`;
+}
+
+export function FeaturedProject({
+  project,
+  index,
+  isExpanded,
+  onToggle,
+}: {
+  project: Project;
+  index: number;
+  isExpanded: boolean;
+  onToggle: () => void;
+}) {
+  const cats = project.categories.map(c => CATEGORY_LABEL[c] ?? c).join(' · ');
+
+  return (
+    <article className="py-7 sm:py-8">
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-3">
+            <span className="text-[11px] tracking-[0.12em] uppercase font-medium" style={{ color: 'var(--text-muted)' }} aria-hidden="true">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="text-[11px] tracking-[0.08em] uppercase" style={{ color: 'var(--text-muted)' }}>
+              {cats}
+            </span>
+          </div>
+
+          <h3 className="text-lg sm:text-xl font-semibold leading-tight mt-2 tracking-tight" style={{ color: 'var(--text)' }}>
+            {project.title}
+          </h3>
+          <p className="text-xs font-medium uppercase tracking-[0.08em] mt-1" style={{ color: 'var(--accent)' }}>
+            {project.subtitle}
+          </p>
+
+          <p className="text-sm leading-relaxed mt-3 max-w-[60ch]" style={{ color: 'var(--text-secondary)' }}>
+            {project.summary}
+          </p>
+
+          <ul className="mt-4 space-y-2">
+            {project.highlights.slice(0, 3).map((h, i) => (
+              <li key={i} className="flex gap-2.5 text-sm leading-relaxed">
+                <span className="mt-[7px] w-1 h-1 rounded-full shrink-0" style={{ background: 'var(--text-muted)' }} aria-hidden="true" />
+                <span style={{ color: 'var(--text-secondary)' }}>{h}</span>
+              </li>
+            ))}
+          </ul>
+
+          <p className="text-xs mt-4" style={{ color: 'var(--text-muted)' }}>
+            {formatTechs(project.technologies)}
+          </p>
+
+          <div className="mt-5 flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              onClick={onToggle}
+              aria-expanded={isExpanded}
+              aria-controls={`detail-${project.id}`}
+              className="inline-flex items-center gap-1.5 text-sm font-medium border rounded-md px-3.5 py-2 transition-colors focus-visible:outline-none"
+              style={
+                isExpanded
+                  ? {
+                      background: 'var(--accent)',
+                      borderColor: 'var(--accent)',
+                      color: '#fff',
+                    }
+                  : {
+                      background: 'transparent',
+                      borderColor: 'var(--border-strong)',
+                      color: 'var(--text)',
+                    }
+              }
+            >
+              {isExpanded ? 'Hide details' : 'View details'}
+              <span aria-hidden="true" className="transition-transform" style={{ display: 'inline-block', transform: isExpanded ? 'rotate(180deg)' : 'rotate(0deg)' }}>
+                ↓
+              </span>
+            </button>
+
+            {project.links.github && (
+              <a
+                href={project.links.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-sm underline-offset-4 hover:underline"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                GitHub <span aria-hidden="true">→</span>
+              </a>
+            )}
+            {project.links.live && (
+              <a
+                href={project.links.live}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-sm underline-offset-4 hover:underline"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                Live <span aria-hidden="true">→</span>
+              </a>
+            )}
+          </div>
+        </div>
+
+        {/* Demo slot: intentionally empty in Phase 6 — no placeholder.
+            Future Phase 7 will render project.demo here when defined.
+            We reserve no visual box to avoid "PREVIEW" rectangles (6AM). */}
+      </div>
+    </article>
+  );
+}
