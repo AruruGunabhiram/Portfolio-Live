@@ -25,8 +25,7 @@ export function getPublicPortfolioSnapshot() {
       github: CONTACT.github,
       githubUrl: CONTACT.githubUrl,
       resumeUrl: CONTACT.resumeUrl,
-      // phone is public today via Contact section; flag for review in 2Z
-      phone: CONTACT.phone,
+      // phone intentionally excluded from Ask Guna context per 14H — only email/GitHub/LinkedIn/resume are portfolio contact knowledge
     },
     experience: EXPERIENCE,
     projects: PROJECTS.map(p => ({
@@ -40,7 +39,6 @@ export function getPublicPortfolioSnapshot() {
       featured: p.featured,
       highlights: p.highlights,
       links: p.links,
-      // caseStudy/architecture kept minimal for RAG
       caseStudy: p.caseStudy ? { oneLiner: p.caseStudy.oneLiner, headings: p.caseStudy.sections.map(s => s.heading) } : undefined,
     })),
     education: EDUCATION,

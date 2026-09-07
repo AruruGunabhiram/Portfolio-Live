@@ -8,6 +8,7 @@ import {
   Publications,
   Certifications,
   Leadership,
+  AskGuna,
   Contact,
 } from '../sections';
 
@@ -23,6 +24,7 @@ export const Home = () => {
       <Certifications />
       <Skills />
       <Leadership />
+      <AskGuna />
       <Contact />
     </>
   );

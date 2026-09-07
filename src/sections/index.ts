@@ -9,5 +9,6 @@ export { Education } from './Education';
 export { Publications } from './Publications';
 export { Certifications } from './Certifications';
 export { Leadership } from './Leadership';
+export { AskGuna } from './AskGuna';
 export { Contact } from './Contact';
 export { Footer } from './Footer';

@@ -7,7 +7,9 @@ dist/
 
 # environment files
 .env
-.env.*
+.env.local
+.env.*.local
+!.env.example
 
 # logs
 npm-debug.log*
