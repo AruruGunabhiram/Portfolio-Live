@@ -1,5 +1,7 @@
 import type { Project } from '../../types/portfolio';
 import { ProjectDemo } from './demo/ProjectDemo';
+import { ProjectStory } from './story/ProjectStory';
+import { hasProjectStory } from './story/storyRegistry';
 import { usePortfolioMode } from '../../context/PortfolioModeContext';
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -31,6 +33,10 @@ export function FeaturedProject({
 }) {
   const cats = project.categories.map(c => CATEGORY_LABEL[c] ?? c).join(' · ');
   const hasDemo = !!project.demo;
+  // A custom visual world takes priority over the generic demo; the demo (when the
+  // project has one) is what a failed story chunk falls back to.
+  const hasStory = hasProjectStory(project.id);
+  const hasVisual = hasStory || hasDemo;
   const { isRecruiter } = usePortfolioMode();
   const flowSummary =
     hasDemo && project.demo!.type === 'flow' && 'steps' in project.demo!
@@ -39,7 +45,7 @@ export function FeaturedProject({
 
   return (
     <article className="py-7 sm:py-8">
-      <div className={hasDemo ? 'grid lg:grid-cols-[1.15fr_340px] gap-6 lg:gap-8 items-start' : 'flex items-start justify-between gap-4'}>
+      <div className={hasVisual ? 'grid lg:grid-cols-[1.15fr_340px] gap-6 lg:gap-8 items-start' : 'flex items-start justify-between gap-4'}>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
             <span className="text-[11px] tracking-[0.12em] uppercase font-medium" style={{ color: 'var(--text-muted)' }} aria-hidden="true">
@@ -126,10 +132,15 @@ export function FeaturedProject({
           </div>
         </div>
 
-        {hasDemo && (
+        {hasVisual && (
           <div className="min-w-0">
-            {/* Recruiter mobile: compact flow text instead of full demo (17AE) */}
-            {isRecruiter && flowSummary ? (
+            {hasStory ? (
+              <ProjectStory
+                projectId={project.id}
+                fallback={hasDemo ? <ProjectDemo demo={project.demo!} /> : null}
+              />
+            ) : /* Recruiter mobile: compact flow text instead of full demo (17AE) */
+            isRecruiter && flowSummary ? (
               <>
                 <p
                   className="sm:hidden text-xs leading-relaxed rounded-md border px-3 py-2.5"
