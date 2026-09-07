@@ -84,8 +84,10 @@ describe('A7 — project inventory reconciliation', () => {
     for (const p of PROJECTS) {
       const blob = [p.summary, p.subtitle, ...p.highlights].join(' ');
       expect(blob, `${p.id}`).not.toMatch(/\b(TBD|TODO|Coming soon|Lorem ipsum|placeholder|FIXME)\b/i);
-      // every project must carry at least one real link
-      expect(Object.values(p.links).filter(Boolean).length, `${p.id} has no links`).toBeGreaterThan(0);
+      // every project must carry at least one real link, except Ember whose repo is private (A7B)
+      if (p.id !== 'ember') {
+        expect(Object.values(p.links).filter(Boolean).length, `${p.id} has no links`).toBeGreaterThan(0);
+      }
     }
   });
 
@@ -133,5 +135,208 @@ describe('A7 — project inventory reconciliation', () => {
     const projectBlob = JSON.stringify(PROJECTS).toLowerCase();
     expect(projectBlob).not.toContain('orkaats');
     expect(projectBlob).not.toContain('orkafin');
+  });
+});
+
+const CANONICAL_ORDER = [
+  'ember',
+  'sociallens',
+  'incidentpilot',
+  'clinical-reconciliation',
+  'code-battlegrounds',
+  'timesling',
+  'zenco',
+  'nostalgia',
+];
+
+const CONTRIBUTIONS: Record<string, 'solo' | 'co-built' | 'contributor'> = {
+  ember: 'solo',
+  sociallens: 'solo',
+  incidentpilot: 'solo',
+  'clinical-reconciliation': 'solo',
+  'code-battlegrounds': 'co-built',
+  timesling: 'solo',
+  zenco: 'co-built',
+  nostalgia: 'co-built',
+};
+
+// Identifiers from the private source repository that must never reach public data.
+const PRIVATE_IDENTIFIERS = [
+  'Personal-BOT',
+  'Personal_BOT',
+  'personal-bot',
+  'Job-automation',
+  'job_automation',
+  'CPT',
+  'aruru_resume',
+];
+
+describe('A7B — final project inventory reconciliation', () => {
+  it('1 — exactly 8 canonical projects', () => {
+    expect(PROJECTS).toHaveLength(8);
+  });
+
+  it('2 — ids appear in the exact canonical order', () => {
+    expect(PROJECTS.map(p => p.id)).toEqual(CANONICAL_ORDER);
+    expect(PROJECTS.map(p => p.slug)).toEqual(CANONICAL_ORDER);
+  });
+
+  it('3 — Creator Copilot is absent everywhere, including as hidden/archived record', () => {
+    const blob = JSON.stringify(PROJECTS).toLowerCase();
+    expect(PROJECTS.some(p => p.id === 'creator-copilot')).toBe(false);
+    expect(blob).not.toContain('creator-copilot');
+    expect(blob).not.toContain('creator copilot');
+  });
+
+  it('4 — Extinction is absent, with no placeholder or coming-soon card', () => {
+    const blob = JSON.stringify(PROJECTS).toLowerCase();
+    expect(blob).not.toContain('extinction');
+  });
+
+  it('5 — Ember is present exactly once', () => {
+    const ember = PROJECTS.filter(p => p.id === 'ember');
+    expect(ember).toHaveLength(1);
+    expect(ember[0].title).toBe('Ember');
+    expect(ember[0].subtitle).toBe('Personal AI Execution Assistant');
+  });
+
+  it('6 — no separate Worthy project record', () => {
+    expect(PROJECTS.some(p => /worthy/i.test(`${p.id} ${p.slug} ${p.title}`))).toBe(false);
+  });
+
+  it('7 — Ember exposes no GitHub link (repository is private)', () => {
+    const ember = PROJECTS.find(p => p.id === 'ember')!;
+    expect(ember.links.github).toBeUndefined();
+    expect(ember.links.live).toBeUndefined();
+    expect(Object.values(ember.links).filter(Boolean)).toHaveLength(0);
+  });
+
+  it('8 — Ember public text contains no private repo or personal identifiers', () => {
+    const ember = PROJECTS.find(p => p.id === 'ember')!;
+    const blob = JSON.stringify(ember);
+    for (const id of PRIVATE_IDENTIFIERS) {
+      expect(blob, `Ember leaks ${id}`).not.toContain(id);
+    }
+    expect(blob).not.toMatch(/visa|H-?1B|OPT\b|immigration/i);
+    expect(blob).not.toMatch(/@[a-z0-9.-]+\.(com|edu|org|net)/i);
+    expect(blob).not.toMatch(/\/(Users|home)\/[a-z]/i);
+    expect(blob).not.toMatch(/\b\d{1,3}(\.\d{1,3}){3}\b/);
+    expect(blob).not.toMatch(/API_KEY|SECRET|TOKEN=|password/i);
+  });
+
+  it('9 — Ember avoids overstated autonomy claims', () => {
+    const ember = PROJECTS.find(p => p.id === 'ember')!;
+    const blob = [ember.subtitle, ember.summary, ...ember.highlights].join(' ');
+    expect(blob).not.toMatch(/fully autonomous|production-scale|automatically applies/i);
+    expect(blob).toMatch(/human handoff|approval/i);
+  });
+
+  it('10 — featured set is exactly Ember, SocialLens, IncidentPilot', () => {
+    const featured = PROJECTS.filter(p => p.featured).map(p => p.id);
+    expect(featured).toEqual(['ember', 'sociallens', 'incidentpilot']);
+  });
+
+  it('11 — featured orders are exactly 1 / 2 / 3', () => {
+    const byId = Object.fromEntries(PROJECTS.map(p => [p.id, p]));
+    expect(byId['ember'].featuredOrder).toBe(1);
+    expect(byId['sociallens'].featuredOrder).toBe(2);
+    expect(byId['incidentpilot'].featuredOrder).toBe(3);
+    for (const p of PROJECTS.filter(p => !p.featured)) {
+      expect(p.featuredOrder, `${p.id}`).toBeUndefined();
+    }
+  });
+
+  it('12 — every project carries a valid contribution value', () => {
+    const valid = new Set(['solo', 'co-built', 'contributor']);
+    for (const p of PROJECTS) {
+      expect(p.contribution, `${p.id} contribution`).toBeDefined();
+      expect(valid.has(p.contribution!), `${p.id} = ${p.contribution}`).toBe(true);
+      expect(p.contribution, `${p.id}`).toBe(CONTRIBUTIONS[p.id]);
+    }
+  });
+
+  it('13 — collaborative projects are not framed as solo work', () => {
+    const coBuilt = PROJECTS.filter(p => p.contribution === 'co-built');
+    expect(coBuilt.map(p => p.id)).toEqual(['code-battlegrounds', 'zenco', 'nostalgia']);
+    for (const p of coBuilt) {
+      const blob = [p.summary, ...p.highlights].join(' ');
+      expect(blob, `${p.id} must acknowledge collaboration`).toMatch(/teammate|with a friend|collaborative|class project/i);
+    }
+  });
+
+  it('14 — Zenco does not claim sole authorship of the engine architecture', () => {
+    const zenco = PROJECTS.find(p => p.id === 'zenco')!;
+    const blob = [zenco.summary, ...zenco.highlights].join(' ');
+    expect(blob).not.toMatch(/I architected|I implemented the full|built the entire/i);
+    expect(blob).toMatch(/VS Code extension/i);
+  });
+
+  it('15 — no ownership metrics are exposed on any project', () => {
+    const blob = JSON.stringify(PROJECTS);
+    expect(blob).not.toMatch(/ownershipPercentage|commitCount|teamSize/);
+    for (const p of PROJECTS) {
+      expect(Object.keys(p)).not.toContain('ownershipPercentage');
+      expect(Object.keys(p)).not.toContain('commitCount');
+      expect(Object.keys(p)).not.toContain('teamSize');
+    }
+  });
+
+  it('16 — no dangling skill evidence of any type', () => {
+    const known: Record<string, Set<string>> = {
+      project: new Set(PROJECTS.map(p => p.id)),
+      experience: new Set(EXPERIENCE.map(e => e.id)),
+    };
+    const dangling: string[] = [];
+    for (const s of SKILLS) {
+      for (const e of s.evidence ?? []) {
+        const set = known[e.type];
+        if (set && !set.has(e.id)) dangling.push(`${s.id} -> ${e.type}:${e.id}`);
+      }
+    }
+    expect(dangling).toEqual([]);
+  });
+
+  it('17 — Creator Copilot skill evidence is fully removed', () => {
+    expect(JSON.stringify(SKILLS)).not.toContain('creator-copilot');
+    const byId = Object.fromEntries(SKILLS.map(s => [s.id, s]));
+    // re-pointed to the remaining verified sources
+    expect(byId['java'].evidence?.map(e => e.id)).toEqual(['sociallens']);
+    expect(byId['spring-boot'].evidence?.map(e => e.id)).toEqual(['sociallens']);
+    expect(byId['rest-apis'].evidence?.map(e => e.id)).toContain('sociallens');
+    expect(byId['llm-api-integration'].evidence?.map(e => e.id)).toContain('incidentpilot');
+    expect(byId['explainable-ai'].evidence?.map(e => e.id)).toContain('incidentpilot');
+    expect(byId['hallucination-guardrails'].evidence?.map(e => e.id)).toContain('incidentpilot');
+    // analytics-grounded prompting had no verified source left after removal
+    expect(byId['analytics-grounded-prompting']).toBeUndefined();
+  });
+
+  it('18 — Zenco evidence reflects only Guna\u2019s verified scope', () => {
+    const byId = Object.fromEntries(SKILLS.map(s => [s.id, s]));
+    const zencoBacked = SKILLS.filter(s => (s.evidence ?? []).some(e => e.type === 'project' && e.id === 'zenco')).map(s => s.id);
+    expect(zencoBacked.sort()).toEqual(['modular-architecture', 'oop', 'typescript', 'vscode-api']);
+    // engine-authorship claims dropped
+    expect(byId['design-patterns'].evidence).toBeUndefined();
+    expect(byId['python'].evidence?.map(e => e.id)).not.toContain('zenco');
+  });
+
+  it('19 — Ask Guna snapshot exposes only public-safe Ember content', () => {
+    const snap = getPublicPortfolioSnapshot();
+    const ember = snap.projects.find(p => p.id === 'ember')!;
+    expect(ember).toBeDefined();
+    expect(ember.links).toEqual({});
+    const blob = JSON.stringify(snap);
+    for (const id of PRIVATE_IDENTIFIERS) {
+      expect(blob, `snapshot leaks ${id}`).not.toContain(id);
+    }
+    expect(blob).not.toContain('creator-copilot');
+    expect(snap.projects).toHaveLength(8);
+  });
+
+  it('20 — Experience and its A6 ordering are unaffected', () => {
+    expect(EXPERIENCE).toHaveLength(2);
+    expect(EXPERIENCE.map(e => e.id)).toEqual(['projxon-ai-intern', 'infini-ai-intern']);
+    const experienceBacked = SKILLS.filter(s => (s.evidence ?? []).some(e => e.type === 'experience')).map(s => s.id);
+    expect(experienceBacked).toContain('python');
+    expect(experienceBacked).toContain('flask');
   });
 });

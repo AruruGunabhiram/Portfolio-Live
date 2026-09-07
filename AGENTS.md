@@ -33,10 +33,10 @@ Order matters: `lint` → `build` (build includes `tsc -b`). Don't run `build` w
 
 ## Data / Content Rules (Phase 2 hard-won)
 
-- **Edit content here:** `src/data/profile.ts` (name/headline/valueProposition + `TECH_CHIPS`), `src/data/contact.ts` (email/phone/linkedin/github/resumeUrl), `src/data/projects.ts` (6 ids: `sociallens, creator-copilot, zenco, code-battlegrounds, timesling, nostalgia`; `featured` 3: sociallens→creator-copilot→code-battlegrounds), `src/data/skills.ts` (7 cats `languages|backend|frontend|databases|ai|design|devops`, 38 flat `Skill{id,category,evidence}`), `src/data/experience|education|publications|leadership|certifications|practices.ts`.
+- **Edit content here:** `src/data/profile.ts` (name/headline/valueProposition + `TECH_CHIPS`), `src/data/contact.ts` (email/phone/linkedin/github/resumeUrl), `src/data/projects.ts` (8 ids: `ember, sociallens, incidentpilot, clinical-reconciliation, code-battlegrounds, timesling, zenco, nostalgia`; `featured` 3: ember→sociallens→incidentpilot; optional `contribution: 'solo'|'co-built'|'contributor'`), `src/data/skills.ts` (7 cats `languages|backend|frontend|databases|ai|design|devops`, 37 flat `Skill{id,category,evidence}`), `src/data/experience|education|publications|leadership|certifications|practices.ts`.
 - **Don't invent:** `year/status` on projects, metrics, or certifications not proven — leave `optional`/`undefined`. `IMPACT_HIGHLIGHTS` is an orphaned array in `profile.ts` — don't assign to a project without provenance.
 - **Evidence:** `Skill.evidence: {type:'project'|'experience'|..., id:string}` must reference existing ids (`validateSkillEvidence` dev-only). Run mentally or call `validatePortfolio`/`validateSkillEvidence` in dev.
-- **Project links needing human check:** `creator-copilot` (profile URL), `zenco`/`code-battlegrounds`/`nostalgia` (other owners). Don't silently rewrite.
+- **Project links needing human check:** `ember` (private repo — intentionally no link), `zenco`/`code-battlegrounds`/`nostalgia` (other owners). Don't silently rewrite.
 - **Public vs private:** `src/data/snapshot.ts` `getPublicPortfolioSnapshot()` is the Ask-Guna allowlist (includes phone because Contact renders it — flag if you make phone private).
 
 ## Gotchas & Quirks

@@ -25,12 +25,12 @@ test.describe('21V / 21BS / 21BT — Ask Guna UI (mocked)', () => {
     // suggested question fills/submits
     await page.goto('/', { waitUntil: 'networkidle' });
     await page.route('/api/ask-guna', async route => {
-      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'Creator Copilot uses AI guardrails.', status: 'ok' }) });
+      await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify({ answer: 'IncidentPilot uses AI guardrails.', status: 'ok' }) });
     });
     const suggested = page.locator('#ask-guna button', { hasText: 'Which projects use AI?' });
     if (await suggested.count()) {
       await suggested.click();
-      await expect(page.locator('#ask-guna')).toContainText('Creator Copilot uses AI guardrails.', { timeout: 5000 });
+      await expect(page.locator('#ask-guna')).toContainText('IncidentPilot uses AI guardrails.', { timeout: 5000 });
     }
 
     // error rendering

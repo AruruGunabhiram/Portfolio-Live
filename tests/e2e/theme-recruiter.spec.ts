@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { SKILLS } from '../../src/data/skills';
 
 test.describe('21H / 21I / 21J / 21BB — Theme + Recruiter Mode', () => {
   test(' / defaults to Standard, ?mode=recruiter activates, invalid defaults Standard', async ({ page }) => {
@@ -81,7 +82,7 @@ test.describe('21H / 21I / 21J / 21BB — Theme + Recruiter Mode', () => {
   test('21K — Recruiter content: 3 featured, explorer secondary, Ask Guna compact', async ({ page }) => {
     await page.goto('/?mode=recruiter', { waitUntil: 'networkidle' });
     // exactly 3 featured headings visible under #projects
-    const featuredTitles = ['SocialLens', 'Creator Copilot', 'Code Battlegrounds'];
+    const featuredTitles = ['Ember', 'SocialLens', 'IncidentPilot'];
     for (const t of featuredTitles) {
       await expect(page.locator('#projects', { hasText: t })).toBeVisible();
     }
@@ -103,7 +104,7 @@ test.describe('21H / 21I / 21J / 21BB — Theme + Recruiter Mode', () => {
     // animated FlowDemo eligibility — demo steps aria-label present
     await expect(page.locator('#projects')).toBeVisible();
     // Skills interactive controls (aria-pressed buttons)
-    await expect(page.locator('#skills button[aria-pressed]')).toHaveCount(38);
+    await expect(page.locator('#skills button[aria-pressed]')).toHaveCount(SKILLS.length);
     // Ask Guna suggestions visible in standard
     await expect(page.locator('#ask-guna', { hasText: 'Try' })).toBeVisible();
     // Project Explorer available

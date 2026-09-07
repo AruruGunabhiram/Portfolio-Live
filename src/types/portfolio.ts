@@ -51,6 +51,9 @@ export type ProjectCategory =
 
 export type ProjectStatus = 'active' | 'completed' | 'in-progress' | 'archived';
 
+/** Attribution for a project. Absent means unstated — never assume solo. */
+export type ProjectContribution = 'solo' | 'co-built' | 'contributor';
+
 export interface ProjectLinks {
   github?: string;
   live?: string;
@@ -114,6 +117,7 @@ export interface Project {
   technologies: string[];
   featured: boolean;
   featuredOrder?: number;
+  contribution?: ProjectContribution;
   status?: ProjectStatus;
   year?: number;
   highlights: string[];

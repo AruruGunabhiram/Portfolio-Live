@@ -40,15 +40,15 @@ export const SKILL_CATEGORIES: SkillCategoryMeta[] = [
 
 export const SKILLS: Skill[] = [
   // languages
-  { id: 'python', name: 'Python', category: 'languages', evidence: [{ type: 'experience', id: 'infini-ai-intern' }, { type: 'project', id: 'zenco' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
-  { id: 'java', name: 'Java', category: 'languages', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'creator-copilot' }] },
+  { id: 'python', name: 'Python', category: 'languages', evidence: [{ type: 'experience', id: 'infini-ai-intern' }, { type: 'project', id: 'ember' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
+  { id: 'java', name: 'Java', category: 'languages', evidence: [{ type: 'project', id: 'sociallens' }] },
   { id: 'cpp', name: 'C/C++', category: 'languages' },
   { id: 'javascript', name: 'JavaScript', category: 'languages', evidence: [{ type: 'project', id: 'code-battlegrounds' }] },
   { id: 'sql', name: 'SQL', category: 'languages', evidence: [{ type: 'project', id: 'sociallens' }] },
 
   // backend & systems
-  { id: 'spring-boot', name: 'Spring Boot', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'creator-copilot' }] },
-  { id: 'rest-apis', name: 'REST APIs', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
+  { id: 'spring-boot', name: 'Spring Boot', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }] },
+  { id: 'rest-apis', name: 'REST APIs', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'ember' }, { type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
   { id: 'oauth2', name: 'OAuth 2.0', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'code-battlegrounds' }] },
   { id: 'scheduled-jobs', name: 'Scheduled Jobs', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }] },
   { id: 'data-pipelines', name: 'Data Pipelines', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }] },
@@ -71,15 +71,14 @@ export const SKILLS: Skill[] = [
   { id: 'aws-aurora', name: 'AWS Aurora', category: 'databases' },
 
   // applied ai
-  { id: 'llm-api-integration', name: 'LLM API Integration', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
-  { id: 'analytics-grounded-prompting', name: 'Analytics-Grounded Prompting', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }] },
-  { id: 'explainable-ai', name: 'Explainable AI', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'incidentpilot' }, { type: 'publication', id: 'ieee-cad-late-fusion-2025' }] },
-  { id: 'hallucination-guardrails', name: 'Hallucination Guardrails', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'incidentpilot' }] },
+  { id: 'llm-api-integration', name: 'LLM API Integration', category: 'ai', evidence: [{ type: 'project', id: 'ember' }, { type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
+  { id: 'explainable-ai', name: 'Explainable AI', category: 'ai', evidence: [{ type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }, { type: 'publication', id: 'ieee-cad-late-fusion-2025' }] },
+  { id: 'hallucination-guardrails', name: 'Hallucination Guardrails', category: 'ai', evidence: [{ type: 'project', id: 'ember' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
 
   // design
   { id: 'oop', name: 'OOP', category: 'design', evidence: [{ type: 'project', id: 'zenco' }] },
-  { id: 'design-patterns', name: 'Design Patterns (Strategy, Factory)', category: 'design', evidence: [{ type: 'project', id: 'zenco' }] },
-  { id: 'modular-architecture', name: 'Modular Architecture', category: 'design', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'zenco' }] },
+  { id: 'design-patterns', name: 'Design Patterns (Strategy, Factory)', category: 'design' },
+  { id: 'modular-architecture', name: 'Modular Architecture', category: 'design', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'ember' }, { type: 'project', id: 'zenco' }] },
   { id: 'dsa', name: 'DSA', category: 'design', evidence: [{ type: 'leadership', id: 'dsa-club-srm' }] },
 
   // devops & tools

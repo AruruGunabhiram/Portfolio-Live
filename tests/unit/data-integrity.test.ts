@@ -42,11 +42,11 @@ describe('21D — data integrity invariants', () => {
     expect(unique(orders as number[])).toBe(true);
   });
 
-  it('21E — featured set is SocialLens, Creator Copilot, Code Battlegrounds in order', () => {
+  it('21E — featured set is Ember, SocialLens, IncidentPilot in order (A7B)', () => {
     const featured = PROJECTS.filter(p => p.featured).sort((a, b) => (a.featuredOrder ?? 0) - (b.featuredOrder ?? 0));
     const ids = featured.map(p => p.id);
-    expect(ids).toEqual(['sociallens', 'creator-copilot', 'code-battlegrounds']);
-    if (ids.join(',') !== 'sociallens,creator-copilot,code-battlegrounds') {
+    expect(ids).toEqual(['ember', 'sociallens', 'incidentpilot']);
+    if (ids.join(',') !== 'ember,sociallens,incidentpilot') {
       throw new Error(`Expected exactly 3 featured projects, found ${featured.length}: ${featured.map(p => p.title).join(', ')}`);
     }
   });

@@ -23,7 +23,7 @@ test.describe('21P / 21Q / 21R — Project Explorer & Detail', () => {
       await expect(aiBtn).toHaveAttribute('aria-pressed', 'true');
       const aiCount = PROJECTS.filter(p => p.categories.includes('ai')).length;
       await expect(explorer).toContainText(`${aiCount} project${aiCount === 1 ? '' : 's'}`);
-      await expect(explorer).toContainText('Creator Copilot');
+      await expect(explorer).toContainText('IncidentPilot');
     }
 
     // filter another real category e.g. backend
@@ -130,11 +130,11 @@ test.describe('21T — Skills', () => {
     await expect(page.locator('#skills')).toContainText(/Evidence/);
     await expect(page.locator('#skills')).toContainText(/InfiniAI|Zenco/);
 
-    // multiple evidence: Java has 2 projects
-    const javaBtn = page.locator('#skills button', { hasText: /^Java$/ });
-    await javaBtn.click();
+    // multiple evidence: REST APIs spans several projects
+    const restBtn = page.locator('#skills button', { hasText: /^REST APIs$/ });
+    await restBtn.click();
     await expect(page.locator('#skills')).toContainText(/SocialLens/);
-    await expect(page.locator('#skills')).toContainText(/Creator Copilot/);
+    await expect(page.locator('#skills')).toContainText(/IncidentPilot/);
 
     // no-evidence skill does not fabricate
     const cppBtn = page.locator('#skills button', { hasText: /^C\/C\+\+$/ });

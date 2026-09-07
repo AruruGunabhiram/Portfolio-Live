@@ -6,7 +6,7 @@
 
 | File | Covers |
 | ---- | ------ |
-| `tests/unit/data-integrity.test.ts` | 21D IDs unique, 21E featured invariant (SocialLens/Creator Copilot/Code Battlegrounds order), 21F URL guard, 21G empty certifications, 21AB peer-reviewed guard, 21AC AWS claim guard |
+| `tests/unit/data-integrity.test.ts` | 21D IDs unique, 21E featured invariant (Ember/SocialLens/IncidentPilot order), 21F URL guard, 21G empty certifications, 21AB peer-reviewed guard, 21AC AWS claim guard |
 | `tests/unit/snapshot.test.ts` | 21Y / 21BZ public snapshot allowlist, phone excluded from Ask Guna, IMPACT_HIGHLIGHTS / secrets excluded |
 | `tests/unit/evidence-resolver.test.ts` | 21U resolver for project/experience/publication/leadership/certification + invalid → null |
 | `tests/unit/seo-static.test.ts` | 21AD metadata, 21AE placeholder domain, 21AF robots/sitemap, 21AG favicon/OG assets, 21AH JSON-LD |

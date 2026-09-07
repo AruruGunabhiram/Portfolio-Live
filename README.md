@@ -46,7 +46,7 @@ src/
     profile.ts            # PROFILE + TECH_CHIPS + IMPACT_HIGHLIGHTS
     contact.ts            # CONTACT (public: email/phone/linkedin/github/resumeUrl)
     experience.ts         # EXPERIENCE[1] id: infini-ai-intern
-    projects.ts           # PROJECTS[6] ids: sociallens, creator-copilot, zenco, code-battlegrounds, timesling, nostalgia (featured 3)
+    projects.ts           # PROJECTS[8] ids: ember, sociallens, incidentpilot, clinical-reconciliation, code-battlegrounds, timesling, zenco, nostalgia (featured 3)
     education.ts          # EDUCATION[2]
     publications.ts       # PUBLICATIONS[1] ieee-cad-late-fusion-2025
     skills.ts             # SKILLS[38] flat + SKILL_CATEGORIES[7] with evidence[] (no level %)

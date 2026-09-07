@@ -210,16 +210,16 @@ describe('A6 — Experience → Projects capability recomposition', () => {
     expect(EXPERIENCE[1].technologies).toEqual(['Python', 'Flask']);
   });
 
-  it('13 — project inventory pinned (A7-reconciled)', () => {
+  it('13 — project inventory pinned (A7B-reconciled)', () => {
     expect(PROJECTS).toHaveLength(8);
     expect(PROJECTS.map(p => p.id).sort()).toEqual(
-      ['clinical-reconciliation', 'code-battlegrounds', 'creator-copilot', 'incidentpilot', 'nostalgia', 'sociallens', 'timesling', 'zenco']
+      ['clinical-reconciliation', 'code-battlegrounds', 'ember', 'incidentpilot', 'nostalgia', 'sociallens', 'timesling', 'zenco']
     );
   });
 
-  it('14 — featured project order unchanged', () => {
+  it('14 — featured project order is Ember / SocialLens / IncidentPilot', () => {
     const featured = PROJECTS.filter(p => p.featured).sort((a, b) => (a.featuredOrder ?? 99) - (b.featuredOrder ?? 99));
-    expect(featured.map(p => p.id)).toEqual(['sociallens', 'creator-copilot', 'code-battlegrounds']);
+    expect(featured.map(p => p.id)).toEqual(['ember', 'sociallens', 'incidentpilot']);
     expect(featured.map(p => p.featuredOrder)).toEqual([1, 2, 3]);
   });
 
