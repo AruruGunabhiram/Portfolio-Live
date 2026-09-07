@@ -2,6 +2,7 @@ import { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { prefersReducedMotion } from '../utils';
+import { usePortfolioMode } from '../context/PortfolioModeContext';
 
 const SUGGESTED = [
   'What backend projects has Guna built?',
@@ -17,6 +18,7 @@ export const AskGuna = () => {
   const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
+  const { isRecruiter } = usePortfolioMode();
 
   const ask = async (q: string) => {
     const trimmed = q.trim();
@@ -63,7 +65,7 @@ export const AskGuna = () => {
   };
 
   return (
-    <section id="ask-guna" className="py-16 sm:py-20 relative">
+    <section id="ask-guna" className={isRecruiter ? 'py-10 sm:py-12 relative' : 'py-16 sm:py-20 relative'}>
       <Container>
         <motion.div
           initial={reduced ? undefined : { opacity: 0, y: 12 }}
@@ -75,7 +77,7 @@ export const AskGuna = () => {
             Ask Guna
           </h2>
           <p className="text-sm leading-relaxed mt-2 max-w-[60ch]" style={{ color: 'var(--text-muted)' }}>
-            Ask about projects, experience, research, or skills.
+            {isRecruiter ? 'Have a specific question about a project or experience?' : 'Ask about projects, experience, research, or skills.'}
           </p>
           <p className="text-xs mt-2" style={{ color: 'var(--text-muted)' }}>
             Answers are based only on the information in this portfolio.
@@ -115,28 +117,30 @@ export const AskGuna = () => {
                 </button>
               </form>
 
-              <div className="mt-6">
-                <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
-                  Try
-                </p>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  {SUGGESTED.map(q => (
-                    <button
-                      key={q}
-                      type="button"
-                      onClick={() => {
-                        setQuestion(q);
-                        ask(q);
-                      }}
-                      disabled={loading}
-                      className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium border transition-colors disabled:opacity-50 focus-visible:outline-none"
-                      style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
-                    >
-                      {q}
-                    </button>
-                  ))}
+              {!isRecruiter && (
+                <div className="mt-6">
+                  <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
+                    Try
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {SUGGESTED.map(q => (
+                      <button
+                        key={q}
+                        type="button"
+                        onClick={() => {
+                          setQuestion(q);
+                          ask(q);
+                        }}
+                        disabled={loading}
+                        className="inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium border transition-colors disabled:opacity-50 focus-visible:outline-none"
+                        style={{ background: 'var(--surface)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }}
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
 
             {/* Right: answer */}

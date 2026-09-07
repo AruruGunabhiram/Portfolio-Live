@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Container, Button } from '../components';
 import { useTheme } from '../hooks';
+import { usePortfolioMode } from '../context/PortfolioModeContext';
 import { PROFILE } from '../data/profile';
 import { prefersReducedMotion } from '../utils';
 
@@ -14,6 +15,15 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'publications', label: 'Research' },
   { id: 'skills', label: 'Skills' },
   { id: 'leadership', label: 'Leadership' },
+  { id: 'contact', label: 'Contact' },
+];
+
+const RECRUITER_NAV_ITEMS: NavItem[] = [
+  { id: 'experience', label: 'Experience' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'skills', label: 'Skills' },
+  { id: 'education', label: 'Education' },
+  { id: 'publications', label: 'Research' },
   { id: 'contact', label: 'Contact' },
 ];
 
@@ -48,11 +58,13 @@ function useActiveSection(ids: string[]) {
 export const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const { isRecruiter, toggleMode } = usePortfolioMode();
   const menuId = 'mobile-nav';
   const menuRef = useRef<HTMLDivElement | null>(null);
   const buttonRef = useRef<HTMLButtonElement | null>(null);
   const reduced = prefersReducedMotion();
-  const activeId = useActiveSection(NAV_ITEMS.map(n => n.id));
+  const navItems = isRecruiter ? RECRUITER_NAV_ITEMS : NAV_ITEMS;
+  const activeId = useActiveSection(navItems.map(n => n.id));
 
   // Close on Escape and on resize to desktop
   useEffect(() => {
@@ -102,7 +114,7 @@ export const Header = () => {
           </a>
 
           <nav className="hidden md:flex items-center gap-5 text-sm" aria-label="Primary">
-            {NAV_ITEMS.map(item => {
+            {navItems.map(item => {
               const isActive = activeId === item.id;
               return (
                 <a
@@ -136,6 +148,20 @@ export const Header = () => {
           </nav>
 
           <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={toggleMode}
+              aria-pressed={isRecruiter}
+              aria-label={isRecruiter ? 'Switch to standard view' : 'Switch to recruiter view'}
+              className="hidden sm:inline-flex items-center px-3 py-1.5 rounded-md text-xs font-medium border transition-colors focus-visible:outline-none"
+              style={
+                isRecruiter
+                  ? { background: 'var(--accent-subtle)', borderColor: 'var(--accent)', color: 'var(--accent)' }
+                  : { background: 'transparent', borderColor: 'var(--border)', color: 'var(--text-muted)' }
+              }
+            >
+              {isRecruiter ? 'Standard view' : 'Recruiter view'}
+            </button>
             <Button
               variant="ghost"
               onClick={toggleTheme}
@@ -210,7 +236,23 @@ export const Header = () => {
           >
             <Container>
               <nav className="py-2" aria-label="Mobile">
-                {NAV_ITEMS.map(item => (
+                <button
+                  type="button"
+                  onClick={() => {
+                    toggleMode();
+                    setIsMenuOpen(false);
+                  }}
+                  aria-pressed={isRecruiter}
+                  className="flex items-center min-h-[44px] w-full px-2 text-sm rounded-md transition-colors text-left focus-visible:outline-none"
+                  style={{
+                    color: isRecruiter ? 'var(--accent)' : 'var(--text-secondary)',
+                    background: isRecruiter ? 'var(--accent-subtle)' : 'transparent',
+                    border: `1px solid ${isRecruiter ? 'var(--accent)' : 'transparent'}`,
+                  }}
+                >
+                  {isRecruiter ? 'Standard view' : 'Recruiter view'}
+                </button>
+                {navItems.map(item => (
                   <a
                     key={item.id}
                     href={`#${item.id}`}

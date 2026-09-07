@@ -7,11 +7,13 @@ import { SpaceDustBackground } from './components';
 import { LoaderOverlay } from './components/LoaderOverlay';
 import { useSessionLoader } from './hooks/useSessionLoader';
 import { prefersReducedMotion } from './utils';
+import { PortfolioModeProvider, usePortfolioMode } from './context/PortfolioModeContext';
 
 function AppContent() {
   const location = useLocation();
   const { isLoading, shouldRender } = useSessionLoader();
   const reducedMotion = prefersReducedMotion();
+  const { isRecruiter } = usePortfolioMode();
 
   const pageVariants = {
     initial: reducedMotion ? {} : { opacity: 0, y: 8 },
@@ -34,7 +36,11 @@ function AppContent() {
       <LoaderOverlay isLoading={isLoading} shouldRender={shouldRender} />
 
       <div className="min-h-screen flex flex-col relative" aria-busy={isLoading || undefined}>
-        <div className="fixed inset-0 pointer-events-none z-0" style={{ opacity: 0.5 }} aria-hidden="true">
+        <div
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{ opacity: isRecruiter ? 0.18 : 0.5, transition: 'opacity 220ms ease' }}
+          aria-hidden="true"
+        >
           <SpaceDustBackground />
         </div>
 
@@ -67,9 +73,11 @@ function AppContent() {
 function App() {
   return (
     <BrowserRouter>
-      <ParallaxProvider>
-        <AppContent />
-      </ParallaxProvider>
+      <PortfolioModeProvider>
+        <ParallaxProvider>
+          <AppContent />
+        </ParallaxProvider>
+      </PortfolioModeProvider>
     </BrowserRouter>
   );
 }

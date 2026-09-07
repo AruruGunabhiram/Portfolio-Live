@@ -5,7 +5,9 @@ import { CONTACT } from '../data/contact';
 import { EDUCATION } from '../data/education';
 import { PUBLICATIONS } from '../data/publications';
 import { EXPERIENCE } from '../data/experience';
+import { PROJECTS } from '../data/projects';
 import { prefersReducedMotion } from '../utils';
+import { usePortfolioMode } from '../context/PortfolioModeContext';
 
 // Compact credibility block — typography + separators, no cards
 function HeroProof() {
@@ -115,6 +117,7 @@ function HeroProofRow() {
 
 export const Hero = () => {
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
+  const { isRecruiter } = usePortfolioMode();
 
   const container = {
     hidden: {},
@@ -201,47 +204,96 @@ export const Hero = () => {
               >
                 {PROFILE.valueProposition}
               </p>
+              {isRecruiter && (
+                <p className="text-xs leading-relaxed pt-2 max-w-[42rem]" style={{ color: 'var(--text-muted)' }}>
+                  {EDUCATION[0].degree} · {EDUCATION[0].institution} · {EXPERIENCE[0].role} · {EXPERIENCE[0].companyShort ?? EXPERIENCE[0].company} · {PUBLICATIONS[0].venue} · {PUBLICATIONS[0].year} · {PROJECTS.filter(p => p.featured).length} featured projects
+                </p>
+              )}
             </motion.div>
 
-            {/* CTAs — max 2 high-emphasis */}
+            {/* CTAs — max 2 high-emphasis, recruiter makes Resume primary */}
             <motion.div variants={item} className="flex flex-wrap gap-3 pt-6">
-              <a
-                href="#projects"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none"
-                style={{
-                  background: 'var(--accent)',
-                  color: '#ffffff',
-                  borderColor: 'var(--accent)',
-                }}
-              >
-                Explore Projects
-              </a>
-              <a
-                href={CONTACT.resumeUrl}
-                download="Gunabhiram_Resume.pdf"
-                className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-medium border bg-transparent transition-colors focus-visible:outline-none"
-                style={{
-                  borderColor: 'var(--border-strong)',
-                  color: 'var(--text)',
-                }}
-              >
-                <svg
-                  width="14"
-                  height="14"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  aria-hidden="true"
-                >
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                View Resume
-              </a>
+              {isRecruiter ? (
+                <>
+                  <a
+                    href={CONTACT.resumeUrl}
+                    download="Gunabhiram_Resume.pdf"
+                    className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none"
+                    style={{
+                      background: 'var(--accent)',
+                      color: '#ffffff',
+                      borderColor: 'var(--accent)',
+                    }}
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    View Resume
+                  </a>
+                  <a
+                    href="#projects"
+                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border bg-transparent transition-colors focus-visible:outline-none"
+                    style={{
+                      borderColor: 'var(--border-strong)',
+                      color: 'var(--text)',
+                    }}
+                  >
+                    Explore Projects
+                  </a>
+                </>
+              ) : (
+                <>
+                  <a
+                    href="#projects"
+                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none"
+                    style={{
+                      background: 'var(--accent)',
+                      color: '#ffffff',
+                      borderColor: 'var(--accent)',
+                    }}
+                  >
+                    Explore Projects
+                  </a>
+                  <a
+                    href={CONTACT.resumeUrl}
+                    download="Gunabhiram_Resume.pdf"
+                    className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-medium border bg-transparent transition-colors focus-visible:outline-none"
+                    style={{
+                      borderColor: 'var(--border-strong)',
+                      color: 'var(--text)',
+                    }}
+                  >
+                    <svg
+                      width="14"
+                      height="14"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      aria-hidden="true"
+                    >
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                      <polyline points="7 10 12 15 17 10" />
+                      <line x1="12" y1="15" x2="12" y2="3" />
+                    </svg>
+                    View Resume
+                  </a>
+                </>
+              )}
             </motion.div>
 
             {/* Low-emphasis external links */}

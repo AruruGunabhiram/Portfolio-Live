@@ -1,107 +1,143 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Container } from '../components';
-import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
 import { CONTACT } from '../data/contact';
-
-const OpenToBanner = () => {
-  return (
-    <motion.div
-      variants={fadeInUp}
-      className="rounded-md px-6 py-5 mb-10"
-      style={{ background: 'var(--surface-subtle)', border: '1px solid var(--border)' }}
-    >
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <p className="text-sm font-semibold" style={{ color: 'var(--text)' }}>Open to Summer 2026 SWE internships</p>
-          <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>Backend / Full-Stack • Boulder / Remote • Fast response via email</p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <a
-            href={`mailto:${CONTACT.email}`}
-            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border transition-colors"
-            style={{ background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }}
-          >
-            Email Me
-          </a>
-          <a
-            href={CONTACT.linkedinUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border"
-            style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)', background: 'var(--surface)' }}
-          >
-            LinkedIn
-          </a>
-          <a
-            href={CONTACT.resumeUrl}
-            download="Gunabhiram_Resume.pdf"
-            className="inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border"
-            style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)', background: 'var(--surface)' }}
-          >
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Download Resume
-          </a>
-        </div>
-      </div>
-    </motion.div>
-  );
-};
-
-interface ContactLink {
-  label: string;
-  value: string;
-  href: string;
-  external?: boolean;
-}
+import { prefersReducedMotion } from '../utils';
 
 export const Contact = () => {
-  const links: ContactLink[] = [
-    { label: 'Email', value: CONTACT.email, href: `mailto:${CONTACT.email}` },
-    { label: 'Phone', value: CONTACT.phone, href: `tel:${CONTACT.phone.replace(/\s/g, '')}` },
-    { label: 'LinkedIn', value: CONTACT.linkedin, href: CONTACT.linkedinUrl, external: true },
-    { label: 'GitHub', value: CONTACT.github, href: CONTACT.githubUrl, external: true },
-  ];
+  const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(CONTACT.email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      // fallback: select via prompt
+      window.prompt('Copy email:', CONTACT.email);
+    }
+  };
+
+  const container = {
+    hidden: {},
+    visible: { transition: { staggerChildren: reduced ? 0 : 0.08, delayChildren: reduced ? 0 : 0.04 } },
+  };
+  const item = {
+    hidden: reduced ? { opacity: 1 } : { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: reduced ? 0 : 0.36, ease: 'easeOut' as const } },
+  };
 
   return (
-    <section id="contact" className="py-20">
+    <section id="contact" className="py-16 sm:py-20 relative">
       <Container>
         <motion.div
-          className="max-w-xl"
           initial="hidden"
           whileInView="visible"
-          viewport={scrollViewport}
-          variants={staggerContainer}
+          viewport={{ once: true, amount: 0.2, margin: '0px 0px -80px 0px' }}
+          variants={container}
+          className="max-w-3xl"
         >
-          <OpenToBanner />
-
-          <motion.h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 tracking-tight" style={{ color: 'var(--text)' }} variants={fadeInUp}>
+          <motion.h2
+            variants={item}
+            className="text-2xl sm:text-3xl font-bold tracking-tight"
+            style={{ color: 'var(--text)', letterSpacing: '-0.02em' }}
+          >
             Contact
           </motion.h2>
 
-          <motion.p className="text-base mb-8" style={{ color: 'var(--text-secondary)' }} variants={fadeInUp}>
-            Open to internship and full-time opportunities. Feel free to reach out directly.
+          <motion.div variants={item} className="mt-4 h-px max-w-[640px]" style={{ background: 'var(--border)' }} aria-hidden="true" />
+
+          <motion.p variants={item} className="text-sm leading-relaxed mt-6 max-w-prose" style={{ color: 'var(--text-secondary)' }}>
+            For roles, collaborations, or questions about my work, email is the best place to reach me.
           </motion.p>
 
-          <motion.div variants={fadeInUp} className="rounded-md divide-y" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
-            {links.map(link => (
-              <div key={link.label} className="px-4 sm:px-6 py-4 flex items-center justify-between gap-2 sm:gap-4">
-                <span className="text-xs font-semibold uppercase tracking-widest w-20 shrink-0" style={{ color: 'var(--text-muted)' }}>
-                  {link.label}
+          {/* Email as primary */}
+          <motion.div variants={item} className="mt-6">
+            <p className="text-xs font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
+              Email
+            </p>
+            <div className="mt-2 flex flex-wrap items-center gap-3">
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="text-sm sm:text-base font-medium break-all focus-visible:outline-none link-accent"
+                style={{ overflowWrap: 'anywhere' }}
+              >
+                {CONTACT.email}
+              </a>
+              <button
+                type="button"
+                onClick={handleCopy}
+                className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-medium border transition-colors focus-visible:outline-none"
+                style={{ borderColor: 'var(--border)', color: 'var(--text-secondary)', background: 'var(--surface)' }}
+                aria-live="polite"
+                aria-label={copied ? 'Email copied' : 'Copy email address'}
+              >
+                {copied ? 'Copied' : 'Copy email'}
+              </button>
+              {copied && (
+                <span className="text-xs" style={{ color: 'var(--text-muted)' }} role="status">
+                  Copied to clipboard
                 </span>
-                <a
-                  href={link.href}
-                  target={link.external ? '_blank' : undefined}
-                  rel={link.external ? 'noopener noreferrer' : undefined}
-                  className="text-sm font-medium break-all sm:break-normal link-accent"
-                >
-                  {link.value}
-                </a>
-              </div>
-            ))}
+              )}
+            </div>
+            <div className="mt-4">
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none"
+                style={{ background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }}
+              >
+                Email Guna
+              </a>
+            </div>
+          </motion.div>
+
+          {/* Secondary links: LinkedIn, GitHub, Resume + phone de-emphasized */}
+          <motion.div variants={item} className="mt-8 pt-6 border-t flex flex-wrap gap-4 sm:gap-6 text-sm" style={{ borderColor: 'var(--border)' }}>
+            <a
+              href={CONTACT.linkedinUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 underline-offset-4 hover:underline focus-visible:outline-none"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              LinkedIn <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              href={CONTACT.githubUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 underline-offset-4 hover:underline focus-visible:outline-none"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              GitHub <span aria-hidden="true">↗</span>
+            </a>
+            <a
+              href={CONTACT.resumeUrl}
+              download="Gunabhiram_Resume.pdf"
+              className="inline-flex items-center gap-1 underline-offset-4 hover:underline focus-visible:outline-none"
+              style={{ color: 'var(--text-secondary)' }}
+            >
+              Résumé <span aria-hidden="true">↓</span>
+            </a>
+            {/* Phone retained but de-emphasized per privacy flag — not primary */}
+            <a
+              href={`tel:${CONTACT.phone.replace(/\s/g, '')}`}
+              className="inline-flex items-center gap-1 underline-offset-4 hover:underline focus-visible:outline-none"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              {CONTACT.phone}
+            </a>
+          </motion.div>
+
+          <motion.div variants={item} className="mt-10">
+            <a
+              href="#hero"
+              className="inline-flex items-center gap-1 text-xs tracking-wide focus-visible:outline-none"
+              style={{ color: 'var(--text-muted)' }}
+            >
+              Back to top <span aria-hidden="true">↑</span>
+            </a>
           </motion.div>
         </motion.div>
       </Container>

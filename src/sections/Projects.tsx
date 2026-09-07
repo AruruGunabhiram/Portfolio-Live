@@ -1,9 +1,10 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Container } from '../components';
 import { PROJECTS } from '../data/projects';
 import type { ProjectCategory } from '../types/portfolio';
 import { prefersReducedMotion } from '../utils';
+import { usePortfolioMode } from '../context/PortfolioModeContext';
 import { FeaturedProject } from '../components/projects/FeaturedProject';
 import { ProjectListItem } from '../components/projects/ProjectListItem';
 import { ProjectDetail } from '../components/projects/ProjectDetail';
@@ -13,8 +14,13 @@ export const Projects = () => {
   const [explorerOpen, setExplorerOpen] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<ProjectCategory | 'all'>('all');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const { isRecruiter } = usePortfolioMode();
 
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
+
+  useEffect(() => {
+    if (isRecruiter && explorerOpen) setExplorerOpen(false);
+  }, [isRecruiter, explorerOpen]);
 
   const featured = useMemo(
     () => PROJECTS.filter(p => p.featured).sort((a, b) => (a.featuredOrder ?? 99) - (b.featuredOrder ?? 99)),
@@ -79,25 +85,41 @@ export const Projects = () => {
             })}
           </div>
 
-          {/* Explore control */}
+          {/* Explore control — recruiter de-emphasized */}
           <div className="mt-8 flex justify-start">
-            <button
-              type="button"
-              aria-expanded={explorerOpen}
-              aria-controls="project-explorer"
-              onClick={() => setExplorerOpen(v => !v)}
-              className="inline-flex items-center gap-2 text-sm font-medium border rounded-md px-4 py-2.5 transition-colors focus-visible:outline-none"
-              style={
-                explorerOpen
-                  ? { background: 'var(--surface-subtle)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }
-                  : { background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }
-              }
-            >
-              {explorerOpen ? 'Show fewer projects' : 'Explore all projects'}
-              <span aria-hidden="true" style={{ transform: explorerOpen ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block', transition: reduced ? 'none' : 'transform 200ms' }}>
-                ↓
-              </span>
-            </button>
+            {isRecruiter ? (
+              <button
+                type="button"
+                aria-expanded={explorerOpen}
+                aria-controls="project-explorer"
+                onClick={() => setExplorerOpen(v => !v)}
+                className="inline-flex items-center gap-1 text-sm underline-offset-4 hover:underline focus-visible:outline-none"
+                style={{ color: 'var(--text-muted)' }}
+              >
+                {explorerOpen ? 'Show fewer projects' : 'View all projects'}
+                <span aria-hidden="true" style={{ display: 'inline-block', transform: explorerOpen ? 'rotate(180deg)' : 'rotate(0deg)', transition: reduced ? 'none' : 'transform 200ms' }}>
+                  ↓
+                </span>
+              </button>
+            ) : (
+              <button
+                type="button"
+                aria-expanded={explorerOpen}
+                aria-controls="project-explorer"
+                onClick={() => setExplorerOpen(v => !v)}
+                className="inline-flex items-center gap-2 text-sm font-medium border rounded-md px-4 py-2.5 transition-colors focus-visible:outline-none"
+                style={
+                  explorerOpen
+                    ? { background: 'var(--surface-subtle)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }
+                    : { background: 'var(--accent)', borderColor: 'var(--accent)', color: '#fff' }
+                }
+              >
+                {explorerOpen ? 'Show fewer projects' : 'Explore all projects'}
+                <span aria-hidden="true" style={{ transform: explorerOpen ? 'rotate(180deg)' : 'rotate(0deg)', display: 'inline-block', transition: reduced ? 'none' : 'transform 200ms' }}>
+                  ↓
+                </span>
+              </button>
+            )}
           </div>
 
           {/* Explorer — inline expansion, pushes Education down */}

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback, useId } from 'react';
 import type { FlowDemo } from '../../../types/portfolio';
+import { usePortfolioMode } from '../../../context/PortfolioModeContext';
 
 interface FlowDemoProps {
   demo: FlowDemo;
@@ -49,6 +50,7 @@ export function FlowDemo({ demo }: FlowDemoProps) {
   const [isDocVisible, setIsDocVisible] = useState(() => typeof document === 'undefined' ? true : document.visibilityState === 'visible');
   const [reduced, setReduced] = useState(false);
   const timerRef = useRef<number | null>(null);
+  const { isRecruiter: modeIsRecruiter } = usePortfolioMode();
 
   // reduced motion init + listener
   useEffect(() => {
@@ -91,7 +93,7 @@ export function FlowDemo({ demo }: FlowDemoProps) {
     return () => document.removeEventListener('visibilitychange', handler);
   }, []);
 
-  const shouldAnimate = !reduced && isMostVisible && isDocVisible && steps.length > 1;
+  const shouldAnimate = !reduced && !modeIsRecruiter && isMostVisible && isDocVisible && steps.length > 1;
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {
@@ -134,8 +136,8 @@ export function FlowDemo({ demo }: FlowDemoProps) {
     }
   }, [isMostVisible, isDocVisible, clearTimer]);
 
-  // reduced motion: static complete flow
-  const isStatic = reduced;
+  // reduced motion or recruiter: static complete flow
+  const isStatic = reduced || modeIsRecruiter;
 
   const connectorActive = (idx: number) => {
     if (isStatic) return true;
