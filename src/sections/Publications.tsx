@@ -1,60 +1,108 @@
 import { motion } from 'framer-motion';
 import { Container } from '../components';
-import { fadeInUp, staggerContainer, scrollViewport } from '../utils';
 import { PUBLICATIONS } from '../data/publications';
+import { prefersReducedMotion } from '../utils';
 
 export const Publications = () => {
+  const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
+
+  if (!PUBLICATIONS.length) return null;
+
+  const container = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduced ? 0 : 0.08,
+        delayChildren: reduced ? 0 : 0.04,
+      },
+    },
+  };
+
+  const item = {
+    hidden: reduced ? { opacity: 1 } : { opacity: 0, y: 12 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: reduced ? 0 : 0.38, ease: 'easeOut' as const },
+    },
+  };
+
+  // Newest first — canonical year descending; single entry currently is 2025.
+  const sorted = [...PUBLICATIONS].sort((a, b) => b.year - a.year);
+
   return (
-    <section id="publications" className="py-20 relative">
+    <section id="publications" className="py-16 sm:py-20 relative">
       <Container>
-        <motion.h2
-          className="text-2xl sm:text-3xl md:text-4xl font-bold mb-10 tracking-tight"
-          style={{ color: 'var(--text)' }}
+        <motion.div
           initial="hidden"
           whileInView="visible"
-          viewport={scrollViewport}
-          variants={fadeInUp}
+          viewport={{ once: true, amount: 0.2, margin: '0px 0px -80px 0px' }}
+          variants={container}
         >
-          Publications
-        </motion.h2>
+          <motion.h2
+            variants={item}
+            className="text-2xl sm:text-3xl font-bold tracking-tight"
+            style={{ color: 'var(--text)', letterSpacing: '-0.02em' }}
+          >
+            Publications
+          </motion.h2>
 
-        <motion.div className="space-y-4" initial="hidden" whileInView="visible" viewport={scrollViewport} variants={staggerContainer}>
-          {PUBLICATIONS.map(pub => (
-            <motion.div
-              key={pub.id}
-              variants={fadeInUp}
-              className="rounded-md p-4 sm:p-6"
-              style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-2 mb-4">
-                <p className="font-semibold text-base leading-snug max-w-xl" style={{ color: 'var(--text)' }}>{pub.title}</p>
-                <span
-                  className="text-xs font-semibold uppercase tracking-widest shrink-0 px-2.5 py-1 rounded-md border"
-                  style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)', color: 'var(--accent)' }}
-                >
-                  {pub.venue} · {pub.year}
-                </span>
-              </div>
-              <ul className="space-y-2">
-                {pub.highlights.map((h, i) => (
-                  <li key={i} className="flex gap-2 text-sm">
-                    <span className="mt-[3px] shrink-0 text-xs" style={{ color: 'var(--accent)' }}>▸</span>
-                    <span style={{ color: 'var(--text-secondary)' }}>{h}</span>
-                  </li>
-                ))}
-              </ul>
-              {pub.paperUrl && (
-                <a
-                  href={pub.paperUrl}
-                  target="_blank"
-                  rel="noreferrer noopener"
-                  className="inline-flex items-center gap-1.5 text-xs font-medium mt-4 link-accent"
-                >
-                  View Paper →
-                </a>
-              )}
-            </motion.div>
-          ))}
+          <motion.div
+            variants={item}
+            className="mt-4 h-px max-w-[640px]"
+            style={{ background: 'var(--border)' }}
+            aria-hidden="true"
+          />
+
+          <div className="mt-8 sm:mt-10 space-y-0">
+            {sorted.map(pub => (
+              <motion.div
+                key={pub.id}
+                variants={item}
+                className="grid lg:grid-cols-[200px_1fr] gap-5 lg:gap-10 items-start py-6 first:pt-0 last:pb-0 border-b last:border-0"
+                style={{ borderColor: 'var(--border)' }}
+              >
+                {/* Left — year / venue meta (flattened on mobile) */}
+                <div className="lg:pt-1 min-w-0">
+                  <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
+                    {pub.year}
+                  </p>
+                  <p className="text-sm font-medium mt-1 leading-snug" style={{ color: 'var(--text-secondary)' }}>
+                    {pub.venue}
+                  </p>
+                </div>
+
+                {/* Right — publication content */}
+                <article className="min-w-0">
+                  <h3
+                    className="text-[17px] sm:text-lg font-semibold leading-snug tracking-tight"
+                    style={{ color: 'var(--text)', textWrap: 'balance' as const }}
+                  >
+                    {pub.title}
+                  </h3>
+
+                  {pub.highlights.length > 0 && (
+                    <p className="text-sm leading-relaxed mt-3 max-w-prose" style={{ color: 'var(--text-secondary)' }}>
+                      {pub.highlights[0]}
+                    </p>
+                  )}
+
+                  {pub.paperUrl && (
+                    <a
+                      href={pub.paperUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1 text-sm font-medium mt-4 underline-offset-4 hover:underline focus-visible:outline-none"
+                      style={{ color: 'var(--accent)' }}
+                      aria-label={`View paper: ${pub.title}`}
+                    >
+                      View paper <span aria-hidden="true">↗</span>
+                    </a>
+                  )}
+                </article>
+              </motion.div>
+            ))}
+          </div>
         </motion.div>
       </Container>
     </section>
