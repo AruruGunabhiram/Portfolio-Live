@@ -173,6 +173,7 @@ describe('A9 — registry', () => {
       'sociallens',
       'incidentpilot',
       'clinical-reconciliation',
+      'code-battlegrounds',
     ]);
     expect(hasProjectStory('ember')).toBe(true);
     expect(hasProjectStory('sociallens')).toBe(true);

@@ -34,6 +34,10 @@ const STORY_LOADERS: Record<string, StoryLoader> = {
     import('./clinical/ClinicalReconciliationStory').then(m => ({
       default: m.ClinicalReconciliationStory,
     })),
+  'code-battlegrounds': () =>
+    import('./code-battlegrounds/CodeBattlegroundsStory').then(m => ({
+      default: m.CodeBattlegroundsStory,
+    })),
 };
 
 /**

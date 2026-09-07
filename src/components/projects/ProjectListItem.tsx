@@ -1,4 +1,5 @@
 import type { Project } from '../../types/portfolio';
+import { ProjectDemo } from './demo/ProjectDemo';
 import { ProjectStory } from './story/ProjectStory';
 import { hasProjectStory } from './story/storyRegistry';
 
@@ -75,7 +76,10 @@ export function ProjectListItem({
 
       {hasExplorerStory && (
         <div className="mt-4 min-w-0">
-          <ProjectStory projectId={project.id} />
+          <ProjectStory
+            projectId={project.id}
+            fallback={project.demo ? <ProjectDemo demo={project.demo} /> : undefined}
+          />
         </div>
       )}
     </article>

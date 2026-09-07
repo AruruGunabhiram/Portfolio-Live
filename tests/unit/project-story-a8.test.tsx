@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, act, screen } from '@testing-library/react';
+import { render, act, screen, waitFor } from '@testing-library/react';
 import { PortfolioModeProvider } from '../../src/context/PortfolioModeContext';
 import { FeaturedProject } from '../../src/components/projects/FeaturedProject';
 import { ProjectStory } from '../../src/components/projects/story/ProjectStory';
@@ -132,6 +132,7 @@ describe('A8 — project story registry', () => {
       'sociallens',
       'incidentpilot',
       'clinical-reconciliation',
+      'code-battlegrounds',
     ]);
     expect(hasProjectStory('ember')).toBe(true);
   });
@@ -171,18 +172,18 @@ describe('A8 — project story registry', () => {
 // ─── 4 · Backwards compatibility ────────────────────────────────────────────
 describe('A8 — existing demo compatibility', () => {
   it('4 — projects without a registered story still render their FlowDemo', async () => {
-    const { container } = renderFeatured(CODE_BATTLEGROUNDS);
+    const { container } = renderFeatured({ ...CODE_BATTLEGROUNDS, id: 'demo-only-project' });
     await settle();
     const flow = container.querySelector('[role="img"]');
     expect(flow).not.toBeNull();
     expect(flow!.getAttribute('aria-label')).toContain('Code Battlegrounds');
   });
 
-  it('19 — a demo-only project and a later custom story remain compatible', async () => {
+  it('19 — a project with both a demo and a later custom story remains compatible', async () => {
     const a = renderFeatured(CODE_BATTLEGROUNDS);
-    await settle();
+    await settle(100);
     expect(a.container.textContent).toContain('Code Battlegrounds');
-    expect(a.container.querySelector('[role="img"]')).not.toBeNull();
+    await waitFor(() => expect(a.container.querySelector('[role="img"]')).not.toBeNull());
     a.unmount();
     __resetStoryLifecycleForTests();
 
@@ -437,16 +438,16 @@ describe('A8 — story failure isolation', () => {
 
   it('20b — IncidentPilot content remains intact after its A10 story registration', async () => {
     const { container } = renderFeatured(INCIDENTPILOT);
-    await settle();
+    await settle(100);
     expect(container.textContent).toContain('IncidentPilot');
     expect(container.textContent).toContain('Verifies cited file paths and line numbers');
-    expect(container.querySelector('[role="img"]')).not.toBeNull();
+    await waitFor(() => expect(container.querySelector('[role="img"]')).not.toBeNull());
   });
 
   it('20c — ProjectStory renders the fallback for an unregistered id', async () => {
     const { container } = render(
       <PortfolioModeProvider>
-        <ProjectStory projectId="code-battlegrounds" fallback={<p>demo fallback</p>} />
+        <ProjectStory projectId="timesling" fallback={<p>demo fallback</p>} />
       </PortfolioModeProvider>
     );
     await settle();

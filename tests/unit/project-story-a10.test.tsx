@@ -136,6 +136,7 @@ describe('A10 — IncidentPilot lazy registry', () => {
       'sociallens',
       'incidentpilot',
       'clinical-reconciliation',
+      'code-battlegrounds',
     ]);
     expect(hasProjectStory('ember')).toBe(true);
     expect(hasProjectStory('sociallens')).toBe(true);

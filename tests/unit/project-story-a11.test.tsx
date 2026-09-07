@@ -129,15 +129,15 @@ afterEach(() => {
 });
 
 describe('A11 — Clinical Reconciliation lazy registry', () => {
-  it('registers only Clinical in A11 while preserving every existing story and unknown-id safety', () => {
+  it('preserves Clinical while later stories are registered and keeps unknown-id safety', () => {
     expect(registeredStoryIds()).toEqual([
       'ember',
       'sociallens',
       'incidentpilot',
       'clinical-reconciliation',
+      'code-battlegrounds',
     ]);
     for (const id of registeredStoryIds()) expect(hasProjectStory(id)).toBe(true);
-    expect(hasProjectStory('code-battlegrounds')).toBe(false);
     expect(hasProjectStory('constructor')).toBe(false);
     expect(registrySource).toMatch(
       /'clinical-reconciliation':\s*\(\)\s*=>\s*\n?\s*import\('\.\/clinical\/ClinicalReconciliationStory'\)/
