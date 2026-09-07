@@ -14,7 +14,6 @@ export default defineConfig({
           // Vendor chunks for better caching
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
           'animation-vendor': ['framer-motion', 'gsap'],
-          'three-vendor': ['@react-three/fiber', '@react-three/drei', 'three'],
         },
       },
     },
