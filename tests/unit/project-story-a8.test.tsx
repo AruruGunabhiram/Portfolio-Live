@@ -90,8 +90,8 @@ function setDocVisible(v: boolean) {
 }
 
 const EMBER = PROJECTS.find(p => p.id === 'ember')!;
-const SOCIALLENS = PROJECTS.find(p => p.id === 'sociallens')!;
 const INCIDENTPILOT = PROJECTS.find(p => p.id === 'incidentpilot')!;
+const CODE_BATTLEGROUNDS = PROJECTS.find(p => p.id === 'code-battlegrounds')!;
 
 /** Flush the mount gate + lazy chunk resolution. */
 async function settle(ms = 30) {
@@ -126,13 +126,13 @@ afterEach(() => {
 
 // ─── 1–3 · Registry ─────────────────────────────────────────────────────────
 describe('A8 — project story registry', () => {
-  it('1 — registry contains Ember only', () => {
-    expect(registeredStoryIds()).toEqual(['ember']);
+  it('1 — registry exposes Ember (A9 added SocialLens alongside it)', () => {
+    expect(registeredStoryIds()).toEqual(['ember', 'sociallens']);
     expect(hasProjectStory('ember')).toBe(true);
   });
 
   it('2 — unknown / unregistered project ids safely return no custom story', () => {
-    for (const id of ['sociallens', 'incidentpilot', 'zenco', 'nope', 'constructor', '__proto__']) {
+    for (const id of ['incidentpilot', 'zenco', 'nope', 'constructor', '__proto__']) {
       expect(hasProjectStory(id), id).toBe(false);
       expect(PROJECT_STORY_COMPONENTS[id], id).toBeUndefined();
     }
@@ -166,18 +166,17 @@ describe('A8 — project story registry', () => {
 // ─── 4 · Backwards compatibility ────────────────────────────────────────────
 describe('A8 — existing demo compatibility', () => {
   it('4 — projects without a registered story still render their FlowDemo', async () => {
-    const { container } = renderFeatured(SOCIALLENS);
+    const { container } = renderFeatured(CODE_BATTLEGROUNDS);
     await settle();
     const flow = container.querySelector('[role="img"]');
     expect(flow).not.toBeNull();
-    expect(flow!.getAttribute('aria-label')).toContain('SocialLens');
-    expect(container.textContent).toContain('YouTube metrics');
+    expect(flow!.getAttribute('aria-label')).toContain('Code Battlegrounds');
   });
 
-  it('19 — SocialLens and IncidentPilot are unaffected by the story layer', async () => {
-    const a = renderFeatured(SOCIALLENS);
+  it('19 — a demo-only project and a visual-less project are unaffected by the story layer', async () => {
+    const a = renderFeatured(CODE_BATTLEGROUNDS);
     await settle();
-    expect(a.container.textContent).toContain('SocialLens');
+    expect(a.container.textContent).toContain('Code Battlegrounds');
     expect(a.container.querySelector('[role="img"]')).not.toBeNull();
     a.unmount();
     __resetStoryLifecycleForTests();
@@ -442,7 +441,7 @@ describe('A8 — story failure isolation', () => {
   it('20c — ProjectStory renders the fallback for an unregistered id', async () => {
     const { container } = render(
       <PortfolioModeProvider>
-        <ProjectStory projectId="sociallens" fallback={<p>demo fallback</p>} />
+        <ProjectStory projectId="code-battlegrounds" fallback={<p>demo fallback</p>} />
       </PortfolioModeProvider>
     );
     await settle();

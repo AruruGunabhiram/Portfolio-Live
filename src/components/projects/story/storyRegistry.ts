@@ -26,6 +26,8 @@ type StoryLoader = () => Promise<StoryModule>;
 
 const STORY_LOADERS: Record<string, StoryLoader> = {
   ember: () => import('./ember/EmberStory').then(m => ({ default: m.EmberStory })),
+  sociallens: () =>
+    import('./sociallens/SocialLensStory').then(m => ({ default: m.SocialLensStory })),
 };
 
 /**
