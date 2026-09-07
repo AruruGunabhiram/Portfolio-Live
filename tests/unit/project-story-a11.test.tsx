@@ -138,6 +138,7 @@ describe('A11 — Clinical Reconciliation lazy registry', () => {
       'code-battlegrounds',
       'timesling',
       'zenco',
+      'nostalgia',
     ]);
     for (const id of registeredStoryIds()) expect(hasProjectStory(id)).toBe(true);
     expect(hasProjectStory('constructor')).toBe(false);
@@ -380,7 +381,7 @@ describe('A11 — canonical data, real-page host, and failure isolation', () => 
   it('keeps unknown ProjectStory fallback behavior intact', () => {
     const { container } = render(
       <PortfolioModeProvider>
-        <ProjectStory projectId="nostalgia" fallback={<p>safe fallback</p>} />
+        <ProjectStory projectId="nope" fallback={<p>safe fallback</p>} />
       </PortfolioModeProvider>
     );
     expect(container.textContent).toBe('safe fallback');

@@ -41,6 +41,8 @@ const STORY_LOADERS: Record<string, StoryLoader> = {
   timesling: () =>
     import('./timesling/TimeSlingStory').then(m => ({ default: m.TimeSlingStory })),
   zenco: () => import('./zenco/ZencoStory').then(m => ({ default: m.ZencoStory })),
+  nostalgia: () =>
+    import('./nostalgia/NostalgiaStory').then(m => ({ default: m.NostalgiaStory })),
 };
 
 /**

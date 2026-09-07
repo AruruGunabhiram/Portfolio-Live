@@ -92,9 +92,9 @@ afterEach(() => {
 
 describe('A13 — lazy registry and canonical inventory', () => {
   it('registers TimeSling lazily while preserving the five earlier stories and unknown-id safety', () => {
-    expect(registeredStoryIds()).toEqual(['ember', 'sociallens', 'incidentpilot', 'clinical-reconciliation', 'code-battlegrounds', 'timesling', 'zenco']);
+    expect(registeredStoryIds()).toEqual(['ember', 'sociallens', 'incidentpilot', 'clinical-reconciliation', 'code-battlegrounds', 'timesling', 'zenco', 'nostalgia']);
     for (const id of registeredStoryIds()) expect(hasProjectStory(id), id).toBe(true);
-    for (const id of ['nostalgia', 'constructor', '__proto__']) expect(hasProjectStory(id), id).toBe(false);
+    for (const id of ['constructor', '__proto__']) expect(hasProjectStory(id), id).toBe(false);
     expect(registrySource).toMatch(/timesling:\s*\(\)\s*=>\s*\n?\s*import\('\.\/timesling\/TimeSlingStory'\)/);
     expect(registrySource).not.toMatch(/^import\s+.*TimeSlingStory/m);
     expect(String((PROJECT_STORY_COMPONENTS.timesling as unknown as { $$typeof: symbol }).$$typeof)).toContain('lazy');
@@ -206,7 +206,7 @@ describe('A13 — static, paused, shared-lifecycle, and fallback behavior', () =
   });
 
   it('keeps unknown ProjectStory fallback behavior intact after TimeSling registration', () => {
-    const { container } = render(<PortfolioModeProvider><ProjectStory projectId="nostalgia" fallback={<p>safe fallback</p>} /></PortfolioModeProvider>);
+    const { container } = render(<PortfolioModeProvider><ProjectStory projectId="nope" fallback={<p>safe fallback</p>} /></PortfolioModeProvider>);
     expect(container.textContent).toBe('safe fallback');
   });
 });
