@@ -25,6 +25,33 @@ body {
     color var(--motion-normal) var(--ease-standard);
 }
 
+/* ─── Technical environment — subtle warm grid + vignette ─────
+   Code-only, no images, no extra canvas. Pure CSS pseudo layers.
+   Very low contrast so readability is untouched. Performance-neutral
+   (fixed pseudo, no animation, no blur). Recruiter inherits same
+   but appears quieter because SpaceDust opacity is already 0.18. */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  opacity: var(--grid-opacity);
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: var(--page-vignette);
+}
+
 code {
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
   font-size: 0.9em;
@@ -189,4 +216,68 @@ button, a { touch-action: manipulation; }
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
+}
+
+/* ─── Visual-story primitives (A1) ───────────────────────────
+   Presentational only. No React components yet. These exist so
+   future Hero / project-visual stages share one geometric grammar.
+   Muted enough to coexist with --accent. No animation. */
+.story-surface {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.story-window {
+  background: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+}
+
+.story-node {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left-width: 3px;
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+.story-node--ai { border-left-color: var(--story-ai); }
+.story-node--backend { border-left-color: var(--story-backend); }
+.story-node--database { border-left-color: var(--story-database); }
+.story-node--cloud { border-left-color: var(--story-cloud); }
+.story-node--automation { border-left-color: var(--story-automation); }
+.story-node--neutral { border-left-color: var(--story-neutral); }
+
+.story-node--ai[data-variant='subtle'] { background: var(--story-ai-subtle); border-color: var(--story-ai-border); border-left-color: var(--story-ai); }
+.story-node--backend[data-variant='subtle'] { background: var(--story-backend-subtle); border-color: var(--story-backend-border); border-left-color: var(--story-backend); }
+.story-node--database[data-variant='subtle'] { background: var(--story-database-subtle); border-color: var(--story-database-border); border-left-color: var(--story-database); }
+.story-node--cloud[data-variant='subtle'] { background: var(--story-cloud-subtle); border-color: var(--story-cloud-border); border-left-color: var(--story-cloud); }
+.story-node--automation[data-variant='subtle'] { background: var(--story-automation-subtle); border-color: var(--story-automation-border); border-left-color: var(--story-automation); }
+
+.story-status--warning {
+  color: var(--story-warning);
+  background: var(--story-warning-subtle);
+  border: 1px solid var(--story-warning-border);
+  border-radius: var(--radius-sm);
+}
+
+.story-status--success {
+  color: var(--story-success);
+  background: var(--story-success-subtle);
+  border: 1px solid var(--story-success-border);
+  border-radius: var(--radius-sm);
+}
+
+.story-grid {
+  background-image:
+    linear-gradient(to right, var(--grid-line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
+  background-size: 32px 32px;
 }

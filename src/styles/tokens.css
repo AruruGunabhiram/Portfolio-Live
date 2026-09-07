@@ -2,24 +2,26 @@
    Semantic Design Tokens — light / dark
    Two themes as two versions of the same product.
    No implementation names (cyber/geek) exposed.
+   A1: warm technical refinement — light canvas is now stone-warm,
+   surfaces are layered (not all pure white), borders are warm neutral.
    ────────────────────────────────────────────────────────────── */
 
-/* ─── Light — warm neutral off-white ───────────────────────── */
+/* ─── Light — warm stone technical ─────────────────────────── */
 :root,
 [data-theme='light'] {
-  --bg: #f6f6f3;
-  --bg-secondary: #efefeb;
-  --surface: #ffffff;
+  --bg: #f5f2ee;
+  --bg-secondary: #ece8e2;
+  --surface: #fdfcfa;
   --surface-raised: #ffffff;
-  --surface-subtle: #f0f0ec;
-  --surface-interactive: #ffffff;
+  --surface-subtle: #f0ebe2;
+  --surface-interactive: #fdfcfa;
 
   --text: #15191b;
   --text-secondary: #4f585d;
   --text-muted: #5f6a6f;
 
-  --border: #dde0df;
-  --border-strong: #c9cecc;
+  --border: #e0dcd5;
+  --border-strong: #c8c2b8;
 
   --accent: #2f6b80;
   --accent-hover: #255a6d;
@@ -33,8 +35,8 @@
   --selection-bg: rgba(47, 107, 128, 0.22);
   --selection-text: #15191b;
 
-  --shadow-sm: 0 1px 2px rgba(16, 21, 24, 0.06), 0 1px 3px rgba(16, 21, 24, 0.04);
-  --shadow-md: 0 4px 12px rgba(16, 21, 24, 0.07), 0 1px 4px rgba(16, 21, 24, 0.05);
+  --shadow-sm: 0 1px 2px rgba(23, 18, 12, 0.06), 0 1px 3px rgba(23, 18, 12, 0.04);
+  --shadow-md: 0 4px 12px rgba(23, 18, 12, 0.07), 0 1px 4px rgba(23, 18, 12, 0.05);
 
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -43,9 +45,47 @@
   --content-width: 72rem; /* 1152px — max-w-6xl */
   --section-spacing: 5rem; /* 80px */
   --section-spacing-sm: 3.5rem;
+
+  /* ── Technical environment — light ──────────────────────── */
+  --grid-line: rgba(21, 25, 27, 0.04);
+  --grid-opacity: 0.9;
+  --page-vignette: radial-gradient(120% 90% at 50% 0%, rgba(47, 107, 128, 0.06) 0%, transparent 62%);
+
+  /* ── Visual-story semantic tokens — light (muted, restrained) */
+  --story-ai: #7a6ea6;
+  --story-ai-subtle: rgba(122, 110, 166, 0.10);
+  --story-ai-border: rgba(122, 110, 166, 0.22);
+
+  --story-backend: #5b7fa6;
+  --story-backend-subtle: rgba(91, 127, 166, 0.10);
+  --story-backend-border: rgba(91, 127, 166, 0.22);
+
+  --story-database: #4a8a90;
+  --story-database-subtle: rgba(74, 138, 144, 0.10);
+  --story-database-border: rgba(74, 138, 144, 0.22);
+
+  --story-cloud: #5a8ca0;
+  --story-cloud-subtle: rgba(90, 140, 160, 0.10);
+  --story-cloud-border: rgba(90, 140, 160, 0.22);
+
+  --story-automation: #a6854a;
+  --story-automation-subtle: rgba(166, 133, 74, 0.10);
+  --story-automation-border: rgba(166, 133, 74, 0.22);
+
+  --story-warning: #c07a65;
+  --story-warning-subtle: rgba(192, 122, 101, 0.10);
+  --story-warning-border: rgba(192, 122, 101, 0.22);
+
+  --story-success: #5c8f6b;
+  --story-success-subtle: rgba(92, 143, 107, 0.10);
+  --story-success-border: rgba(92, 143, 107, 0.22);
+
+  --story-neutral: #8d8884;
+  --story-neutral-subtle: rgba(141, 136, 132, 0.10);
+  --story-neutral-border: rgba(141, 136, 132, 0.22);
 }
 
-/* ─── Dark — deep charcoal/blue-charcoal, not pure black ───── */
+/* ─── Dark — deep graphite/blue-charcoal, not pure black ───── */
 [data-theme='dark'] {
   --bg: #0e1418;
   --bg-secondary: #0a0f13;
@@ -75,6 +115,44 @@
 
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4), 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.35);
+
+  /* ── Technical environment — dark (more subtle) ─────────── */
+  --grid-line: rgba(230, 236, 239, 0.035);
+  --grid-opacity: 0.85;
+  --page-vignette: radial-gradient(130% 90% at 50% 0%, rgba(91, 168, 196, 0.07) 0%, transparent 60%);
+
+  /* ── Visual-story semantic tokens — dark (slightly brighter, still restrained) */
+  --story-ai: #a99de0;
+  --story-ai-subtle: rgba(169, 157, 224, 0.12);
+  --story-ai-border: rgba(169, 157, 224, 0.24);
+
+  --story-backend: #8aa8d0;
+  --story-backend-subtle: rgba(138, 168, 208, 0.12);
+  --story-backend-border: rgba(138, 168, 208, 0.24);
+
+  --story-database: #6bb3be;
+  --story-database-subtle: rgba(107, 179, 190, 0.12);
+  --story-database-border: rgba(107, 179, 190, 0.24);
+
+  --story-cloud: #7ec0d6;
+  --story-cloud-subtle: rgba(126, 192, 214, 0.12);
+  --story-cloud-border: rgba(126, 192, 214, 0.24);
+
+  --story-automation: #d9ad6a;
+  --story-automation-subtle: rgba(217, 173, 106, 0.12);
+  --story-automation-border: rgba(217, 173, 106, 0.24);
+
+  --story-warning: #e39a87;
+  --story-warning-subtle: rgba(227, 154, 135, 0.12);
+  --story-warning-border: rgba(227, 154, 135, 0.24);
+
+  --story-success: #7dc49a;
+  --story-success-subtle: rgba(125, 196, 154, 0.12);
+  --story-success-border: rgba(125, 196, 154, 0.24);
+
+  --story-neutral: #9ea8ac;
+  --story-neutral-subtle: rgba(158, 168, 172, 0.10);
+  --story-neutral-border: rgba(158, 168, 172, 0.20);
 }
 
 /* ─── Motion tokens ────────────────────────────────────────── */

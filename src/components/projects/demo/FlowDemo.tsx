@@ -1,41 +1,10 @@
-import { useEffect, useRef, useState, useCallback, useId } from 'react';
+import { useEffect, useRef, useState, useCallback } from 'react';
 import type { FlowDemo } from '../../../types/portfolio';
+import { useCompetitiveStoryActive, useReducedMotion, useDocumentVisible } from '../../../hooks/useStoryLifecycle';
 import { usePortfolioMode } from '../../../context/PortfolioModeContext';
 
 interface FlowDemoProps {
   demo: FlowDemo;
-}
-
-// ─── One-active-demo coordination (8AF) ──────────────────────────
-// Without global state: all FlowDemos share a module-level observer that
-// picks the most-visible demo as the only active one. Lightweight, no context.
-type RegistryEntry = { ratio: number; setActive: (v: boolean) => void };
-const registry = new Map<string, RegistryEntry>();
-let sharedObserver: IntersectionObserver | null = null;
-
-function getSharedObserver() {
-  if (sharedObserver) return sharedObserver;
-  sharedObserver = new IntersectionObserver(
-    entries => {
-      entries.forEach(e => {
-        const id = (e.target as HTMLElement).dataset.demoId;
-        if (!id) return;
-        const ent = registry.get(id);
-        if (ent) ent.ratio = e.intersectionRatio;
-      });
-      let bestId: string | null = null;
-      let bestRatio = 0.2;
-      registry.forEach((ent, id) => {
-        if (ent.ratio >= bestRatio) {
-          bestRatio = ent.ratio;
-          bestId = id;
-        }
-      });
-      registry.forEach((ent, id) => ent.setActive(id === bestId));
-    },
-    { threshold: [0, 0.2, 0.5, 0.75] }
-  );
-  return sharedObserver;
 }
 
 export function FlowDemo({ demo }: FlowDemoProps) {
@@ -44,54 +13,13 @@ export function FlowDemo({ demo }: FlowDemoProps) {
   const stepDuration = steps.length > 0 ? totalDuration / steps.length : 0;
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const demoId = useId();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isMostVisible, setIsMostVisible] = useState(false);
-  const [isDocVisible, setIsDocVisible] = useState(() => typeof document === 'undefined' ? true : document.visibilityState === 'visible');
-  const [reduced, setReduced] = useState(false);
+  // A2: shared competitive activation (extracted from module-level registry, same 0.2 threshold)
+  const isMostVisible = useCompetitiveStoryActive(containerRef);
+  const isDocVisible = useDocumentVisible();
+  const reduced = useReducedMotion();
   const timerRef = useRef<number | null>(null);
   const { isRecruiter: modeIsRecruiter } = usePortfolioMode();
-
-  // reduced motion init + listener
-  useEffect(() => {
-    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const update = () => setReduced(mq.matches);
-    update();
-    mq.addEventListener('change', update);
-    return () => mq.removeEventListener('change', update);
-  }, []);
-
-  // viewport — shared one-active coordination
-  useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-    el.dataset.demoId = demoId;
-    const entry: RegistryEntry = { ratio: 0, setActive: setIsMostVisible };
-    registry.set(demoId, entry);
-    const obs = getSharedObserver();
-    obs.observe(el);
-    return () => {
-      obs.unobserve(el);
-      registry.delete(demoId);
-      // re-evaluate remaining
-      let bestId: string | null = null;
-      let bestRatio = 0.2;
-      registry.forEach((ent, id) => {
-        if (ent.ratio >= bestRatio) {
-          bestRatio = ent.ratio;
-          bestId = id;
-        }
-      });
-      registry.forEach((ent, id) => ent.setActive(id === bestId));
-    };
-  }, [demoId]);
-
-  // document visibility
-  useEffect(() => {
-    const handler = () => setIsDocVisible(document.visibilityState === 'visible');
-    document.addEventListener('visibilitychange', handler);
-    return () => document.removeEventListener('visibilitychange', handler);
-  }, []);
 
   const shouldAnimate = !reduced && !modeIsRecruiter && isMostVisible && isDocVisible && steps.length > 1;
 
