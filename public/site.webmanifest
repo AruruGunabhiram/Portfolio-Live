@@ -1,0 +1,29 @@
+{
+  "name": "Gunabhiram Aruru — Software Engineer",
+  "short_name": "Gunabhiram Aruru",
+  "description": "Software engineer building backend and full-stack systems with Java and Python. Projects, experience and research by Gunabhiram Aruru, MS CS at CU Boulder.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f6f6f3",
+  "theme_color": "#0e1418",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x630",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
