@@ -40,7 +40,7 @@ export const SKILL_CATEGORIES: SkillCategoryMeta[] = [
 
 export const SKILLS: Skill[] = [
   // languages
-  { id: 'python', name: 'Python', category: 'languages', evidence: [{ type: 'experience', id: 'infini-ai-intern' }, { type: 'project', id: 'zenco' }] },
+  { id: 'python', name: 'Python', category: 'languages', evidence: [{ type: 'experience', id: 'infini-ai-intern' }, { type: 'project', id: 'zenco' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
   { id: 'java', name: 'Java', category: 'languages', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'creator-copilot' }] },
   { id: 'cpp', name: 'C/C++', category: 'languages' },
   { id: 'javascript', name: 'JavaScript', category: 'languages', evidence: [{ type: 'project', id: 'code-battlegrounds' }] },
@@ -48,7 +48,7 @@ export const SKILLS: Skill[] = [
 
   // backend & systems
   { id: 'spring-boot', name: 'Spring Boot', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'creator-copilot' }] },
-  { id: 'rest-apis', name: 'REST APIs', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'code-battlegrounds' }] },
+  { id: 'rest-apis', name: 'REST APIs', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
   { id: 'oauth2', name: 'OAuth 2.0', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'code-battlegrounds' }] },
   { id: 'scheduled-jobs', name: 'Scheduled Jobs', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }] },
   { id: 'data-pipelines', name: 'Data Pipelines', category: 'backend', evidence: [{ type: 'project', id: 'sociallens' }] },
@@ -58,23 +58,23 @@ export const SKILLS: Skill[] = [
   { id: 'express', name: 'Express', category: 'backend', evidence: [{ type: 'project', id: 'code-battlegrounds' }] },
 
   // frontend
-  { id: 'react', name: 'React', category: 'frontend', evidence: [{ type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'nostalgia' }] },
+  { id: 'react', name: 'React', category: 'frontend', evidence: [{ type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'nostalgia' }, { type: 'project', id: 'clinical-reconciliation' }] },
   { id: 'typescript', name: 'TypeScript', category: 'frontend', evidence: [{ type: 'project', id: 'zenco' }, { type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'nostalgia' }] },
   { id: 'html', name: 'HTML', category: 'frontend' },
   { id: 'css', name: 'CSS', category: 'frontend' },
   { id: 'bootstrap', name: 'Bootstrap', category: 'frontend' },
 
   // databases
-  { id: 'postgresql', name: 'PostgreSQL', category: 'databases', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'code-battlegrounds' }] },
+  { id: 'postgresql', name: 'PostgreSQL', category: 'databases', evidence: [{ type: 'project', id: 'sociallens' }, { type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'clinical-reconciliation' }] },
   { id: 'mysql', name: 'MySQL', category: 'databases' },
   { id: 'mongodb', name: 'MongoDB', category: 'databases' },
   { id: 'aws-aurora', name: 'AWS Aurora', category: 'databases' },
 
   // applied ai
-  { id: 'llm-api-integration', name: 'LLM API Integration', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'code-battlegrounds' }] },
+  { id: 'llm-api-integration', name: 'LLM API Integration', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'code-battlegrounds' }, { type: 'project', id: 'incidentpilot' }, { type: 'project', id: 'clinical-reconciliation' }] },
   { id: 'analytics-grounded-prompting', name: 'Analytics-Grounded Prompting', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }] },
-  { id: 'explainable-ai', name: 'Explainable AI', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }, { type: 'publication', id: 'ieee-cad-late-fusion-2025' }] },
-  { id: 'hallucination-guardrails', name: 'Hallucination Guardrails', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }] },
+  { id: 'explainable-ai', name: 'Explainable AI', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'incidentpilot' }, { type: 'publication', id: 'ieee-cad-late-fusion-2025' }] },
+  { id: 'hallucination-guardrails', name: 'Hallucination Guardrails', category: 'ai', evidence: [{ type: 'project', id: 'creator-copilot' }, { type: 'project', id: 'incidentpilot' }] },
 
   // design
   { id: 'oop', name: 'OOP', category: 'design', evidence: [{ type: 'project', id: 'zenco' }] },
@@ -83,7 +83,7 @@ export const SKILLS: Skill[] = [
   { id: 'dsa', name: 'DSA', category: 'design', evidence: [{ type: 'leadership', id: 'dsa-club-srm' }] },
 
   // devops & tools
-  { id: 'docker', name: 'Docker', category: 'devops' },
+  { id: 'docker', name: 'Docker', category: 'devops', evidence: [{ type: 'project', id: 'clinical-reconciliation' }] },
   { id: 'aws', name: 'AWS', category: 'devops' },
   { id: 'git', name: 'Git', category: 'devops' },
   { id: 'github-actions', name: 'GitHub Actions', category: 'devops' },

@@ -210,10 +210,10 @@ describe('A6 — Experience → Projects capability recomposition', () => {
     expect(EXPERIENCE[1].technologies).toEqual(['Python', 'Flask']);
   });
 
-  it('13 — project inventory unchanged', () => {
-    expect(PROJECTS).toHaveLength(6);
+  it('13 — project inventory pinned (A7-reconciled)', () => {
+    expect(PROJECTS).toHaveLength(8);
     expect(PROJECTS.map(p => p.id).sort()).toEqual(
-      ['code-battlegrounds', 'creator-copilot', 'nostalgia', 'sociallens', 'timesling', 'zenco']
+      ['clinical-reconciliation', 'code-battlegrounds', 'creator-copilot', 'incidentpilot', 'nostalgia', 'sociallens', 'timesling', 'zenco']
     );
   });
 

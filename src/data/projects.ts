@@ -109,6 +109,50 @@ export const PROJECTS: Project[] = [
     },
   },
   {
+    id: 'incidentpilot',
+    slug: 'incidentpilot',
+    title: 'IncidentPilot',
+    subtitle: 'Approval-Gated Incident Investigator',
+    summary:
+      'An approval-gated incident investigation assistant that analyzes CI logs and repository snapshots, verifies file/line evidence, and blocks external actions until safety gates and human approval pass.',
+    categories: ['ai', 'backend'],
+    technologies: ['Python', 'FastAPI', 'Pydantic', 'Gemini API', 'Pytest'],
+    featured: false,
+    highlights: [
+      'Sequential investigation workflow over CI logs, stack traces, and a local repository snapshot, producing structured root-cause, remediation, and regression-test reports',
+      'Verifies cited file paths and line numbers before reporting them, so findings stay grounded in evidence that actually exists',
+      'Sensitive-value redaction, path guards, deterministic safety gates, and recorded human approval before any external GitHub issue creation; dry-run is the default',
+      'Deterministic investigation by default; optional Gemini agent mode receives only redacted, grounded evidence, and schema-invalid or ungrounded output falls back to the deterministic report',
+      '438 passing tests and 8 of 8 evaluation cases meeting expected outcomes, including 2 deliberate safe failures',
+      'Built for the Kaggle Agents for Business hackathon track',
+    ],
+    links: {
+      github: 'https://github.com/AruruGunabhiram/IncidentPilot',
+    },
+  },
+  {
+    id: 'clinical-reconciliation',
+    slug: 'clinical-reconciliation',
+    title: 'Clinical Reconciliation',
+    subtitle: 'Medication Review Platform',
+    summary:
+      'A full-stack medication reconciliation and data-quality review application with confidence scoring and an explicit human approve/reject step before any suggestion is accepted.',
+    categories: ['full-stack', 'ai'],
+    technologies: ['Python', 'FastAPI', 'React', 'Supabase', 'PostgreSQL', 'Docker'],
+    featured: false,
+    highlights: [
+      'Reconciles conflicting medication records submitted from multiple source systems into a single suggested record with stated reasoning',
+      'Scores patient-record data quality across completeness, accuracy, timeliness, and plausibility, surfacing specific issues with severity levels',
+      'Every result carries a 0-1 confidence score, and no suggestion is accepted without an explicit human approve/reject decision persisted to Supabase',
+      'API-key authentication on all backend routes, in-memory LRU caching so identical requests skip the model, and deterministic fallback plus error handling when the model path is unavailable',
+      'Docker Compose for reproducible local deployment; frontend and backend deployed separately with a live demo application',
+    ],
+    links: {
+      github: 'https://github.com/AruruGunabhiram/clinical-reconciliation',
+      live: 'https://clinical-reconciliation.vercel.app',
+    },
+  },
+  {
     id: 'zenco',
     slug: 'zenco',
     title: 'Zenco',

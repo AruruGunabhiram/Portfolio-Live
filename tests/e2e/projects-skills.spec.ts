@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { PROJECTS } from '../../src/data/projects';
 
 test.describe('21P / 21Q / 21R — Project Explorer & Detail', () => {
   test('explorer closed by default, opens, filters, collapses with focus safety', async ({ page }) => {
@@ -13,14 +14,15 @@ test.describe('21P / 21Q / 21R — Project Explorer & Detail', () => {
     await expect(explorer).toBeVisible();
     // All filter selected by default
     await expect(explorer.locator('button', { hasText: 'All' })).toHaveAttribute('aria-pressed', 'true');
-    await expect(explorer).toContainText('6 projects');
+    await expect(explorer).toContainText(`${PROJECTS.length} projects`);
 
     // filter AI
     const aiBtn = explorer.locator('button', { hasText: /^ai$/i });
     if (await aiBtn.count() > 0) {
       await aiBtn.click();
       await expect(aiBtn).toHaveAttribute('aria-pressed', 'true');
-      await expect(explorer).toContainText('1 project');
+      const aiCount = PROJECTS.filter(p => p.categories.includes('ai')).length;
+      await expect(explorer).toContainText(`${aiCount} project${aiCount === 1 ? '' : 's'}`);
       await expect(explorer).toContainText('Creator Copilot');
     }
 
