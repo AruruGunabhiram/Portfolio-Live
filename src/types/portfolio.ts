@@ -71,12 +71,41 @@ export interface CaseStudy {
 
 export type DemoType = 'flow' | 'video' | 'lottie' | 'interactive' | 'none';
 
-export interface ProjectDemo {
+// ─── Phase 7 — declarative flow / media demos ─────────────────
+
+export interface FlowDemoStep {
+  id: string;
+  label: string;
+  detail?: string;
+  state?: 'default' | 'success' | 'warning';
+}
+
+export interface FlowDemo {
+  type: 'flow';
+  steps: FlowDemoStep[];
+  connections?: { from: string; to: string }[];
+  durationMs?: number;
+  ariaLabel?: string;
+}
+
+export interface MediaDemo {
+  type: 'media';
+  src: string;
+  poster?: string;
+  alt: string;
+  durationMs?: number;
+  ariaLabel?: string;
+}
+
+// Legacy fallback (asset-based) — kept for backward compat, not used in Phase 7+ framework
+export interface LegacyProjectDemo {
   type: DemoType;
   asset?: string;
   durationMs?: number;
   alt?: string;
 }
+
+export type ProjectDemo = FlowDemo | MediaDemo | LegacyProjectDemo;
 
 export interface ProjectArchitecture {
   summary?: string;

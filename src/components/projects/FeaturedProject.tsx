@@ -1,4 +1,5 @@
 import type { Project } from '../../types/portfolio';
+import { ProjectDemo } from './demo/ProjectDemo';
 
 const CATEGORY_LABEL: Record<string, string> = {
   backend: 'Backend',
@@ -26,10 +27,11 @@ export function FeaturedProject({
   onToggle: () => void;
 }) {
   const cats = project.categories.map(c => CATEGORY_LABEL[c] ?? c).join(' · ');
+  const hasDemo = !!project.demo;
 
   return (
     <article className="py-7 sm:py-8">
-      <div className="flex items-start justify-between gap-4">
+      <div className={hasDemo ? 'grid lg:grid-cols-[1.15fr_340px] gap-6 lg:gap-8 items-start' : 'flex items-start justify-between gap-4'}>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
             <span className="text-[11px] tracking-[0.12em] uppercase font-medium" style={{ color: 'var(--text-muted)' }} aria-hidden="true">
@@ -116,9 +118,11 @@ export function FeaturedProject({
           </div>
         </div>
 
-        {/* Demo slot: intentionally empty in Phase 6 — no placeholder.
-            Future Phase 7 will render project.demo here when defined.
-            We reserve no visual box to avoid "PREVIEW" rectangles (6AM). */}
+        {hasDemo && (
+          <div className="min-w-0 lg:sticky lg:top-24">
+            <ProjectDemo demo={project.demo!} />
+          </div>
+        )}
       </div>
     </article>
   );

@@ -65,6 +65,17 @@ export const PROJECTS: Project[] = [
       summary:
         'Spring Boot services for OAuth, ingestion, scheduling, and analytics, backed by PostgreSQL with normalized entities for channels/videos and time-stamped metric snapshots.',
     },
+    demo: {
+      type: 'flow',
+      durationMs: 6400,
+      ariaLabel: 'SocialLens processing flow: YouTube metrics via OAuth ingestion, scheduled idempotent refresh, PostgreSQL time-series store, and REST analytics APIs',
+      steps: [
+        { id: 'source', label: 'YouTube metrics', detail: 'Channel & video metrics via OAuth 2.0' },
+        { id: 'ingest', label: 'Ingestion & scheduling', detail: 'Daily jobs with idempotent writes' },
+        { id: 'store', label: 'PostgreSQL time-series store', detail: 'Normalized snapshots for history' },
+        { id: 'api', label: 'REST analytics APIs', detail: 'Structured APIs for dashboards' },
+      ],
+    },
   },
   {
     id: 'creator-copilot',
