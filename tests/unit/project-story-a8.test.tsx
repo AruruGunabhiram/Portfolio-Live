@@ -133,12 +133,14 @@ describe('A8 — project story registry', () => {
       'incidentpilot',
       'clinical-reconciliation',
       'code-battlegrounds',
+      'timesling',
+      'zenco',
     ]);
     expect(hasProjectStory('ember')).toBe(true);
   });
 
   it('2 — unknown / unregistered project ids safely return no custom story', () => {
-    for (const id of ['zenco', 'nope', 'constructor', '__proto__']) {
+    for (const id of ['nostalgia', 'nope', 'constructor', '__proto__']) {
       expect(hasProjectStory(id), id).toBe(false);
       expect(PROJECT_STORY_COMPONENTS[id], id).toBeUndefined();
     }
@@ -447,7 +449,7 @@ describe('A8 — story failure isolation', () => {
   it('20c — ProjectStory renders the fallback for an unregistered id', async () => {
     const { container } = render(
       <PortfolioModeProvider>
-        <ProjectStory projectId="timesling" fallback={<p>demo fallback</p>} />
+        <ProjectStory projectId="nostalgia" fallback={<p>demo fallback</p>} />
       </PortfolioModeProvider>
     );
     await settle();

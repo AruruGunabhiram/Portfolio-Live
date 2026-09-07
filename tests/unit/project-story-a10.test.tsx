@@ -137,6 +137,8 @@ describe('A10 — IncidentPilot lazy registry', () => {
       'incidentpilot',
       'clinical-reconciliation',
       'code-battlegrounds',
+      'timesling',
+      'zenco',
     ]);
     expect(hasProjectStory('ember')).toBe(true);
     expect(hasProjectStory('sociallens')).toBe(true);
@@ -369,7 +371,7 @@ describe('A10 — canonical data and failure isolation', () => {
   it('keeps unregistered ProjectStory fallback behavior intact', () => {
     const { container } = render(
       <PortfolioModeProvider>
-        <ProjectStory projectId="zenco" fallback={<p>safe fallback</p>} />
+        <ProjectStory projectId="nostalgia" fallback={<p>safe fallback</p>} />
       </PortfolioModeProvider>
     );
     expect(container.textContent).toBe('safe fallback');

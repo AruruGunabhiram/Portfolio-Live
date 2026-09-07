@@ -174,6 +174,8 @@ describe('A9 — registry', () => {
       'incidentpilot',
       'clinical-reconciliation',
       'code-battlegrounds',
+      'timesling',
+      'zenco',
     ]);
     expect(hasProjectStory('ember')).toBe(true);
     expect(hasProjectStory('sociallens')).toBe(true);
@@ -195,7 +197,7 @@ describe('A9 — registry', () => {
   });
 
   it('3 — unknown and unregistered ids remain safe', () => {
-    for (const id of ['zenco', 'nope', 'constructor', '__proto__', 'toString']) {
+    for (const id of ['nostalgia', 'nope', 'constructor', '__proto__', 'toString']) {
       expect(hasProjectStory(id), id).toBe(false);
       expect(PROJECT_STORY_COMPONENTS[id], id).toBeUndefined();
     }

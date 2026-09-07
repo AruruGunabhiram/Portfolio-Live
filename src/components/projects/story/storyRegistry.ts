@@ -38,6 +38,9 @@ const STORY_LOADERS: Record<string, StoryLoader> = {
     import('./code-battlegrounds/CodeBattlegroundsStory').then(m => ({
       default: m.CodeBattlegroundsStory,
     })),
+  timesling: () =>
+    import('./timesling/TimeSlingStory').then(m => ({ default: m.TimeSlingStory })),
+  zenco: () => import('./zenco/ZencoStory').then(m => ({ default: m.ZencoStory })),
 };
 
 /**

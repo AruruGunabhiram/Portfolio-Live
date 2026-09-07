@@ -131,9 +131,11 @@ describe('A12 — lazy registry and lifecycle', () => {
       'incidentpilot',
       'clinical-reconciliation',
       'code-battlegrounds',
+      'timesling',
+      'zenco',
     ]);
     for (const id of registeredStoryIds()) expect(hasProjectStory(id)).toBe(true);
-    for (const id of ['timesling', 'zenco', 'nostalgia', 'constructor', '__proto__']) {
+    for (const id of ['nostalgia', 'constructor', '__proto__']) {
       expect(hasProjectStory(id), id).toBe(false);
       expect(PROJECT_STORY_COMPONENTS[id], id).toBeUndefined();
     }
@@ -148,7 +150,7 @@ describe('A12 — lazy registry and lifecycle', () => {
   it('reuses the competitive shared lifecycle with no local observer or alternate mode hooks', () => {
     expect(storySource).toMatch(/useStoryLifecycle\(ref,\s*\{\s*competitive:\s*true\s*\}\)/);
     expect(storySource).not.toMatch(/new IntersectionObserver|useReducedMotion|usePortfolioMode/);
-    expect(registrySource).not.toMatch(/preload|timesling\/|zenco\/|nostalgia\//i);
+    expect(registrySource).not.toMatch(/preload|nostalgia\//i);
   });
 });
 
@@ -319,7 +321,7 @@ describe('A12 — explorer host and chunk-failure fallback', () => {
   it('keeps unknown ProjectStory fallback behavior intact', () => {
     const { container } = render(
       <PortfolioModeProvider>
-        <ProjectStory projectId="timesling" fallback={<p>safe fallback</p>} />
+        <ProjectStory projectId="nostalgia" fallback={<p>safe fallback</p>} />
       </PortfolioModeProvider>
     );
     expect(container.textContent).toBe('safe fallback');
