@@ -167,7 +167,7 @@ export default defineConfig({
         manualChunks: {
           // Vendor chunks for better caching
           'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'animation-vendor': ['framer-motion', 'gsap'],
+          'animation-vendor': ['framer-motion'],
         },
       },
     },
@@ -178,13 +178,7 @@ export default defineConfig({
   },
   // Performance optimizations
   optimizeDeps: {
-    include: [
-      'react',
-      'react-dom',
-      'react-router-dom',
-      'framer-motion',
-      'gsap',
-    ],
+    include: ['react', 'react-dom', 'react-router-dom', 'framer-motion'],
   },
   // Server configuration
   server: {

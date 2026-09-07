@@ -1,5 +1,4 @@
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
-import { ParallaxProvider } from 'react-scroll-parallax';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Header, Footer } from './sections';
 import { Home } from './pages';
@@ -85,9 +84,7 @@ function App() {
   return (
     <BrowserRouter>
       <PortfolioModeProvider>
-        <ParallaxProvider>
-          <AppContent />
-        </ParallaxProvider>
+        <AppContent />
       </PortfolioModeProvider>
     </BrowserRouter>
   );

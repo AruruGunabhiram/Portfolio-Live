@@ -1,5 +1,4 @@
 import type { Variants } from 'framer-motion';
-import { useEffect, useRef } from 'react';
 
 // ============================================
 // FRAMER MOTION VARIANTS
@@ -160,7 +159,7 @@ export const scrollViewport = {
 };
 
 // ============================================
-// GSAP UTILITIES
+// BROWSER + MOTION UTILITIES
 // ============================================
 
 /**
@@ -175,81 +174,6 @@ export const isBrowser = typeof window !== 'undefined';
 export const prefersReducedMotion = (): boolean => {
   if (!isBrowser) return false;
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-};
-
-/**
- * Get animation duration based on reduced-motion preference
- * @param duration - Normal duration in seconds
- * @returns 0 if reduced motion, otherwise normal duration
- */
-export const getAnimationDuration = (duration: number): number => {
-  return prefersReducedMotion() ? 0 : duration;
-};
-
-/**
- * Get scroll effect intensity based on reduced-motion preference
- * @param intensity - Normal intensity (0-1)
- * @returns 0 if reduced motion, otherwise normal intensity
- */
-export const getScrollIntensity = (intensity: number): number => {
-  return prefersReducedMotion() ? 0 : intensity;
-};
-
-/**
- * Custom hook for GSAP ScrollTrigger animations
- * SSR-safe with proper cleanup
- *
- * @param callback - Function that sets up GSAP animations
- * @param dependencies - Dependency array for useEffect
- *
- * @example
- * useGSAP(() => {
- *   gsap.from('.element', {
- *     scrollTrigger: {
- *       trigger: '.element',
- *       start: 'top 80%',
- *     },
- *     opacity: 0,
- *     y: 50,
- *   });
- * }, []);
- */
-export const useGSAP = (callback: () => void | (() => void), dependencies: unknown[] = []) => {
-  const cleanupRef = useRef<(() => void) | void>(undefined);
-
-  useEffect(() => {
-    // Only run in browser environment
-    if (!isBrowser) return;
-
-    // Execute the callback and store any cleanup function
-    cleanupRef.current = callback();
-
-    // Cleanup function
-    return () => {
-      if (typeof cleanupRef.current === 'function') {
-        cleanupRef.current();
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, dependencies);
-};
-
-/**
- * GSAP ScrollTrigger default configuration
- */
-export const gsapScrollTriggerDefaults = {
-  start: 'top 80%', // Start animation when top of element hits 80% of viewport
-  end: 'bottom 20%', // End animation when bottom of element hits 20% of viewport
-  toggleActions: 'play none none reverse', // Play on enter, reverse on leave
-  markers: false, // Set to true for debugging
-};
-
-/**
- * GSAP timeline default configuration
- */
-export const gsapTimelineDefaults = {
-  ease: 'power3.out',
-  duration: 0.8,
 };
 
 // ============================================

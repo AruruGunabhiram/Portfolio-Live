@@ -185,7 +185,7 @@ export function FlowDemo({ demo }: FlowDemoProps) {
                 style={{
                   background: isCompleted && !isActive ? 'var(--accent-subtle)' : 'var(--surface)',
                   borderColor: isActive ? 'var(--border-strong)' : isCompleted ? 'var(--border)' : 'var(--border)',
-                  opacity: state === 'idle' ? 0.72 : 1,
+                  opacity: 1,
                   transform: 'translateZ(0)',
                   overflowWrap: 'anywhere' as const,
                 }}

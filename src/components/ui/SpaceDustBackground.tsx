@@ -80,15 +80,22 @@ export const SpaceDustBackground = () => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const dpr = window.devicePixelRatio || 1;
+    // Adaptive policy (19R/S/T): lower cost on mobile/coarse pointer
+    const coarse = window.matchMedia('(pointer: coarse)').matches;
+    const isMobile = window.innerWidth < 768 || coarse;
+    const COUNT_EFF = isMobile ? 140 : COUNT;
+    const MAX_EDGES_EFF = isMobile ? 280 : MAX_TOTAL_EDGES;
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     let w = 0, h = 0, rafId = 0;
+    let lastFrame = 0;
+    const FRAME_INTERVAL = isMobile ? 33 : 16; // 30fps mobile, 60fps desktop
 
     const mouse  = { x: 0.5, y: 0.5 }; // normalized (0-1) for parallax
     const cursor = { x: -9999, y: -9999 }; // CSS px for hover detection
 
     let particles: Particle[] = [];
 
-    // blocked edges: key = i * COUNT + j (always i < j), value = expiry timestamp
+    // blocked edges: key = i * COUNT_EFF + j (always i < j), value = expiry timestamp
     const blocked = new Map<number, number>();
 
     // spatial grid: key = cellX * 65536 + cellY
@@ -126,23 +133,44 @@ export const SpaceDustBackground = () => {
     };
 
     resize();
-    particles = Array.from({ length: COUNT }, mkParticle);
+    particles = Array.from({ length: COUNT_EFF }, mkParticle);
 
-    // ── Events ─────────────────────────────────────────────────────────────────
+    // ── Events: disable hover on coarse pointer (19W) ──────────────────────────
     const onMouse = (e: MouseEvent) => {
+      if (coarse) return;
       mouse.x  = e.clientX / window.innerWidth;
       mouse.y  = e.clientY / window.innerHeight;
       cursor.x = e.clientX;
       cursor.y = e.clientY;
     };
-    window.addEventListener('mousemove', onMouse, { passive: true });
+    if (!coarse) window.addEventListener('mousemove', onMouse, { passive: true });
 
     // ── Dev debug (throttled to every 2 s) ─────────────────────────────────────
     let dbgFrames = 0, dbgEdges = 0, dbgNext = 0;
 
-    // ── Main draw loop ─────────────────────────────────────────────────────────
+    // ── Visibility pause (19U) ───────────────────────────────────────────────
+    const onVisibility = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(rafId);
+      } else {
+        lastFrame = performance.now();
+        rafId = requestAnimationFrame(draw);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    // ── Main draw loop (throttled 19T) ───────────────────────────────────────
     const draw = () => {
       const now = performance.now();
+      if (document.hidden) {
+        rafId = requestAnimationFrame(draw);
+        return;
+      }
+      if (now - lastFrame < FRAME_INTERVAL) {
+        rafId = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrame = now;
       ctx.clearRect(0, 0, w, h);
       const isLight = document.documentElement.getAttribute('data-theme') === 'light';
 
@@ -165,7 +193,7 @@ export const SpaceDustBackground = () => {
 
       // ── 2. Rebuild spatial grid (O(n) each frame) ────────────────────────────
       grid.clear();
-      for (let i = 0; i < COUNT; i++) {
+      for (let i = 0; i < COUNT_EFF; i++) {
         const p  = particles[i];
         const cx = Math.floor(p.x / CELL);
         const cy = Math.floor(p.y / CELL);
@@ -177,9 +205,9 @@ export const SpaceDustBackground = () => {
 
       // ── 3. Precompute parallax-adjusted screen positions ─────────────────────
       //    (CSS px space — same space as cursor.x/y)
-      const sx = new Float32Array(COUNT);
-      const sy = new Float32Array(COUNT);
-      for (let i = 0; i < COUNT; i++) {
+      const sx = new Float32Array(COUNT_EFF);
+      const sy = new Float32Array(COUNT_EFF);
+      for (let i = 0; i < COUNT_EFF; i++) {
         const p  = particles[i];
         const pm = Z_PARALLAX_MIN + p.z * (Z_PARALLAX_MAX - Z_PARALLAX_MIN);
         sx[i] = p.x + ox * pm;
@@ -197,9 +225,9 @@ export const SpaceDustBackground = () => {
       ctx.globalAlpha  = 1;
 
       let totalEdges = 0;
-      const edgeCounts = new Uint8Array(COUNT); // edges drawn per particle
+      const edgeCounts = new Uint8Array(COUNT_EFF); // edges drawn per particle
 
-      for (let i = 0; i < COUNT && totalEdges < MAX_TOTAL_EDGES; i++) {
+      for (let i = 0; i < COUNT_EFF && totalEdges < MAX_EDGES_EFF; i++) {
         if (edgeCounts[i] >= MAX_EPP) continue;
 
         const p  = particles[i];
@@ -218,7 +246,7 @@ export const SpaceDustBackground = () => {
               if (j <= i) continue;                       // canonical i < j
               if (edgeCounts[i] >= MAX_EPP) break outer; // i is full
               if (edgeCounts[j] >= MAX_EPP) continue;    // j is full
-              if (totalEdges >= MAX_TOTAL_EDGES) break outer;
+              if (totalEdges >= MAX_EDGES_EFF) break outer;
 
               const dx = p.x - particles[j].x;
               const dy = p.y - particles[j].y;
@@ -236,7 +264,7 @@ export const SpaceDustBackground = () => {
               const by = sy[j];
 
               // Hover split: check if cursor is near this segment
-              const edgeKey = i * COUNT + j;
+              const edgeKey = i * COUNT_EFF + j;
               if (blocked.has(edgeKey)) continue; // currently split — skip; neighbor edges fill in
 
               if (cursor.x > -1000) {
@@ -342,12 +370,17 @@ export const SpaceDustBackground = () => {
 
     draw();
 
+    // Resize throttling via RAF (19V) — ResizeObserver already debounced, add RAF guard
+    let resizeRaf = 0;
     const ro = new ResizeObserver(() => {
-      resize();
-      for (const p of particles) {
-        if (p.x > w) p.x = Math.random() * w;
-        if (p.y > h) p.y = Math.random() * h;
-      }
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      resizeRaf = requestAnimationFrame(() => {
+        resize();
+        for (const p of particles) {
+          if (p.x > w) p.x = Math.random() * w;
+          if (p.y > h) p.y = Math.random() * h;
+        }
+      });
     });
     if (canvas.parentElement) ro.observe(canvas.parentElement);
 
@@ -355,14 +388,16 @@ export const SpaceDustBackground = () => {
       if (e.matches) {
         cancelAnimationFrame(rafId);
         ctx.clearRect(0, 0, w, h);
-        window.removeEventListener('mousemove', onMouse);
+        if (!coarse) window.removeEventListener('mousemove', onMouse);
       }
     };
     mq.addEventListener('change', onReducedChange);
 
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener('mousemove', onMouse);
+      if (resizeRaf) cancelAnimationFrame(resizeRaf);
+      if (!coarse) window.removeEventListener('mousemove', onMouse);
+      document.removeEventListener('visibilitychange', onVisibility);
       mq.removeEventListener('change', onReducedChange);
       ro.disconnect();
     };
