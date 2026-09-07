@@ -75,11 +75,11 @@ export function InfiniAIExperienceStory() {
             <div className="w-full max-w-[260px]">
               <StoryNode variant="neutral" label="Request" detail="incoming input" state={stateFor(0)} />
             </div>
-            <StoryConnector active={connectorActive(0)} orientation="vertical" />
+            <StoryConnector active={connectorActive(0)} orientation="vertical" dense />
             <div className="w-full max-w-[260px]">
               <StoryNode variant="backend" subtle label="Flask service" detail="Python · backend logic" state={stateFor(1)} />
             </div>
-            <StoryConnector active={connectorActive(1)} orientation="vertical" />
+            <StoryConnector active={connectorActive(1)} orientation="vertical" dense />
             <div className="w-full max-w-[260px] flex flex-col items-center gap-2">
               <StoryNode variant="neutral" label="Response" detail={showResponse ? '200 · processed' : 'pending'} state={showResponse ? 'completed' : 'idle'} />
               <StoryStatus variant={showResponse ? 'success' : 'neutral'} label="Response" detail={showResponse ? 'returned' : 'pending'} />

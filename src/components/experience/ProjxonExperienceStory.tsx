@@ -18,33 +18,39 @@ export function ProjxonExperienceStory() {
   });
 
   const isStatic = isRecruiter || isReducedMotion;
-  const [step, setStep] = useState(() => (isStatic ? 6 : 0));
+  const maxStep = isCompact ? 4 : 6;
+  const [step, setStep] = useState(() => (isStatic ? maxStep : 0));
 
   // Drive step sequencing only when shouldAnimate; pause otherwise; force final for static
   useEffect(() => {
     if (isStatic) {
-      setStep(6);
+      setStep(maxStep);
       return;
     }
     if (!shouldAnimate) return;
-    if (step === 6) {
+    if (step === maxStep) {
       const t = setTimeout(() => setStep(0), 2000);
       return () => clearTimeout(t);
     }
-    const t = setTimeout(() => setStep(s => Math.min(s + 1, 6)), 700);
+    const t = setTimeout(() => setStep(s => Math.min(s + 1, maxStep)), 700);
     return () => clearTimeout(t);
-  }, [step, shouldAnimate, isStatic, isDocumentVisible]);
+  }, [step, shouldAnimate, isStatic, isDocumentVisible, maxStep]);
 
   // Initialize static final if lifecycle later resolves to static (e.g., after mount)
   useEffect(() => {
-    if (isStatic) setStep(6);
-  }, [isStatic]);
+    if (isStatic) setStep(maxStep);
+  }, [isStatic, maxStep]);
 
   const stateFor = (idx: number): 'active' | 'completed' | 'idle' => {
     if (isStatic) return 'completed';
     if (!shouldAnimate && step === 0) {
-      // not yet active, show initial idle except task which is idle? keep task active to hint
       return idx === 0 ? 'active' : 'idle';
+    }
+    // Compact: 4 nodes (Task, AI, Control/approval, Execution) — single tick each
+    if (isCompact) {
+      if (step > idx) return 'completed';
+      if (step === idx) return 'active';
+      return 'idle';
     }
     if (step > idx) return 'completed';
     if (step === idx) return 'active';
@@ -56,12 +62,9 @@ export function ProjxonExperienceStory() {
     return step > afterIdx;
   };
 
-  // For non-static but not animating (offscreen/competitive), show final-ish to communicate completeness
-  // If shouldAnimate false and step is 0 (never started), keep initial; otherwise keep current step (paused)
+  const showFinalAudit = isStatic || step >= (isCompact ? 4 : 5);
 
-  const showFinalAudit = isStatic || step >= 5;
-
-  const stageHeight = isCompact ? 300 : 260;
+  const stageHeight = isCompact ? 200 : 260;
 
   return (
     <StoryStage
@@ -71,17 +74,17 @@ export function ProjxonExperienceStory() {
       className="overflow-hidden"
     >
       <div ref={ref} className="min-w-0" style={{ minHeight: stageHeight }}>
-        <div className="flex items-center justify-between gap-2 mb-3 min-w-0 flex-wrap">
+        <div className={`flex items-center justify-between gap-2 min-w-0 flex-wrap ${isCompact ? 'mb-2' : 'mb-3'}`}>
           <span className="text-[10px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }} aria-hidden="true">
             Controlled workflow — current
           </span>
           <span className="text-[10px] leading-none px-1.5 py-1 rounded" style={{ background: 'var(--story-neutral-subtle)', border: '1px solid var(--story-neutral-border)', color: 'var(--text-muted)' }} aria-hidden="true">
-            OrkaATS · operational workflow tooling
+            {isCompact ? 'OrkaATS' : 'OrkaATS · operational workflow tooling'}
           </span>
         </div>
 
         {isCompact ? (
-          // Compact: vertical stack
+          // Compact: vertical stack — 4 primary objects (audit as footer status)
           <div className="flex flex-col items-center gap-0 min-w-0">
             <motion.div
               className="w-full max-w-[260px]"
@@ -90,23 +93,19 @@ export function ProjxonExperienceStory() {
             >
               <StoryNode variant="neutral" label="Task context" detail="workflow input" state={stateFor(0)} />
             </motion.div>
-            <StoryConnector active={connectorActive(0)} orientation="vertical" />
+            <StoryConnector active={connectorActive(0)} orientation="vertical" dense />
             <div className="w-full max-w-[260px]">
               <StoryNode variant="ai" subtle label="AI proposal" detail="bounded reasoning" state={stateFor(1)} />
             </div>
-            <StoryConnector active={connectorActive(1)} orientation="vertical" />
+            <StoryConnector active={connectorActive(1)} orientation="vertical" dense />
             <div className="w-full max-w-[260px]">
-              <StoryNode variant="automation" subtle label="Permission gate" detail="policy check" state={stateFor(2)} />
+              <StoryNode variant="automation" subtle label="Control / approval" detail="permission + human approval" state={stateFor(2)} />
             </div>
-            <StoryConnector active={connectorActive(2)} orientation="vertical" />
+            <StoryConnector active={connectorActive(2)} orientation="vertical" dense />
             <div className="w-full max-w-[260px]">
-              <StoryNode variant="neutral" label="Human approval" detail="approval required" state={stateFor(3)} />
+              <StoryNode variant="backend" label="App execution" detail="application-owned" state={stateFor(3)} />
             </div>
-            <StoryConnector active={connectorActive(3)} orientation="vertical" />
-            <div className="w-full max-w-[260px]">
-              <StoryNode variant="backend" label="App execution" detail="application-owned" state={stateFor(4)} />
-            </div>
-            <div className="mt-3 w-full max-w-[260px] flex justify-center" aria-hidden="true">
+            <div className="mt-2 w-full max-w-[260px] flex justify-center" aria-hidden="true">
               <span
                 className="inline-flex items-center gap-1.5 px-2 py-1 text-xs font-medium rounded-md border"
                 style={{
@@ -156,7 +155,7 @@ export function ProjxonExperienceStory() {
             </div>
           </div>
         )}
-        <p className="text-[10px] leading-snug mt-3 text-center" style={{ color: 'var(--text-muted)' }} aria-hidden="true">
+        <p className={`text-[10px] leading-snug text-center ${isCompact ? 'mt-2' : 'mt-3'}`} style={{ color: 'var(--text-muted)' }} aria-hidden="true">
           {isStatic ? 'Static system' : shouldAnimate ? 'Controlled · permission → approval → execution → audit' : 'Paused · approval required before execution'}
         </p>
       </div>

@@ -3,6 +3,7 @@ import { Hero, Experience, Projects, EngineeringPractices, Skills, Education, Pu
 import { usePortfolioMode } from '../context/PortfolioModeContext';
 import { prefersReducedMotion } from '../utils';
 import { Container } from '../components';
+import { ExperienceProjectsBridge } from '../components/transitions/ExperienceProjectsBridge';
 
 const AskGuna = lazy(() => import('../sections/AskGuna').then(m => ({ default: m.AskGuna })));
 
@@ -36,6 +37,7 @@ export const Home = () => {
     >
       <Hero />
       <Experience />
+      <ExperienceProjectsBridge />
       <Projects />
       <EngineeringPractices />
       <Education />

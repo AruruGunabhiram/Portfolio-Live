@@ -3,7 +3,7 @@ import { motion, useTransform } from 'framer-motion';
 import { Container } from '../components';
 import { EXPERIENCE } from '../data/experience';
 import { prefersReducedMotion } from '../utils';
-import { useExperienceEntryProgress } from '../hooks/useSectionTransitionProgress';
+import { useExperienceEntryProgress, useExperienceExitProgress } from '../hooks/useSectionTransitionProgress';
 import { ProjxonExperienceStory } from '../components/experience/ProjxonExperienceStory';
 import { InfiniAIExperienceStory } from '../components/experience/InfiniAIExperienceStory';
 
@@ -14,6 +14,11 @@ export const Experience = () => {
   const bridgeScaleX = useTransform(entryProgress, [0, 1], [0.78, 1]);
   const bridgeOpacity = useTransform(entryProgress, [0, 0.5, 1], [0.42, 0.85, 1]);
   const signalX = useTransform(entryProgress, [0.3, 0.9], [0, 240]);
+  // A6 — story visuals recede slightly as Experience exits (transform only; opacity
+  // MotionValues are not applied reliably by the current framer-motion version).
+  // Factual content — bullets, company, chronology — never consumes this value.
+  const exitProgress = useExperienceExitProgress(expRef);
+  const storyRecede = useTransform(exitProgress, [0, 1], [1, 0.985]);
 
   if (!EXPERIENCE.length) return null;
 
@@ -127,10 +132,13 @@ export const Experience = () => {
                       {job.role}
                     </p>
 
-                    {/* Visual — compact engineering system */}
-                    <div className="mt-5 min-w-0">
+                    {/* Visual — compact engineering system (emphasis fades toward the A6 boundary) */}
+                    <motion.div
+                      className="mt-5 min-w-0"
+                      style={{ scale: storyRecede, transformOrigin: 'left top' } as unknown as React.CSSProperties}
+                    >
                       {isProjxon ? <ProjxonExperienceStory /> : <InfiniAIExperienceStory />}
-                    </div>
+                    </motion.div>
 
                     <ul className="mt-5 space-y-2.5">
                       {job.bullets.map((b, i) => (

@@ -42,6 +42,49 @@ const animVendor = findAndGzip(/^animation-vendor-.*\.js$/, 'Animation vendor');
 
 const totalInitial = main.gz + reactVendor.gz + animVendor.gz;
 
+// ── Hardening (A6) ──────────────────────────────────────────────────────────
+// The totals above are hand-picked, so an unexpected eager chunk could bypass them.
+// Guard that with dist/index.html itself rather than guessing from filenames:
+// anything the entry HTML loads or preloads IS initial and MUST be counted.
+const allJs = files.filter(f => f.endsWith('.js'));
+const countedInitial = [main.name, reactVendor.name, animVendor.name];
+
+const indexHtml = fs.readFileSync(path.join(dist, 'index.html'), 'utf8');
+const eagerFromHtml = new Set(
+  [...indexHtml.matchAll(/(?:src|href)="\/assets\/([^"]+\.js)"/g)].map(m => m[1])
+);
+
+// 1. Every chunk the entry HTML loads/preloads must be inside the counted total.
+const uncounted = [...eagerFromHtml].filter(f => !countedInitial.includes(f));
+if (uncounted.length) {
+  console.error(
+    `[budget] FAIL — dist/index.html eagerly loads JS excluded from totalInitialJsGzip: ${uncounted.join(', ')}`
+  );
+  process.exit(1);
+}
+
+// 2. Every chunk we count must actually be referenced by the entry HTML.
+const countedButUnreferenced = countedInitial.filter(f => !eagerFromHtml.has(f));
+if (countedButUnreferenced.length) {
+  console.error(
+    `[budget] FAIL — counted as initial but not referenced by dist/index.html: ${countedButUnreferenced.join(', ')}`
+  );
+  process.exit(1);
+}
+
+// 3. Everything else is a code-split chunk. It is not counted, but it is reported —
+//    a new one appearing here is a deliberate change that should be reviewed.
+//    NOTE: AskGuna is code-split but IS fetched shortly after hydration, because
+//    <Suspense><AskGuna/></Suspense> is rendered eagerly in Home. It is not
+//    render-blocking and is not part of the initial HTML, so it stays uncounted.
+const split = allJs.filter(f => !countedInitial.includes(f));
+console.log('Build budget check — Phase 19 thresholds (21AQ)');
+console.log(`  Entry HTML eager JS: ${[...eagerFromHtml].join(', ')}`);
+for (const name of split) {
+  const gz = gzipSync(fs.readFileSync(path.join(assetsDir, name))).length;
+  console.log(`  Split chunk (not counted): ${name} ${(gz / 1024).toFixed(2)} kB`);
+}
+
 function fmt(n) {
   return `${(n / 1024).toFixed(2)} kB`;
 }
@@ -51,7 +94,6 @@ function check(actual, budget, label) {
   return ok;
 }
 
-console.log('Build budget check — Phase 19 thresholds (21AQ)');
 console.log(`  CSS: ${css.name} ${fmt(css.gz)}`);
 console.log(`  Main: ${main.name} ${fmt(main.gz)}`);
 console.log(`  React: ${reactVendor.name} ${fmt(reactVendor.gz)}`);

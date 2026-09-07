@@ -55,3 +55,44 @@ export function useExperienceEntryProgress(
   if (isRecruiter || isReduced) return staticZero;
   return scrollYProgress;
 }
+
+/**
+ * Bounded progress for Experience → Projects capability recomposition.
+ * Natural boundary, no pinning. Short window around Experience bottom / Projects top.
+ * Bypassed for recruiter/reduced-motion (static 0).
+ */
+export function useExperienceProjectsProgress(
+  targetRef: React.RefObject<HTMLElement | null>
+): MotionValue<number> {
+  const { isRecruiter } = usePortfolioMode();
+  const isReduced = useReducedMotion();
+  const isCompact = useIsCompactStory(1024);
+  const offset = (isCompact ? ['start 0.88', 'start 0.28'] : ['start 0.85', 'start 0.25']) as unknown as [string, string];
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: offset as unknown as never,
+  });
+  const staticZero = useMotionValue(0);
+  if (isRecruiter || isReduced) return staticZero;
+  return scrollYProgress;
+}
+
+/**
+ * Experience exit emphasis — the professional story visuals reduce emphasis as the
+ * section bottom leaves, so the capability modules read as a recomposition of them.
+ * Same bounded-window pattern as A4; only visual-story objects consume it.
+ * Factual content (bullets, company, chronology) never consumes this value.
+ */
+export function useExperienceExitProgress(
+  targetRef: React.RefObject<HTMLElement | null>
+): MotionValue<number> {
+  const { isRecruiter } = usePortfolioMode();
+  const isReduced = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: targetRef,
+    offset: ['end 0.95', 'end 0.4'] as unknown as never,
+  });
+  const staticZero = useMotionValue(0);
+  if (isRecruiter || isReduced) return staticZero;
+  return scrollYProgress;
+}
