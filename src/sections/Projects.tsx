@@ -19,9 +19,11 @@ export const Projects = () => {
 
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
 
+  // Entering recruiter mode starts with the secondary explorer collapsed, but
+  // an explicit "View all projects" action must be allowed to keep it open.
   useEffect(() => {
-    if (isRecruiter && explorerOpen) setExplorerOpen(false);
-  }, [isRecruiter, explorerOpen]);
+    if (isRecruiter) setExplorerOpen(false);
+  }, [isRecruiter]);
 
   // When explorer collapses, return focus if it was inside
   useEffect(() => {

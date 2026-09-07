@@ -127,7 +127,12 @@ afterEach(() => {
 // ─── 1–3 · Registry ─────────────────────────────────────────────────────────
 describe('A8 — project story registry', () => {
   it('1 — registry preserves Ember as later visual worlds are added', () => {
-    expect(registeredStoryIds()).toEqual(['ember', 'sociallens', 'incidentpilot']);
+    expect(registeredStoryIds()).toEqual([
+      'ember',
+      'sociallens',
+      'incidentpilot',
+      'clinical-reconciliation',
+    ]);
     expect(hasProjectStory('ember')).toBe(true);
   });
 

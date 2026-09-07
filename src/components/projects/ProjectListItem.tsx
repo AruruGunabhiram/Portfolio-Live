@@ -1,4 +1,6 @@
 import type { Project } from '../../types/portfolio';
+import { ProjectStory } from './story/ProjectStory';
+import { hasProjectStory } from './story/storyRegistry';
 
 const LABEL: Record<string, string> = {
   backend: 'Backend',
@@ -26,6 +28,9 @@ export function ProjectListItem({
   detailId?: string;
 }) {
   const cats = project.categories.map(c => LABEL[c] ?? c).join(' · ');
+  // Featured projects already host their story in FeaturedProject. The explorer
+  // is the real-page host for non-featured visual worlds such as Clinical.
+  const hasExplorerStory = !project.featured && hasProjectStory(project.id);
   return (
     <article className="py-5 border-t min-w-0" style={{ borderColor: 'var(--border)' }}>
       <div className="flex items-start justify-between gap-3 min-w-0">
@@ -65,6 +70,12 @@ export function ProjectListItem({
               Live
             </a>
           )}
+        </div>
+      )}
+
+      {hasExplorerStory && (
+        <div className="mt-4 min-w-0">
+          <ProjectStory projectId={project.id} />
         </div>
       )}
     </article>

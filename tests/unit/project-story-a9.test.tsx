@@ -168,7 +168,12 @@ afterEach(() => {
 // ─── 1–3 · Registry ─────────────────────────────────────────────────────────
 describe('A9 — registry', () => {
   it('1 — registry preserves Ember and SocialLens after A10', () => {
-    expect(registeredStoryIds()).toEqual(['ember', 'sociallens', 'incidentpilot']);
+    expect(registeredStoryIds()).toEqual([
+      'ember',
+      'sociallens',
+      'incidentpilot',
+      'clinical-reconciliation',
+    ]);
     expect(hasProjectStory('ember')).toBe(true);
     expect(hasProjectStory('sociallens')).toBe(true);
   });

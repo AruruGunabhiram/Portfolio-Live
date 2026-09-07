@@ -30,6 +30,10 @@ const STORY_LOADERS: Record<string, StoryLoader> = {
     import('./sociallens/SocialLensStory').then(m => ({ default: m.SocialLensStory })),
   incidentpilot: () =>
     import('./incidentpilot/IncidentPilotStory').then(m => ({ default: m.IncidentPilotStory })),
+  'clinical-reconciliation': () =>
+    import('./clinical/ClinicalReconciliationStory').then(m => ({
+      default: m.ClinicalReconciliationStory,
+    })),
 };
 
 /**

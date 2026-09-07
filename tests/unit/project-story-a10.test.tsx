@@ -131,7 +131,12 @@ afterEach(() => {
 
 describe('A10 — IncidentPilot lazy registry', () => {
   it('registers IncidentPilot lazily while preserving Ember and SocialLens', () => {
-    expect(registeredStoryIds()).toEqual(['ember', 'sociallens', 'incidentpilot']);
+    expect(registeredStoryIds()).toEqual([
+      'ember',
+      'sociallens',
+      'incidentpilot',
+      'clinical-reconciliation',
+    ]);
     expect(hasProjectStory('ember')).toBe(true);
     expect(hasProjectStory('sociallens')).toBe(true);
     expect(hasProjectStory('incidentpilot')).toBe(true);
