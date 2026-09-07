@@ -119,7 +119,7 @@ export function FeaturedProject({
         </div>
 
         {hasDemo && (
-          <div className="min-w-0 lg:sticky lg:top-24">
+          <div className="min-w-0">
             <ProjectDemo demo={project.demo!} />
           </div>
         )}

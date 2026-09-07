@@ -1,8 +1,40 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useId } from 'react';
 import type { FlowDemo } from '../../../types/portfolio';
 
 interface FlowDemoProps {
   demo: FlowDemo;
+}
+
+// ─── One-active-demo coordination (8AF) ──────────────────────────
+// Without global state: all FlowDemos share a module-level observer that
+// picks the most-visible demo as the only active one. Lightweight, no context.
+type RegistryEntry = { ratio: number; setActive: (v: boolean) => void };
+const registry = new Map<string, RegistryEntry>();
+let sharedObserver: IntersectionObserver | null = null;
+
+function getSharedObserver() {
+  if (sharedObserver) return sharedObserver;
+  sharedObserver = new IntersectionObserver(
+    entries => {
+      entries.forEach(e => {
+        const id = (e.target as HTMLElement).dataset.demoId;
+        if (!id) return;
+        const ent = registry.get(id);
+        if (ent) ent.ratio = e.intersectionRatio;
+      });
+      let bestId: string | null = null;
+      let bestRatio = 0.2;
+      registry.forEach((ent, id) => {
+        if (ent.ratio >= bestRatio) {
+          bestRatio = ent.ratio;
+          bestId = id;
+        }
+      });
+      registry.forEach((ent, id) => ent.setActive(id === bestId));
+    },
+    { threshold: [0, 0.2, 0.5, 0.75] }
+  );
+  return sharedObserver;
 }
 
 export function FlowDemo({ demo }: FlowDemoProps) {
@@ -11,8 +43,9 @@ export function FlowDemo({ demo }: FlowDemoProps) {
   const stepDuration = steps.length > 0 ? totalDuration / steps.length : 0;
 
   const containerRef = useRef<HTMLDivElement>(null);
+  const demoId = useId();
   const [activeIndex, setActiveIndex] = useState(0);
-  const [isInViewport, setIsInViewport] = useState(false);
+  const [isMostVisible, setIsMostVisible] = useState(false);
   const [isDocVisible, setIsDocVisible] = useState(() => typeof document === 'undefined' ? true : document.visibilityState === 'visible');
   const [reduced, setReduced] = useState(false);
   const timerRef = useRef<number | null>(null);
@@ -26,20 +59,30 @@ export function FlowDemo({ demo }: FlowDemoProps) {
     return () => mq.removeEventListener('change', update);
   }, []);
 
-  // viewport
+  // viewport — shared one-active coordination
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
-    const obs = new IntersectionObserver(
-      entries => {
-        const e = entries[0];
-        setIsInViewport(e.isIntersecting && e.intersectionRatio >= 0.2);
-      },
-      { threshold: [0, 0.2, 0.5] }
-    );
+    el.dataset.demoId = demoId;
+    const entry: RegistryEntry = { ratio: 0, setActive: setIsMostVisible };
+    registry.set(demoId, entry);
+    const obs = getSharedObserver();
     obs.observe(el);
-    return () => obs.disconnect();
-  }, []);
+    return () => {
+      obs.unobserve(el);
+      registry.delete(demoId);
+      // re-evaluate remaining
+      let bestId: string | null = null;
+      let bestRatio = 0.2;
+      registry.forEach((ent, id) => {
+        if (ent.ratio >= bestRatio) {
+          bestRatio = ent.ratio;
+          bestId = id;
+        }
+      });
+      registry.forEach((ent, id) => ent.setActive(id === bestId));
+    };
+  }, [demoId]);
 
   // document visibility
   useEffect(() => {
@@ -48,7 +91,7 @@ export function FlowDemo({ demo }: FlowDemoProps) {
     return () => document.removeEventListener('visibilitychange', handler);
   }, []);
 
-  const shouldAnimate = !reduced && isInViewport && isDocVisible && steps.length > 1;
+  const shouldAnimate = !reduced && isMostVisible && isDocVisible && steps.length > 1;
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {
@@ -70,7 +113,6 @@ export function FlowDemo({ demo }: FlowDemoProps) {
       setActiveIndex(prev => {
         const next = prev + 1;
         if (next >= steps.length) {
-          // pause at end, then restart loop
           scheduleNext(() => {
             setActiveIndex(0);
             scheduleNext(tick, stepDuration);
@@ -86,14 +128,11 @@ export function FlowDemo({ demo }: FlowDemoProps) {
     return clearTimer;
   }, [shouldAnimate, stepDuration, steps.length, clearTimer]);
 
-  // reset when becoming invisible/hidden so loop restarts cleanly when returning
   useEffect(() => {
-    if (!isInViewport || !isDocVisible) {
+    if (!isMostVisible || !isDocVisible) {
       clearTimer();
-    } else if (shouldAnimate) {
-      // ensure active index advances from current; no reset needed
     }
-  }, [isInViewport, isDocVisible, shouldAnimate, clearTimer]);
+  }, [isMostVisible, isDocVisible, clearTimer]);
 
   // reduced motion: static complete flow
   const isStatic = reduced;
@@ -194,7 +233,7 @@ export function FlowDemo({ demo }: FlowDemoProps) {
       </div>
 
       <p className="text-[10px] leading-snug mt-3 text-center" style={{ color: 'var(--text-muted)' }} aria-hidden="true">
-        {isStatic ? 'Static flow (reduced motion)' : isInViewport && isDocVisible ? 'Looping · pauses offscreen' : 'Paused offscreen'}
+        {isStatic ? 'Static flow (reduced motion)' : isMostVisible && isDocVisible ? 'Looping · pauses offscreen' : 'Paused offscreen'}
       </p>
     </div>
   );

@@ -96,6 +96,17 @@ export const PROJECTS: Project[] = [
     links: {
       github: 'https://github.com/AruruGunabhiram',
     },
+    demo: {
+      type: 'flow',
+      durationMs: 6400,
+      ariaLabel: 'Creator Copilot flow: analytics context, prompt assembly, LLM call with guardrails, and explainable recommendation',
+      steps: [
+        { id: 'context', label: 'Analytics context', detail: 'Stored retention & engagement metrics' },
+        { id: 'assemble', label: 'Prompt & context assembly', detail: 'Structured signals assembled for LLM' },
+        { id: 'llm', label: 'LLM call with guardrails', detail: 'Constrained to analytics-backed signals' },
+        { id: 'insight', label: 'Explainable recommendation', detail: 'Structured insight with reasoning traces' },
+      ],
+    },
   },
   {
     id: 'zenco',
@@ -148,6 +159,17 @@ export const PROJECTS: Project[] = [
     links: {
       github: 'https://github.com/Kanyarasi2026/code-battle-grounds',
       live: 'https://code-battle-grounds.vercel.app',
+    },
+    demo: {
+      type: 'flow',
+      durationMs: 6400,
+      ariaLabel: 'Code Battlegrounds flow: submit from collaborative editor, backend forwards to Judge0, execution, and realtime sync',
+      steps: [
+        { id: 'submit', label: 'Submit from editor', detail: 'From Socket.IO collaborative editor' },
+        { id: 'request', label: 'Backend execution request', detail: 'Node/Express forwards to Judge0' },
+        { id: 'execute', label: 'Judge0 execution', detail: 'Multi-language immediate feedback' },
+        { id: 'sync', label: 'Realtime session sync', detail: 'Socket.IO broadcasts to participants' },
+      ],
     },
   },
   {

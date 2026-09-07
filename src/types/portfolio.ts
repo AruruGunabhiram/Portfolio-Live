@@ -97,15 +97,7 @@ export interface MediaDemo {
   ariaLabel?: string;
 }
 
-// Legacy fallback (asset-based) — kept for backward compat, not used in Phase 7+ framework
-export interface LegacyProjectDemo {
-  type: DemoType;
-  asset?: string;
-  durationMs?: number;
-  alt?: string;
-}
-
-export type ProjectDemo = FlowDemo | MediaDemo | LegacyProjectDemo;
+export type ProjectDemo = FlowDemo | MediaDemo;
 
 export interface ProjectArchitecture {
   summary?: string;
