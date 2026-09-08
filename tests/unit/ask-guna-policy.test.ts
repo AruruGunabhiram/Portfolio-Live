@@ -45,16 +45,20 @@ describe('Ask Guna policy — system prompt contains required portfolio-only ins
 
   it('knowledge file exists and is minimal, covers required categories', () => {
     expect(knowledgeMd).toContain('# Gunabhiram Aruru');
-    expect(knowledgeMd).toContain('## Profile');
+    // New MD uses ## Professional Profile, old used ## Profile — accept either
+    expect(knowledgeMd).toMatch(/## (Professional )?Profile/);
     expect(knowledgeMd).toContain('## Education');
     expect(knowledgeMd).toContain('## Projects');
-    expect(knowledgeMd).toContain('## Skills');
-    expect(knowledgeMd).toContain('## Certification');
+    // New MD uses ## Complete Technical Skills and AI / Agent Engineering; old used ## Skills
+    expect(knowledgeMd).toMatch(/## (Complete Technical )?Skills|## AI \/ Agent Engineering/);
+    expect(knowledgeMd).toMatch(/## Certifications?/);
     expect(knowledgeMd).toContain('## Leadership');
     expect(knowledgeMd).toContain('University of Colorado Boulder');
-    // must remain minimal, not a huge biography — ensure no invented GPA or address
+    // must remain minimal, not a huge biography — ensure no invented GPA or actual street address
+    // New MD contains disclaimer "Do not expose a home address" which is not an actual address
     expect(knowledgeMd).not.toMatch(/GPA/);
-    expect(knowledgeMd).not.toMatch(/home address/i);
+    expect(knowledgeMd).not.toMatch(/home address:\s*\d/i);
+    expect(knowledgeMd).not.toMatch(/\d+\s+\w+\s+Street/i);
   });
 
   it('API key is server-side only, not exposed via VITE_ prefix', () => {

@@ -12,7 +12,7 @@
   // GROQ_API_KEY is a secret — set via `wrangler secret put GROQ_API_KEY` or Cloudflare dashboard
   // Worker Secrets (do NOT put in vars, do NOT prefix with VITE_). GROQ_MODEL may be set as var.
   "vars": {
-    "GROQ_MODEL": "llama-3.1-8b-instant"
+    "GROQ_MODEL": "openai/gpt-oss-20b"
   },
   // Observability optional
   "observability": {

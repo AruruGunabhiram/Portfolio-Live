@@ -87,7 +87,7 @@ describe('Ask Guna production grounding — general classifier', () => {
 
   // 1. Relevant + supported — answer from markdown
   it('What college did Guna attend? -> RELEVANT_KNOWN grounded from markdown', async () => {
-    const grounded = 'Guna is pursuing a Master of Science in Computer Science at the University of Colorado Boulder (August 2025 - May 2027 expected) and holds a Bachelor of Technology in Computer Science and Engineering from SRM Institute of Science and Technology.';
+    const grounded = 'Guna is pursuing a Master of Science in Computer Science at the University of Colorado Boulder (August 2025 - May 2027 expected) and earned a Bachelor of Science in Computer Science from SRM University (August 2021 - May 2025).';
     mockGroqClassification('RELEVANT_KNOWN', grounded);
     const res = makeRes();
     await handler(baseReq('What college did Guna attend?'), res as never);
@@ -99,25 +99,27 @@ describe('Ask Guna production grounding — general classifier', () => {
     const fetchCall = (global.fetch as unknown as ReturnType<typeof vi.fn>).mock.calls[0][1] as { body: string };
     const payload = JSON.parse(fetchCall.body);
     expect(payload.messages[1].content).toContain('Master of Science in Computer Science');
-    expect(payload.messages[1].content).toContain('SRM Institute of Science and Technology');
+    expect(payload.messages[1].content).toContain('SRM University');
+    expect(payload.messages[1].content).toContain('Bachelor of Science in Computer Science');
     expect(payload.messages[1].content).not.toMatch(/3\.65|3\.92/);
     expect(payload.messages[1].content).toContain('# Gunabhiram Aruru');
     expect(payload.response_format).toEqual({ type: 'json_object' });
   });
 
-  // 2. Relevant + supported but publication is NOT in markdown — must be UNKNOWN (snapshot must not leak)
-  it('What research has he published? -> RELEVANT_UNKNOWN when markdown lacks publication', async () => {
-    mockGroqClassification('RELEVANT_UNKNOWN', UNKNOWN);
+  // 2. Relevant + supported — publication IS in markdown (new MD has Research and Publications)
+  it('What research has he published? -> RELEVANT_KNOWN grounded from markdown', async () => {
+    const grounded = 'Guna published Computer Aided Diagnosis Multi-Model System using Late Fusion and Ensemble Learning with IEEE in 2025, focusing on computer-aided diagnosis using multiple models combined through late-fusion and ensemble techniques.';
+    mockGroqClassification('RELEVANT_KNOWN', grounded);
     const res = makeRes();
     await handler(baseReq('What research has he published?'), res as never);
     const { statusCode, body } = (res as ReturnType<typeof makeRes>)._get() as { statusCode: number; body: Record<string, unknown> };
     expect(statusCode).toBe(200);
-    expect(body.answer).toBe(UNKNOWN);
-    // Ensure knowledge does not contain the IEEE publication from snapshot
+    expect(String(body.answer)).toContain('Computer Aided Diagnosis');
+    expect(String(body.answer)).toContain('IEEE');
     const fetchCall = (global.fetch as unknown as ReturnType<typeof vi.fn>).mock.calls[0][1] as { body: string };
     const payload = JSON.parse(fetchCall.body);
-    expect(payload.messages[1].content).not.toContain('Computer Aided Diagnosis');
-    expect(payload.messages[1].content).not.toContain('10940411');
+    expect(payload.messages[1].content).toContain('Computer Aided Diagnosis');
+    expect(payload.messages[1].content).toContain('IEEE');
   });
 
   // 3. Relevant + unsupported — GPA absent from markdown
