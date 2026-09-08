@@ -256,10 +256,13 @@ describe('Ask Guna production grounding — general classifier', () => {
     const { statusCode, body } = (res as ReturnType<typeof makeRes>)._get() as { statusCode: number; body: Record<string, unknown> };
     expect(statusCode).toBe(429);
     expect((body as Record<string, unknown>).error).toBe('rate_limited');
-    expect(body).toHaveProperty('message', "I couldn't answer that right now. Please try again.");
-    // Must not expose provider internals
+    expect(body).toHaveProperty('message', "Ask Guna is busy right now. Please try again in a few seconds.");
+    // Must not expose provider internals — no Groq/model/quota/Retry-After values in body
     expect(JSON.stringify(body)).not.toContain('Rate limit');
+    expect(JSON.stringify(body)).not.toContain('openai/gpt-oss-20b');
+    expect(JSON.stringify(body)).not.toContain('13');
     expect(JSON.stringify(body)).not.toContain('gsk_');
+    expect(JSON.stringify(body)).not.toContain('Groq');
   });
 
   // 10. Cloudflare bundle has no runtime fs dependency

@@ -270,15 +270,11 @@ export default async function handler(
 
     if (!groqRes.ok) {
       const text = await groqRes.text().catch(() => '');
-      // Handle 429 rate limit cleanly — log safely, respect Retry-After, preserve generic for UI
+      // Handle 429 rate limit cleanly — log safely, respect Retry-After, user-friendly busy message
       if (groqRes.status === 429) {
         const retryAfter = groqRes.headers.get('Retry-After');
         console.warn(`[ask-guna] Groq 429 rate limited${retryAfter ? ` retry-after=${retryAfter}` : ''} model=${model}`);
-        // Return 429 with generic message and optional Retry-After for client to respect
-        const headers: Record<string, string> = { 'Content-Type': 'application/json' };
-        if (retryAfter) headers['Retry-After'] = retryAfter;
-        // Use 429 status but generic message — do not expose provider internals
-        return res.status(429).json({ error: 'rate_limited', message: "I couldn't answer that right now. Please try again." });
+        return res.status(429).json({ error: 'rate_limited', message: "Ask Guna is busy right now. Please try again in a few seconds." });
       }
       console.error(`[ask-guna] Groq error ${groqRes.status}: ${text.slice(0, 300)}`);
       return res.status(502).json({ error: 'provider_error', message: "I couldn't answer that right now. Please try again." });
