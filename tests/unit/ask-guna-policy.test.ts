@@ -155,7 +155,7 @@ describe('Ask Guna handler — three-state behavior (8 required cases, mocked Gr
     expect(payload.messages[0].content).toContain('You are Ask Guna');
     expect(payload.messages[0].content).toContain(IRRELEVANT);
     expect(payload.messages[0].content).toContain(UNKNOWN);
-    expect(payload.max_tokens).toBe(400);
+    expect(payload.max_tokens).toBe(250);
   });
 
   it('2. Supported skill question — answer from supplied knowledge', async () => {
