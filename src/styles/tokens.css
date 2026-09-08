@@ -96,7 +96,9 @@
 
   --text: #e6ecef;
   --text-secondary: #9aa8b0;
-  --text-muted: #75848b;
+  /* A18: was #75848b, which measured 4.45:1 on --surface-subtle — just under WCAG AA.
+     Lifted to clear 4.5:1 on every dark surface (4.76 subtle / 4.85 surface / 5.13 bg). */
+  --text-muted: #7a898f;
 
   --border: #23313b;
   --border-strong: #2e404e;

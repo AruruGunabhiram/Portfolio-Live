@@ -83,7 +83,7 @@ export const SKILLS: Skill[] = [
 
   // devops & tools
   { id: 'docker', name: 'Docker', category: 'devops', evidence: [{ type: 'project', id: 'clinical-reconciliation' }] },
-  { id: 'aws', name: 'AWS', category: 'devops' },
+  { id: 'aws', name: 'AWS', category: 'devops', evidence: [{ type: 'certification', id: 'aws-solutions-architect-associate' }] },
   { id: 'git', name: 'Git', category: 'devops' },
   { id: 'github-actions', name: 'GitHub Actions', category: 'devops' },
   { id: 'cicd', name: 'CI/CD', category: 'devops' },

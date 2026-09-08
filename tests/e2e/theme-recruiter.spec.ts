@@ -103,8 +103,8 @@ test.describe('21H / 21I / 21J / 21BB — Theme + Recruiter Mode', () => {
     await page.goto('/', { waitUntil: 'networkidle' });
     // animated FlowDemo eligibility — demo steps aria-label present
     await expect(page.locator('#projects')).toBeVisible();
-    // Skills interactive controls (aria-pressed buttons)
-    await expect(page.locator('#skills button[aria-pressed]')).toHaveCount(SKILLS.length);
+    // Skills interactive controls (A18: disclosure buttons controlling the evidence panel)
+    await expect(page.locator('#skills button[aria-expanded]')).toHaveCount(SKILLS.length);
     // Ask Guna suggestions visible in standard
     await expect(page.locator('#ask-guna', { hasText: 'Try' })).toBeVisible();
     // Project Explorer available

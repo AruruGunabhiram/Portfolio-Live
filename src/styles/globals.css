@@ -404,3 +404,13 @@ button, a { touch-action: manipulation; }
   border: solid var(--story-success); border-width: 0 1.6px 1.6px 0;
   transform: rotate(45deg);
 }
+
+/* A18 — skill evidence rail: a short local connector, not a cross-screen diagram */
+.skill-evidence__list { border-left: 1px solid var(--border); padding-left: 12px; }
+.skill-evidence__row { position: relative; }
+.skill-evidence__row::before {
+  content: ''; position: absolute; left: -12px; top: 0.62em;
+  width: 8px; height: 1px; background: var(--border-strong);
+}
+.skill-evidence__link { text-decoration: none; }
+.skill-evidence__link:hover span:first-child { color: var(--text); }

@@ -16,23 +16,21 @@ describe('21Z / 21AA / 21AV — Contact invariants', () => {
     expect(CONTACT.githubUrl).toBe('https://github.com/AruruGunabhiram');
   });
 
-  it('résumé URL points to existing public asset', () => {
-    // CONTACT.resumeUrl is /Gunabhiram_Resume.pdf but public has Guna_Fall_Resume.pdf
-    // We check that at least one resume PDF exists in public/dist and that code uses CONTACT.resumeUrl
-    const publicFiles = fs.readdirSync(path.join(process.cwd(), 'public'));
-    const hasPdf = publicFiles.some(f => f.toLowerCase().includes('resume') || f.toLowerCase().endsWith('.pdf'));
-    expect(hasPdf).toBe(true);
-    expect(CONTACT.resumeUrl).toMatch(/\.pdf$/);
-    // ensure built asset would be copied if name matches — warn if mismatch but not fail before host rename
-    const resumePath = path.join(process.cwd(), 'public', path.basename(CONTACT.resumeUrl));
-    const exists = fs.existsSync(resumePath);
-    // If file renamed, accept alternative but log invariant — test checks NOT missing entirely
-    if (!exists) {
-      // fallback check: any pdf present is acceptable until Phase22 renames
-      expect(hasPdf).toBe(true);
-    } else {
-      expect(exists).toBe(true);
-    }
+  it('résumé URL resolves to the real PDF that ships in public/ (A17C)', () => {
+    // A17C: CONTACT.resumeUrl previously pointed at /Gunabhiram_Resume.pdf, which does not
+    // exist in public/. The SPA fallback made that look fine in the browser. No fallback
+    // branch here any more — the exact filename must exist and must be a real PDF.
+    expect(CONTACT.resumeUrl).toMatch(/^\/[^/]+\.pdf$/);
+    const resumePath = path.join(
+      process.cwd(),
+      'public',
+      decodeURIComponent(path.basename(CONTACT.resumeUrl))
+    );
+    expect(fs.existsSync(resumePath)).toBe(true);
+    const head = fs.readFileSync(resumePath).subarray(0, 5).toString();
+    expect(head).toBe('%PDF-');
+    // guard against the stale name silently returning
+    expect(CONTACT.resumeUrl).not.toBe('/Gunabhiram_Resume.pdf');
   });
 
   it('phone presence follows current decision (rendered but de-emphasized)', () => {

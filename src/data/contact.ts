@@ -7,5 +7,5 @@ export const CONTACT: ContactInfo = {
   linkedinUrl: 'https://www.linkedin.com/in/gunabhiram-aruru/',
   github: 'github.com/AruruGunabhiram',
   githubUrl: 'https://github.com/AruruGunabhiram',
-  resumeUrl: '/Gunabhiram_Resume.pdf',
+  resumeUrl: '/Guna_Fall_Resume.pdf',
 };

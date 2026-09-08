@@ -91,12 +91,19 @@ describe('21D — data integrity invariants', () => {
     }
   });
 
-  it('CERTIFICATIONS array valid (currently empty) — 21G', () => {
+  it('CERTIFICATIONS holds exactly the one verified AWS credential — 21G', () => {
     expect(Array.isArray(CERTIFICATIONS)).toBe(true);
-    // Empty-state invariant: if zero, section should be absent; not asserting count permanently
-    if (CERTIFICATIONS.length === 0) {
-      expect(CERTIFICATIONS.length).toBe(0);
-    }
+    expect(CERTIFICATIONS).toHaveLength(1);
+
+    const [cert] = CERTIFICATIONS;
+    expect(cert.id).toBe('aws-solutions-architect-associate');
+    expect(cert.title).toBe('AWS Certified Solutions Architect - Associate');
+    expect(cert.issuer).toBe('Amazon Web Services (AWS)');
+    expect(cert.year).toBe(2026);
+    expect(cert.summary).toBe('Issued August 30, 2026. Valid through August 30, 2029.');
+
+    // no duplicates
+    expect(new Set(CERTIFICATIONS.map(c => c.id)).size).toBe(CERTIFICATIONS.length);
   });
 
   it('CONTACT has required public links', () => {
@@ -129,19 +136,40 @@ describe('21D — data integrity invariants', () => {
     expect(haystack).not.toContain('peer reviewed');
   });
 
-  it('21AC — AWS/certification claims not present while certs empty', () => {
-    if (CERTIFICATIONS.length === 0) {
-      const allText = [
-        PROFILE.headline,
-        PROFILE.valueProposition,
-        ...PROJECTS.map(p => p.title + ' ' + p.summary),
-        ...SKILLS.map(s => s.name),
-      ].join(' ').toLowerCase();
-      // Skills contain "aws" as tech label (allowed in devops list) but headline must not claim certified
-      expect(PROFILE.headline.toLowerCase()).not.toContain('aws certified');
-      expect(PROFILE.headline.toLowerCase()).not.toContain('certified');
-      // Ensure no "AWS Certified" badge string in profile
-      expect(allText).not.toContain('aws certified');
-    }
+  it('21AC — the certification record carries only certificate-supported facts', () => {
+    const [cert] = CERTIFICATIONS;
+    const record = cert as unknown as Record<string, unknown>;
+    const serialized = JSON.stringify(CERTIFICATIONS);
+
+    // The exam score is private and must never reach the repository or the page.
+    expect(serialized).not.toContain('915');
+    expect(serialized).not.toContain('1000');
+    expect(serialized.toLowerCase()).not.toContain('score');
+
+    // The certificate prints no exam code, so SAA-C03 must not be asserted.
+    expect(serialized.toLowerCase()).not.toContain('saa-c03');
+
+    // No credential/validation number is republished, and no such field was invented.
+    expect(serialized.toLowerCase()).not.toContain('ea628dde');
+    expect(record.credentialId).toBeUndefined();
+    expect(record.validationNumber).toBeUndefined();
+
+    // The link is proof display (the local public certificate), not an issuer
+    // verification endpoint — a generic landing page cannot verify a credential.
+    expect(cert.credentialUrl).toBe(
+      '/AWS%20Certified%20Solutions%20Architect%20-%20Associate%20certificate.pdf'
+    );
+    expect(cert.credentialUrl).not.toMatch(/aws\.amazon\.com/);
+    expect(cert.credentialUrl!.startsWith('/')).toBe(true);
+    expect(cert.credentialUrl).not.toMatch(/^\.?\/?public\//);
+    expect(cert.credentialUrl).not.toMatch(/localhost|127\.0\.0\.1|\/Users\//);
+
+    // Certification claims stay inside the certification record: the profile itself
+    // still makes no standalone "certified" claim.
+    const profileText = `${PROFILE.headline} ${PROFILE.valueProposition}`.toLowerCase();
+    expect(profileText).not.toContain('aws certified');
+    const projectText = PROJECTS.map(p => `${p.title} ${p.summary}`).join(' ').toLowerCase();
+    expect(projectText).not.toContain('aws certified');
+    expect(SKILLS.map(s => s.name).join(' ').toLowerCase()).not.toContain('certified');
   });
 });

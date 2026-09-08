@@ -156,7 +156,10 @@ export interface Certification {
   title: string;
   issuer: string;
   year?: number;
+  /** Local proof artifact (the certificate PDF served from public/). */
   credentialUrl?: string;
+  /** Issuer-hosted verification page for this specific credential. */
+  verificationUrl?: string;
   summary?: string;
 }
 

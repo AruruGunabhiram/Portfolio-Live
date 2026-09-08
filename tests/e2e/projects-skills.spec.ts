@@ -119,13 +119,13 @@ test.describe('21P / 21Q / 21R — Project Explorer & Detail', () => {
 });
 
 test.describe('21T — Skills', () => {
-  test('standard: selection uses aria-pressed, evidence updates, keyboard', async ({ page }) => {
+  test('standard: selection uses aria-expanded, evidence updates, keyboard', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
     await expect(page.locator('#skills')).toBeVisible();
     const pythonBtn = page.locator('#skills button', { hasText: /^Python$/ });
-    await expect(pythonBtn).toHaveAttribute('aria-pressed', 'false');
+    await expect(pythonBtn).toHaveAttribute('aria-expanded', 'false');
     await pythonBtn.click();
-    await expect(pythonBtn).toHaveAttribute('aria-pressed', 'true');
+    await expect(pythonBtn).toHaveAttribute('aria-expanded', 'true');
     // evidence panel shows project/experience links
     await expect(page.locator('#skills')).toContainText(/Evidence/);
     await expect(page.locator('#skills')).toContainText(/InfiniAI|Zenco/);
@@ -145,13 +145,13 @@ test.describe('21T — Skills', () => {
     const reactBtn = page.locator('#skills button', { hasText: /^React$/ });
     await reactBtn.focus();
     await page.keyboard.press('Enter');
-    await expect(reactBtn).toHaveAttribute('aria-pressed', 'true');
+    await expect(reactBtn).toHaveAttribute('aria-expanded', 'true');
     await expect(page.locator('#skills')).toContainText(/Code Battlegrounds/);
     // Space also
     const tsBtn = page.locator('#skills button', { hasText: /^TypeScript$/ });
     await tsBtn.focus();
     await page.keyboard.press(' ');
-    await expect(tsBtn).toHaveAttribute('aria-pressed', 'true');
+    await expect(tsBtn).toHaveAttribute('aria-expanded', 'true');
   });
 
   test('recruiter: static concise groups', async ({ page }) => {
@@ -160,10 +160,9 @@ test.describe('21T — Skills', () => {
     // In recruiter, skills should be rendered as static text groups, not just buttons? Actually still groups
     await expect(page.locator('#skills')).toContainText('Backend & Systems');
     await expect(page.locator('#skills')).toContainText('Languages');
-    // Interactive buttons still? Recruiter shows static concise — check that not 38 interactive required?
-    // Recruiter variant uses static lists, not the 38-button grid in same form? Our implementation keeps buttons in standard only.
-    // In recruiter, expect no 38 aria-pressed buttons? Check count differs
-    const pressed = page.locator('#skills button[aria-pressed]');
+    // Recruiter uses static lists; the interactive grid exists in standard mode only.
+    // recruiter renders a static list, so none of the disclosure buttons exist
+    const pressed = page.locator('#skills button[aria-expanded]');
     // recruiter should have 0 interactive skill buttons (static view)
     await expect(pressed).toHaveCount(0);
   });

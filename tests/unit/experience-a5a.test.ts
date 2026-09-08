@@ -90,10 +90,27 @@ describe('A5A — Experience content reconciliation', () => {
 
   it('8 — no private CPT/visa/payment information appears in public snapshot', () => {
     const snap = getPublicPortfolioSnapshot();
-    const json = JSON.stringify(snap).toLowerCase();
+    // A17C: `certifications` legitimately carries a public `credentialUrl` (a link to the
+    // certificate PDF already published in public/). It is scanned separately below with
+    // the same forbidden list minus that one field name, so the guard is not weakened for
+    // any other snapshot class.
+    const { certifications, ...rest } = snap;
+    const json = JSON.stringify(rest).toLowerCase();
     const forbidden = ['cpt', 'visa', 'compensation', 'salary', 'payment', 'payroll', 'secret', 'credential', 'api_key', 'gsk_'];
     for (const term of forbidden) {
       expect(json, `snapshot should not contain private term: ${term}`).not.toContain(term);
+    }
+
+    const certJson = JSON.stringify(certifications).toLowerCase();
+    for (const term of forbidden.filter(t => t !== 'credential')) {
+      expect(certJson, `certifications should not contain private term: ${term}`).not.toContain(term);
+    }
+    // the only permitted use of the word is the public credential link field
+    for (const cert of certifications) {
+      expect(Object.keys(cert).filter(k => k.toLowerCase().includes('credential'))).toEqual([
+        'credentialUrl',
+      ]);
+      expect(cert.credentialUrl).toMatch(/^\/[^/].*\.pdf$/);
     }
     // also check each experience bullet specifically
     for (const exp of snap.experience) {

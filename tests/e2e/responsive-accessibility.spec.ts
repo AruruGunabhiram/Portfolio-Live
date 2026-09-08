@@ -148,18 +148,20 @@ test.describe('21AS / 21AT / 21AU / 21AV — Static + console + resume', () => {
     expect(await page.getAttribute('link[rel="icon"]', 'href')).toBe('/favicon.svg');
   });
 
-  test('resume asset exists via request', async ({ page }) => {
+  test('resume asset is a real PDF, not the SPA fallback (A17C)', async ({ page }) => {
     await page.goto('/', { waitUntil: 'networkidle' });
     const resumeHref = await page.getAttribute('#contact a[href$=".pdf"]', 'href');
-    expect(resumeHref).toMatch(/\.pdf/);
-    // public has renamed file — check any pdf 200
+    expect(resumeHref).toMatch(/\.pdf$/);
+
+    // A17C: no fallback branch. A missing file is served as index.html by the SPA
+    // rewrite and still returns 200, so status alone proves nothing. Content-Type and
+    // the PDF magic bytes are what actually distinguish the asset from index.html.
     const res = await page.request.get(resumeHref!);
-    // Vite preview may return 200 for existing file or 404 if name mismatch — accept alternative pdf as fallback
-    if (res.status() !== 200) {
-      const fallback = await page.request.get('/Guna_Fall_Resume.pdf');
-      expect(fallback.status()).toBe(200);
-    } else {
-      expect(res.status()).toBe(200);
-    }
+    expect(res.status()).toBe(200);
+    expect(res.headers()['content-type']).toContain('pdf');
+    const body = await res.body();
+    expect(body.subarray(0, 5).toString()).toBe('%PDF-');
+    expect(body.subarray(0, 512).toString('utf8').toLowerCase()).not.toContain('<!doctype html');
+    expect(body.length).toBeGreaterThan(1000);
   });
 });

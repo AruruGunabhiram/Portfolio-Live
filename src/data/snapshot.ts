@@ -13,6 +13,7 @@ import { PROJECTS } from './projects';
 import { EDUCATION } from './education';
 import { PUBLICATIONS } from './publications';
 import { LEADERSHIP } from './leadership';
+import { CERTIFICATIONS } from './certifications';
 import { SKILLS } from './skills';
 
 export function getPublicPortfolioSnapshot() {
@@ -44,6 +45,18 @@ export function getPublicPortfolioSnapshot() {
     education: EDUCATION,
     publications: PUBLICATIONS,
     leadership: LEADERSHIP,
+    // Projected from canonical CERTIFICATIONS. Only the publicly rendered credential
+    // facts are exposed; `summary` (issue/expiry prose) and anything printed on the
+    // certificate PDF but never published here (score, validation number, exam code)
+    // stay out of Ask Guna context.
+    certifications: CERTIFICATIONS.map(c => ({
+      id: c.id,
+      title: c.title,
+      issuer: c.issuer,
+      year: c.year,
+      credentialUrl: c.credentialUrl,
+      verificationUrl: c.verificationUrl,
+    })),
     skills: SKILLS.map(s => ({ id: s.id, name: s.name, category: s.category })),
   };
 }

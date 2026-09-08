@@ -86,18 +86,32 @@ export const Certifications = () => {
                       {cert.summary}
                     </p>
                   )}
-                  {cert.credentialUrl && (
-                    <a
-                      href={cert.credentialUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1 text-sm font-medium mt-3 underline-offset-4 hover:underline focus-visible:outline-none"
-                      style={{ color: 'var(--accent)' }}
-                      aria-label={`Verify credential: ${cert.title}`}
-                    >
-                      Verify credential <span aria-hidden="true">↗</span>
-                    </a>
-                  )}
+                  <div className="flex flex-wrap items-center gap-x-5 gap-y-2 mt-3">
+                    {cert.credentialUrl && (
+                      <a
+                        href={cert.credentialUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm font-medium underline-offset-4 hover:underline focus-visible:outline-none"
+                        style={{ color: 'var(--accent)' }}
+                        aria-label={`View certificate: ${cert.title}`}
+                      >
+                        View certificate <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                    {cert.verificationUrl && (
+                      <a
+                        href={cert.verificationUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-sm underline-offset-4 hover:underline focus-visible:outline-none"
+                        style={{ color: 'var(--text-muted)' }}
+                        aria-label={`Verify with issuer: ${cert.title}`}
+                      >
+                        Verify with issuer <span aria-hidden="true">↗</span>
+                      </a>
+                    )}
+                  </div>
                 </article>
               </motion.div>
             ))}

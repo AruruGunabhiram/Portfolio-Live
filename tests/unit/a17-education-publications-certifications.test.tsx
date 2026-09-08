@@ -114,9 +114,14 @@ describe('A17 — Education / Publications / Certifications evidence visuals', (
     expect(p.paperUrl).toBe('https://ieeexplore.ieee.org/stamp/stamp.jsp?arnumber=10940411');
   });
 
-  it('3 — CERTIFICATIONS data unchanged (still empty, nothing invented)', () => {
+  it('3 — CERTIFICATIONS holds exactly the one certificate-backed AWS credential', () => {
     expect(Array.isArray(CERTIFICATIONS)).toBe(true);
-    expect(CERTIFICATIONS).toHaveLength(0);
+    expect(CERTIFICATIONS).toHaveLength(1);
+    const [cert] = CERTIFICATIONS;
+    expect(cert.id).toBe('aws-solutions-architect-associate');
+    expect(cert.title).toBe('AWS Certified Solutions Architect - Associate');
+    expect(cert.issuer).toBe('Amazon Web Services (AWS)');
+    expect(cert.year).toBe(2026);
   });
 
   // ── 4-8: canonical facts still visible / no fabricated credential ─────────
@@ -140,25 +145,25 @@ describe('A17 — Education / Publications / Certifications evidence visuals', (
     expect(years).toEqual(['2021', '2025', '2025', '2027']);
   });
 
-  it('7 — no AWS / Solutions Architect / SAA-C03 claim is rendered while certifications are empty', async () => {
+  it('7 — the certification section mounts and renders the canonical credential', async () => {
     const { container } = await renderSections();
-    const txt = (container.textContent ?? '').toLowerCase();
-    expect(txt).not.toContain('aws');
-    expect(txt).not.toContain('solutions architect');
-    expect(txt).not.toContain('saa-c03');
-    // section itself does not mount while data is empty
-    expect(container.querySelector('#certifications')).toBeNull();
+    expect(container.querySelector('#certifications')).not.toBeNull();
+    const txt = container.textContent ?? '';
+    expect(txt).toContain('AWS Certified Solutions Architect - Associate');
+    expect(txt).toContain('Amazon Web Services (AWS)');
+    expect(txt).toContain('2026');
+    expect(txt).toContain('Issued August 30, 2026. Valid through August 30, 2029.');
+    // the certificate prints no exam code, so none is claimed
+    expect(txt.toLowerCase()).not.toContain('saa-c03');
   });
 
-  it('8 — certification proof visual renders no text, so it cannot assert a credential', async () => {
-    const { CertificationProofVisual } = await import('../../src/components/certifications/CertificationProofVisual');
-    const { container } = render(
-      <PortfolioModeProvider>
-        <CertificationProofVisual />
-      </PortfolioModeProvider>
-    );
-    expect(container.querySelector('.cert-proof')).not.toBeNull();
-    expect((container.textContent ?? '').trim()).toBe('');
+  it('8 — the A17 proof visual renders in the mounted section and asserts no text of its own', async () => {
+    const { container } = await renderSections();
+    const proof = container.querySelector('#certifications .cert-proof');
+    expect(proof).not.toBeNull();
+    expect(proof!.getAttribute('aria-hidden')).toBe('true');
+    expect((proof!.textContent ?? '').trim()).toBe('');
+    expect(container.querySelectorAll('.cert-proof__corner')).toHaveLength(4);
   });
 
   // ── 9-12: nothing invented ───────────────────────────────────────────────
@@ -178,24 +183,39 @@ describe('A17 — Education / Publications / Certifications evidence visuals', (
     });
   });
 
-  it('11 — no certification score or percentage-complete metric invented', async () => {
+  it('11 — no exam score and no percentage-complete metric reaches the DOM', async () => {
     const { container } = await renderSections();
     const txt = container.textContent ?? '';
     expect(txt).not.toContain('915');
     expect(txt).not.toContain('/1000');
     expect(txt).not.toMatch(/\d+%/);
     expect(txt.toLowerCase()).not.toContain('complete');
+    // including anything parked in attributes rather than text
+    expect(container.innerHTML).not.toContain('915');
+    expect(container.innerHTML.toLowerCase()).not.toContain('score');
   });
 
-  it('12 — no fabricated credential id or verification URL in the DOM', async () => {
+  it('12 — every link is canonical; no credential id and no issuer-verification claim', async () => {
     const { container } = await renderSections();
     const hrefs = Array.from(container.querySelectorAll('a')).map(a => a.getAttribute('href') ?? '');
     const canonical = [
       ...PUBLICATIONS.map(p => p.paperUrl),
       ...CERTIFICATIONS.map(c => c.credentialUrl),
+      // A18: issuer-hosted verification, specific to this credential
+      ...CERTIFICATIONS.map(c => c.verificationUrl),
     ].filter(Boolean);
     hrefs.forEach(h => expect(canonical).toContain(h));
-    expect((container.textContent ?? '').toLowerCase()).not.toContain('credential id');
+
+    const html = container.innerHTML.toLowerCase();
+    expect(html).not.toContain('credential id');
+    expect(html).not.toContain('ea628dde');
+    // still no score, exam code or validation number anywhere in the rendered output
+    expect(html).not.toContain('915');
+    expect(html).not.toContain('saa-c03');
+    expect(html).not.toContain('validation number');
+    // the generic AWS landing page is still never presented as verification
+    expect(html).not.toContain('aws.amazon.com/verification');
+    expect(html).not.toContain('verify credential');
   });
 
   // ── 13-14: reduced motion + recruiter ────────────────────────────────────
@@ -206,6 +226,8 @@ describe('A17 — Education / Publications / Certifications evidence visuals', (
     expect(container.textContent).toContain('MS Computer Science');
     expect(container.textContent).toContain('University of Colorado Boulder');
     expect(container.textContent).toContain('Computer Aided Diagnosis Multi-Model System using Late Fusion and Ensemble Learning');
+    expect(container.textContent).toContain('AWS Certified Solutions Architect - Associate');
+    expect(container.querySelector('#certifications .cert-proof')).not.toBeNull();
     const chrono = container.querySelector('.edu-chrono') as HTMLElement | null;
     expect(chrono).not.toBeNull();
     // no element parked at opacity 0 waiting for an animation
@@ -223,12 +245,14 @@ describe('A17 — Education / Publications / Certifications evidence visuals', (
     // canonical proof is still scannable
     expect(container.textContent).toContain('University of Colorado Boulder');
     expect(container.textContent).toContain('IEEE');
+    expect(container.textContent).toContain('AWS Certified Solutions Architect - Associate');
+    expect(container.querySelector('#certifications')).not.toBeNull();
   });
 
   // ── 15-17: accessibility / layout ────────────────────────────────────────
   it('15 — visuals introduce no tab stops and no interactive elements', async () => {
     const { container } = await renderSections();
-    ['.edu-chrono', '.pub-doc', '.evidence-seq', '.edu-boundary'].forEach(sel => {
+    ['.edu-chrono', '.pub-doc', '.cert-proof', '.evidence-seq', '.edu-boundary'].forEach(sel => {
       container.querySelectorAll(sel).forEach(root => {
         expect(root.querySelectorAll('a, button, input, select, textarea, [tabindex]').length).toBe(0);
         expect(root.getAttribute('role')).toBeNull();
@@ -242,6 +266,7 @@ describe('A17 — Education / Publications / Certifications evidence visuals', (
     expect(container.querySelectorAll('[role="status"], [role="alert"]').length).toBe(0);
     expect(container.querySelector('.edu-chrono')!.getAttribute('aria-hidden')).toBe('true');
     expect(container.querySelector('.pub-doc')!.getAttribute('aria-hidden')).toBe('true');
+    expect(container.querySelector('.cert-proof')!.getAttribute('aria-hidden')).toBe('true');
     expect(container.querySelector('.evidence-seq')!.getAttribute('aria-hidden')).toBe('true');
     expect(container.querySelector('.edu-boundary')!.getAttribute('aria-hidden')).toBe('true');
   });
@@ -251,6 +276,7 @@ describe('A17 — Education / Publications / Certifications evidence visuals', (
     const h2s = Array.from(container.querySelectorAll('h2')).map(h => h.textContent);
     expect(h2s).toContain('Education');
     expect(h2s).toContain('Publications');
+    expect(h2s).toContain('Certifications');
     // institution / publication title stay h3
     const h3s = Array.from(container.querySelectorAll('h3')).map(h => h.textContent);
     expect(h3s).toContain('University of Colorado Boulder');
@@ -285,5 +311,40 @@ describe('A17 — Education / Publications / Certifications evidence visuals', (
         if (ev.type === 'certification') expect(certIds.has(ev.id)).toBe(true);
       });
     });
+    // A17B left this unwired and deferred it to A18; A18 wires exactly one skill (AWS)
+    // to the canonical credential. Certification evidence is now reachable from Skills.
+    const certBacked = SKILLS.filter(s => (s.evidence ?? []).some(ev => ev.type === 'certification'));
+    expect(certBacked.map(s => s.id)).toEqual(['aws']);
+  });
+
+  // ── 21-22: A17B certificate integration ─────────────────────────────────
+  it('21 — certificate link is a real, keyboard-reachable anchor to the public artifact', async () => {
+    const { container } = await renderSections();
+    const link = container.querySelector<HTMLAnchorElement>('#certifications a');
+    expect(link).not.toBeNull();
+    expect(link!.tagName).toBe('A');
+    expect(link!.textContent).toContain('View certificate');
+    expect(link!.getAttribute('href')).toBe(
+      '/AWS%20Certified%20Solutions%20Architect%20-%20Associate%20certificate.pdf'
+    );
+    expect(link!.getAttribute('rel')).toBe('noopener noreferrer');
+    expect(link!.getAttribute('target')).toBe('_blank');
+    expect(link!.getAttribute('aria-label')).toBe(
+      'View certificate: AWS Certified Solutions Architect - Associate'
+    );
+    // anchors with href are natively focusable — no tabindex hack
+    expect(link!.hasAttribute('tabindex')).toBe(false);
+  });
+
+  it('22 — the certificate link uses a production-safe public URL', () => {
+    const url = CERTIFICATIONS[0].credentialUrl!;
+    expect(url.startsWith('/')).toBe(true);
+    expect(url).not.toMatch(/^\.?\/?public\//);
+    expect(url).not.toMatch(/localhost|127\.0\.0\.1/);
+    expect(url).not.toContain('/Users/');
+    expect(url).not.toContain(' ');
+    expect(decodeURIComponent(url)).toBe(
+      '/AWS Certified Solutions Architect - Associate certificate.pdf'
+    );
   });
 });
