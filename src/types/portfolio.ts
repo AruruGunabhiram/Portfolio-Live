@@ -200,6 +200,7 @@ export interface LeadershipEntry {
   id: string;
   organization: string;
   role: string;
+  period?: string;
   description: string;
 }
 

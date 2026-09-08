@@ -3,6 +3,8 @@ import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { prefersReducedMotion } from '../utils';
 import { usePortfolioMode } from '../context/PortfolioModeContext';
+import { AskGunaDeskScene } from '../components/ask-guna/AskGunaDeskScene';
+import type { AskGunaSceneState } from '../components/ask-guna/AskGunaDeskScene';
 
 const SUGGESTED = [
   'What backend projects has Guna built?',
@@ -58,6 +60,18 @@ export const AskGuna = () => {
       setLoading(false);
     }
   };
+
+  // Scene state is derived from the interaction the section already tracks —
+  // the illustration never owns state of its own.
+  const sceneState: AskGunaSceneState = error
+    ? 'error'
+    : loading
+      ? 'thinking'
+      : answer
+        ? 'answer'
+        : question.trim()
+          ? 'typing'
+          : 'idle';
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -151,8 +165,14 @@ export const AskGuna = () => {
               )}
             </div>
 
-            {/* Right: answer */}
-            <div className="min-w-0">
+            {/* Right: answer + decorative desk environment */}
+            <div className="min-w-0 flex flex-col gap-4">
+              <div className="order-2 lg:order-1 flex lg:justify-end">
+                <AskGunaDeskScene state={sceneState} />
+              </div>
+              <div
+                className="order-1 lg:order-2"
+              >
               <div
                 className="rounded-md border p-4 sm:p-5 min-h-[140px] sm:min-h-[180px] min-w-0 overflow-hidden"
                 style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)' }}
@@ -175,6 +195,7 @@ export const AskGuna = () => {
                     Your answer will appear here. For example, try asking which projects use Java or what Guna built at InfiniAI.
                   </p>
                 )}
+              </div>
               </div>
             </div>
           </div>

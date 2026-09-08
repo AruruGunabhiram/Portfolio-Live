@@ -1,7 +1,12 @@
+import { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { LEADERSHIP } from '../data/leadership';
 import { prefersReducedMotion } from '../utils';
+
+const LeadershipOutreachVisual = lazy(() =>
+  import('../components/closing/closingVisuals').then(m => ({ default: m.LeadershipOutreachVisual }))
+);
 
 export const Leadership = () => {
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
@@ -51,11 +56,12 @@ export const Leadership = () => {
             aria-hidden="true"
           />
 
-          <div className="mt-8 sm:mt-10 space-y-0">
+          <div className="mt-8 sm:mt-10 grid md:grid-cols-[1fr_200px] gap-6 md:gap-10 items-start">
+            <div className="min-w-0 space-y-0">
             {LEADERSHIP.map(entry => {
-              // Optional period support for future entries — not present in current canonical data
-              const period = (entry as unknown as { period?: string }).period;
+              const period = entry.period;
               const year = period?.match(/\d{4}/)?.[0] ?? '';
+              const isCurrent = period?.includes('Present');
 
               return (
                 <motion.div
@@ -69,8 +75,16 @@ export const Leadership = () => {
                     {period ? (
                       <>
                         {year && (
-                          <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
-                            {year}
+                          <p className="text-[11px] font-semibold tracking-[0.12em] uppercase flex items-center gap-2 flex-wrap" style={{ color: 'var(--text-muted)' }}>
+                            <span>{year}</span>
+                            {isCurrent && (
+                              <span
+                                className="inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-[0.08em] uppercase border"
+                                style={{ borderColor: 'var(--accent)', color: 'var(--accent)', background: 'var(--surface)' }}
+                              >
+                                Current
+                              </span>
+                            )}
                           </p>
                         )}
                         <p className="text-sm font-medium mt-1 leading-snug" style={{ color: 'var(--text-secondary)' }}>
@@ -105,6 +119,14 @@ export const Leadership = () => {
                 </motion.div>
               );
             })}
+            </div>
+
+            {/* Outreach as connection — decorative, factual by omission */}
+            <motion.div variants={item} className="min-w-0 md:pt-2">
+              <Suspense fallback={null}>
+                <LeadershipOutreachVisual />
+              </Suspense>
+            </motion.div>
           </div>
         </motion.div>
       </Container>

@@ -1,11 +1,17 @@
-import { useState } from 'react';
+import { useState, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { CONTACT } from '../data/contact';
 import { prefersReducedMotion } from '../utils';
+import { usePortfolioMode } from '../context/PortfolioModeContext';
+
+const ContactSendVisual = lazy(() =>
+  import('../components/closing/closingVisuals').then(m => ({ default: m.ContactSendVisual }))
+);
 
 export const Contact = () => {
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
+  const { isRecruiter } = usePortfolioMode();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -132,7 +138,17 @@ export const Contact = () => {
             </a>
           </motion.div>
 
-          <motion.div variants={item} className="mt-10">
+          {/* Closing mark — sits below every real action so nothing waits on it.
+              Recruiter mode never requests the chunk. */}
+          {!isRecruiter && (
+            <motion.div variants={item} className="mt-10">
+              <Suspense fallback={null}>
+                <ContactSendVisual />
+              </Suspense>
+            </motion.div>
+          )}
+
+          <motion.div variants={item} className="mt-6">
             <a
               href="#hero"
               className="inline-flex items-center gap-1 text-xs tracking-wide focus-visible:outline-none"
