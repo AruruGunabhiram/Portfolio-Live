@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { EDUCATION } from '../data/education';
 import { prefersReducedMotion } from '../utils';
+import { EvidenceSequence } from '../components/evidence/EvidenceSequence';
+import { EducationChronologyVisual } from '../components/education/EducationChronologyVisual';
 
 export const Education = () => {
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
@@ -39,6 +41,10 @@ export const Education = () => {
           viewport={{ once: true, amount: 0.2, margin: '0px 0px -80px 0px' }}
           variants={container}
         >
+          <motion.div variants={item} className="edu-boundary" aria-hidden="true" />
+
+          <EvidenceSequence step={1} />
+
           <motion.h2
             variants={item}
             className="text-2xl sm:text-3xl font-bold tracking-tight"
@@ -53,6 +59,10 @@ export const Education = () => {
             style={{ background: 'var(--border)' }}
             aria-hidden="true"
           />
+
+          <motion.div variants={item}>
+            <EducationChronologyVisual />
+          </motion.div>
 
           <div className="mt-8 sm:mt-10 space-y-0">
             {EDUCATION.map(entry => {

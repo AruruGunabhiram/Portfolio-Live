@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { PUBLICATIONS } from '../data/publications';
 import { prefersReducedMotion } from '../utils';
+import { EvidenceSequence } from '../components/evidence/EvidenceSequence';
+import { PublicationEvidenceVisual } from '../components/publications/PublicationEvidenceVisual';
 
 export const Publications = () => {
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
@@ -39,6 +41,8 @@ export const Publications = () => {
           viewport={{ once: true, amount: 0.2, margin: '0px 0px -80px 0px' }}
           variants={container}
         >
+          <EvidenceSequence step={2} />
+
           <motion.h2
             variants={item}
             className="text-2xl sm:text-3xl font-bold tracking-tight"
@@ -64,6 +68,7 @@ export const Publications = () => {
               >
                 {/* Left — year / venue meta (flattened on mobile) */}
                 <div className="lg:pt-1 min-w-0">
+                  <PublicationEvidenceVisual />
                   <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
                     {pub.year}
                   </p>

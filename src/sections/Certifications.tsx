@@ -2,6 +2,8 @@ import { motion } from 'framer-motion';
 import { Container } from '../components';
 import { CERTIFICATIONS } from '../data/certifications';
 import { prefersReducedMotion } from '../utils';
+import { EvidenceSequence } from '../components/evidence/EvidenceSequence';
+import { CertificationProofVisual } from '../components/certifications/CertificationProofVisual';
 
 export const Certifications = () => {
   const reduced = typeof window !== 'undefined' ? prefersReducedMotion() : false;
@@ -36,6 +38,8 @@ export const Certifications = () => {
           viewport={{ once: true, amount: 0.2, margin: '0px 0px -80px 0px' }}
           variants={container}
         >
+          <EvidenceSequence step={3} />
+
           <motion.h2
             variants={item}
             className="text-2xl sm:text-3xl font-bold tracking-tight"
@@ -61,6 +65,7 @@ export const Certifications = () => {
               >
                 {/* Left — year / issuer meta */}
                 <div className="lg:pt-1 min-w-0">
+                  <CertificationProofVisual />
                   {typeof cert.year === 'number' && (
                     <p className="text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
                       {cert.year}

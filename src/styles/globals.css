@@ -307,3 +307,100 @@ button, a { touch-action: manipulation; }
 @media (min-width: 1024px) {
   .project-story { --story-reserved-height: var(--story-height-desktop); }
 }
+
+/* ── A17: Education / Publications / Certifications evidence system ────────── */
+
+/* Projects → Education boundary: the technical grid rhythm dissolves into a
+   single academic guide line. Decorative, adds no scroll height of its own. */
+.edu-boundary {
+  height: 1px;
+  max-width: 640px;
+  margin-bottom: 26px;
+  background: repeating-linear-gradient(to right, var(--border-strong) 0 2px, transparent 2px 8px);
+  mask-image: linear-gradient(to right, transparent, #000 14%, #000 56%, transparent);
+}
+
+/* Shared continuity marker across the three evidence sections. */
+.evidence-seq { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+.evidence-seq__rule { width: 18px; height: 1px; background: var(--border-strong); }
+.evidence-seq__dots { display: flex; gap: 5px; }
+.evidence-seq__dot { width: 4px; height: 4px; border-radius: 50%; border: 1px solid var(--border-strong); }
+.evidence-seq__dot[data-on] { background: var(--accent); border-color: var(--accent); opacity: 0.75; }
+
+/* Education chronology */
+.edu-chrono {
+  margin-top: 24px;
+  max-width: 640px;
+  padding: 22px 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+}
+.edu-chrono__eyebrow {
+  font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--text-muted);
+}
+.edu-chrono__track { display: flex; gap: 16px; margin-top: 18px; }
+.edu-chrono__seg { flex: 1 1 0; min-width: 0; }
+.edu-chrono__rail-row { display: flex; align-items: center; gap: 4px; padding: 5px 0; }
+.edu-chrono__rail {
+  flex: 1 1 auto; height: 1px; transform-origin: left center;
+  background: var(--story-backend); opacity: 0.55;
+}
+.edu-chrono__rail[data-ongoing] {
+  background: repeating-linear-gradient(to right, var(--accent) 0 4px, transparent 4px 8px);
+  opacity: 0.85;
+}
+.edu-chrono__cap {
+  width: 5px; height: 5px; border-radius: 50%; flex: none;
+  background: var(--story-backend); opacity: 0.7;
+}
+.edu-chrono__cap[data-open] { background: transparent; border: 1px solid var(--accent); opacity: 1; }
+.edu-chrono__years {
+  display: flex; justify-content: space-between; margin-top: 7px;
+  font-size: 10px; font-weight: 600; letter-spacing: 0.08em; color: var(--text-muted);
+}
+.edu-chrono__degree { font-size: 11px; line-height: 1.35; margin-top: 6px; color: var(--text-secondary); overflow-wrap: anywhere; }
+.edu-chrono__state { font-size: 10px; margin-top: 3px; color: var(--accent); }
+@media (max-width: 479px) {
+  .edu-chrono { padding: 16px 18px; }
+  .edu-chrono__track { flex-direction: column; gap: 12px; margin-top: 14px; }
+  .edu-chrono__rail-row { padding: 3px 0; }
+}
+
+/* Publication document evidence */
+.pub-doc { position: relative; width: 92px; height: 108px; margin-bottom: 14px; }
+.pub-doc__sheet {
+  position: absolute; inset: 0; display: block;
+  border: 1px solid var(--border); border-radius: 2px; background: var(--surface);
+}
+.pub-doc__sheet[data-depth='2'] { transform: translate(8px, -6px); opacity: 0.5; }
+.pub-doc__sheet[data-depth='1'] { transform: translate(4px, -3px); opacity: 0.75; }
+.pub-doc__sheet--front {
+  border-color: var(--story-database-border); background: var(--story-database-subtle); padding: 12px 10px;
+}
+.pub-doc__lines { display: flex; flex-direction: column; gap: 6px; }
+.pub-doc__line { height: 2px; border-radius: 1px; background: var(--story-database); opacity: 0.45; }
+.pub-doc__line[data-w='full'] { width: 100%; }
+.pub-doc__line[data-w='mid'] { width: 62%; }
+.pub-doc__line[data-w='short'] { width: 44%; }
+.pub-doc__rule { height: 1px; background: var(--border-strong); margin: 3px 0; }
+
+/* Certification proof frame */
+.cert-proof {
+  position: relative; width: 92px; height: 66px; margin-bottom: 14px;
+  display: flex; align-items: center; justify-content: center;
+  border: 1px solid var(--story-cloud-border); border-radius: var(--radius-sm);
+  background: var(--story-cloud-subtle);
+}
+.cert-proof__corner { position: absolute; width: 7px; height: 7px; border: 1px solid var(--story-cloud); opacity: 0.8; }
+.cert-proof__corner[data-c='tl'] { top: -1px; left: -1px; border-right: 0; border-bottom: 0; }
+.cert-proof__corner[data-c='tr'] { top: -1px; right: -1px; border-left: 0; border-bottom: 0; }
+.cert-proof__corner[data-c='bl'] { bottom: -1px; left: -1px; border-right: 0; border-top: 0; }
+.cert-proof__corner[data-c='br'] { bottom: -1px; right: -1px; border-left: 0; border-top: 0; }
+.cert-proof__mark { display: inline-flex; }
+.cert-proof__check {
+  width: 6px; height: 11px; margin-top: -3px;
+  border: solid var(--story-success); border-width: 0 1.6px 1.6px 0;
+  transform: rotate(45deg);
+}
