@@ -103,7 +103,22 @@ describe('Ask Guna production grounding — general classifier', () => {
     expect(payload.messages[1].content).toContain('Bachelor of Science in Computer Science');
     expect(payload.messages[1].content).not.toMatch(/3\.65|3\.92/);
     expect(payload.messages[1].content).toContain('# Gunabhiram Aruru');
-    expect(payload.response_format).toEqual({ type: 'json_object' });
+    expect(payload.response_format).toEqual({
+      type: 'json_schema',
+      json_schema: {
+        name: 'ask_guna',
+        strict: true,
+        schema: {
+          type: 'object',
+          properties: {
+            classification: { type: 'string', enum: ['RELEVANT_KNOWN', 'RELEVANT_UNKNOWN', 'IRRELEVANT'] },
+            answer: { type: 'string' },
+          },
+          required: ['classification', 'answer'],
+          additionalProperties: false,
+        },
+      },
+    });
   });
 
   // 2. Relevant + supported — publication IS in markdown (new MD has Research and Publications)
@@ -217,12 +232,34 @@ describe('Ask Guna production grounding — general classifier', () => {
     expect(body).toHaveProperty('message', "I couldn't answer that right now. Please try again.");
   });
 
-  it('Provider 429 -> 502 generic (not policy)', async () => {
-    mockGroqFailure(429);
+  it('Provider 400 JSON-generation failure -> 502 generic (not policy)', async () => {
+    // Groq 400 failed_generation for json_object — must be generic, not UNKNOWN/IRRELEVANT
+    mockGroqFailure(400);
+    const res = makeRes();
+    await handler(baseReq('What college did Guna attend?'), res as never);
+    const { statusCode, body } = (res as ReturnType<typeof makeRes>)._get() as { statusCode: number; body: Record<string, unknown> };
+    expect(statusCode).toBe(502);
+    expect((body as Record<string, unknown>).error).toBe('provider_error');
+  });
+
+  it('Provider 429 -> 429 rate_limited with Retry-After respected (not 502)', async () => {
+    // Mock 429 with Retry-After header
+    global.fetch = vi.fn(async () => ({
+      ok: false,
+      status: 429,
+      headers: { get: (k: string) => (k === 'Retry-After' ? '13' : null) } as unknown as Headers,
+      text: async () => 'Rate limit reached for model openai/gpt-oss-20b',
+      json: async () => ({}),
+    })) as unknown as typeof fetch;
     const res = makeRes();
     await handler(baseReq('Tell me a joke.'), res as never);
-    const { statusCode } = (res as ReturnType<typeof makeRes>)._get() as { statusCode: number };
-    expect(statusCode).toBe(502);
+    const { statusCode, body } = (res as ReturnType<typeof makeRes>)._get() as { statusCode: number; body: Record<string, unknown> };
+    expect(statusCode).toBe(429);
+    expect((body as Record<string, unknown>).error).toBe('rate_limited');
+    expect(body).toHaveProperty('message', "I couldn't answer that right now. Please try again.");
+    // Must not expose provider internals
+    expect(JSON.stringify(body)).not.toContain('Rate limit');
+    expect(JSON.stringify(body)).not.toContain('gsk_');
   });
 
   // 10. Cloudflare bundle has no runtime fs dependency
@@ -256,5 +293,32 @@ describe('Ask Guna production grounding — general classifier', () => {
     await handler(baseReq("What is Guna's GPA?"), res as never);
     const { body } = (res as ReturnType<typeof makeRes>)._get() as { body: Record<string, unknown> };
     expect(body.answer).toBe(UNKNOWN);
+  });
+
+  it('Long but valid grounded answer (500 chars) still succeeds with max_tokens 700', async () => {
+    const longAnswer = 'Guna is pursuing a Master of Science in Computer Science at the University of Colorado Boulder (August 2025 - May 2027 expected). He holds a Bachelor of Science in Computer Science from SRM University. His professional experience includes AI Specialist Intern at PROJXON working on OrkaATS and PROJXON Monitor with Python, PostgreSQL, and workflow automation, plus Software Engineer Intern at InfiniAI. His projects include Ember/Worthy with 4211 tests, IncidentPilot with 438 tests, SocialLens with Java and Spring Boot, and Clinical Reconciliation. He is AWS Certified Solutions Architect Associate and President of Outreach for GPSG. '.repeat(1).slice(0, 600);
+    mockGroqClassification('RELEVANT_KNOWN', longAnswer);
+    const res = makeRes();
+    await handler(baseReq('Tell me about Guna'), res as never);
+    const { statusCode, body } = (res as ReturnType<typeof makeRes>)._get() as { statusCode: number; body: Record<string, unknown> };
+    expect(statusCode).toBe(200);
+    expect(String(body.answer).length).toBeGreaterThan(400);
+    expect(String(body.answer)).toContain('University of Colorado Boulder');
+  });
+
+  it('Missing answer field in RELEVANT_KNOWN -> 502', async () => {
+    mockGroqClassification('RELEVANT_KNOWN', '');
+    const res = makeRes();
+    await handler(baseReq('What college did Guna attend?'), res as never);
+    const { statusCode } = (res as ReturnType<typeof makeRes>)._get() as { statusCode: number };
+    expect(statusCode).toBe(502);
+  });
+
+  it('Invalid classification with valid JSON still 502', async () => {
+    mockGroqRawContent(JSON.stringify({ classification: 'UNKNOWN', answer: 'test' }));
+    const res = makeRes();
+    await handler(baseReq('What college did Guna attend?'), res as never);
+    const { statusCode } = (res as ReturnType<typeof makeRes>)._get() as { statusCode: number };
+    expect(statusCode).toBe(502);
   });
 });

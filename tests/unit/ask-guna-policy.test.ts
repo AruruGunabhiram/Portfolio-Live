@@ -155,7 +155,23 @@ describe('Ask Guna handler — three-state behavior (8 required cases, mocked Gr
     expect(payload.messages[0].content).toContain('You are Ask Guna');
     expect(payload.messages[0].content).toContain(IRRELEVANT);
     expect(payload.messages[0].content).toContain(UNKNOWN);
-    expect(payload.max_tokens).toBe(250);
+    expect(payload.max_tokens).toBe(700);
+    expect(payload.response_format).toEqual({
+      type: 'json_schema',
+      json_schema: {
+        name: 'ask_guna',
+        strict: true,
+        schema: {
+          type: 'object',
+          properties: {
+            classification: { type: 'string', enum: ['RELEVANT_KNOWN', 'RELEVANT_UNKNOWN', 'IRRELEVANT'] },
+            answer: { type: 'string' },
+          },
+          required: ['classification', 'answer'],
+          additionalProperties: false,
+        },
+      },
+    });
   });
 
   it('2. Supported skill question — answer from supplied knowledge', async () => {
