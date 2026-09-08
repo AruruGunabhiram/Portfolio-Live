@@ -361,7 +361,7 @@ describe('A10 — canonical data and failure isolation', () => {
       expect(container.querySelector('a[href="https://github.com/AruruGunabhiram/IncidentPilot"]')).not.toBeNull();
       expect(container.querySelector('button[aria-controls="featured-detail-incidentpilot"]')).not.toBeNull();
       expect(stageOf(container)).toBeNull();
-      expect(container.querySelector('[aria-hidden="true"][class*="min-h-"]')).not.toBeNull();
+      expect(container.querySelector('[data-story-skeleton="incidentpilot"]')).not.toBeNull();
     } finally {
       registry.incidentpilot = original;
       error.mockRestore();

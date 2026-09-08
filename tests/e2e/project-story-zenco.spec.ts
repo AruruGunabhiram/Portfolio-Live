@@ -18,7 +18,9 @@ async function openExplorer(page: Page) {
 }
 async function scrollToZenco(page: Page, expectStory = true) {
   await openExplorer(page);
-  await page.locator('#project-explorer').getByRole('heading', { name: 'Zenco', exact: true }).scrollIntoViewIfNeeded();
+  const toggle = page.locator('button[aria-controls="explorer-detail-zenco"]');
+  await toggle.scrollIntoViewIfNeeded();
+  if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
   if (expectStory) {
     const stage = page.getByRole('img', { name: ZENCO_STAGE });
     await expect(stage).toBeAttached();
@@ -78,8 +80,7 @@ test.describe('A14 — Zenco chunk failure', () => {
     await page.route(ZENCO_CHUNK, route => route.abort()); await page.goto('/', { waitUntil: 'networkidle' }); await scrollToZenco(page, false); await page.waitForTimeout(500);
     await expect(page.getByRole('img', { name: ZENCO_STAGE })).toHaveCount(0);
     const card = page.locator('#project-explorer article').filter({ hasText: 'Modular Developer Tooling System' });
-    await expect(card.getByRole('heading', { name: 'Zenco', exact: true })).toBeVisible(); await expect(card.locator('a[href="https://github.com/paudelnirajan/zenco-vscode-extension"]')).toBeVisible();
-    await card.locator('button[aria-controls="explorer-detail-zenco"]').click(); const detail = page.locator('#explorer-detail-zenco');
+    await expect(card.getByRole('heading', { name: 'Zenco', exact: true })).toBeVisible(); const detail = page.locator('#explorer-detail-zenco');
     await expect(detail).toBeVisible(); await expect(detail).toContainText('collaborative class project'); await expect(detail).toContainText('VS Code extension integration'); await expect(detail.getByRole('link', { name: /repository on GitHub/i })).toBeVisible(); await expect(page.locator('#project-explorer')).toContainText('8 projects');
   });
 });

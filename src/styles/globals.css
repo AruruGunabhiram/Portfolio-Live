@@ -281,3 +281,29 @@ button, a { touch-action: manipulation; }
     linear-gradient(to bottom, var(--grid-line) 1px, transparent 1px);
   background-size: 32px 32px;
 }
+
+/* A16: one measured reservation contract for lazy and loaded project stories. */
+.project-story {
+  --story-reserved-height: var(--story-height-compact);
+  min-height: var(--story-reserved-height);
+}
+[data-theme='light'] .project-story {
+  --text-muted: #4f5a5f;
+  --story-ai: #5d518c;
+  --story-backend: #3e6389;
+  --story-database: #286c72;
+  --story-cloud: #326f82;
+  --story-automation: #775d2c;
+  --story-warning: #974b3a;
+  --story-success: #245335;
+  --story-neutral: #5d5854;
+}
+[data-theme='dark'] #projects { --text-muted: #98a5ab; }
+[data-theme='dark'] .project-story { --text-muted: #a2afb5; }
+.project-story > [data-story-skeleton] { min-height: var(--story-reserved-height); }
+@media (min-width: 768px) {
+  .project-story { --story-reserved-height: var(--story-height-tablet); }
+}
+@media (min-width: 1024px) {
+  .project-story { --story-reserved-height: var(--story-height-desktop); }
+}

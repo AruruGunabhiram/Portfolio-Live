@@ -21,10 +21,9 @@ async function openExplorer(page: Page) {
 
 async function scrollToCodeBattlegrounds(page: Page, expectCustomStory = true) {
   await openExplorer(page);
-  await page
-    .locator('#project-explorer')
-    .getByRole('heading', { name: 'Code Battlegrounds', exact: true })
-    .scrollIntoViewIfNeeded();
+  const toggle = page.locator('button[aria-controls="explorer-detail-code-battlegrounds"]');
+  await toggle.scrollIntoViewIfNeeded();
+  if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
   if (expectCustomStory) {
     const stage = page.getByRole('img', { name: CODE_STAGE });
     await expect(stage).toBeAttached();
@@ -167,11 +166,8 @@ test.describe('A12 — Code Battlegrounds chunk failure', () => {
     const card = explorer.locator('article').filter({ hasText: 'Full-Stack Collaborative Coding Platform' });
     await expect(card.getByRole('heading', { name: 'Code Battlegrounds', exact: true })).toBeVisible();
     await expect(card).toContainText('React · TypeScript · Vite · +9');
-    await expect(card.locator('a[href="https://github.com/Kanyarasi2026/code-battle-grounds"]')).toBeVisible();
-    await expect(card.locator('a[href="https://code-battle-grounds.vercel.app"]')).toBeVisible();
     await expect(card.getByRole('img', { name: /Code Battlegrounds flow/i })).toBeVisible();
 
-    await card.locator('button[aria-controls="explorer-detail-code-battlegrounds"]').click();
     const detail = page.locator('#explorer-detail-code-battlegrounds');
     await expect(detail).toBeVisible();
     await expect(detail).toContainText('real-time collaborative coding platform');

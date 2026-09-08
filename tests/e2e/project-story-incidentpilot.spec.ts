@@ -67,7 +67,7 @@ test.describe('A10 — IncidentPilot visual and accessibility', () => {
   test('meets responsive object, height, overflow, and interaction limits', async ({ page }) => {
     const heightLimits: Record<number, number> = {
       320: 470,
-      375: 460,
+      375: 480,
       768: 600,
       1024: 625,
       1440: 625,

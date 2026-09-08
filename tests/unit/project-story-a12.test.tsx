@@ -4,6 +4,7 @@ import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { CodeBattlegroundsStory } from '../../src/components/projects/story/code-battlegrounds/CodeBattlegroundsStory';
 import { ProjectListItem } from '../../src/components/projects/ProjectListItem';
+import { ProjectDetail } from '../../src/components/projects/ProjectDetail';
 import { ProjectStory } from '../../src/components/projects/story/ProjectStory';
 import {
   PROJECT_STORY_COMPONENTS,
@@ -88,12 +89,15 @@ function renderStory(options: { compact?: boolean; recruiter?: boolean; reduced?
 function renderExplorerItem() {
   return render(
     <PortfolioModeProvider>
-      <ProjectListItem
-        project={CODE_BATTLEGROUNDS}
-        isExpanded={false}
-        onToggle={() => {}}
-        detailId="explorer-detail-code-battlegrounds"
-      />
+      <>
+        <ProjectListItem
+          project={CODE_BATTLEGROUNDS}
+          isExpanded
+          onToggle={() => {}}
+          detailId="explorer-detail-code-battlegrounds"
+        />
+        <ProjectDetail project={CODE_BATTLEGROUNDS} onClose={() => {}} />
+      </>
     </PortfolioModeProvider>
   );
 }

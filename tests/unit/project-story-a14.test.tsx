@@ -3,6 +3,7 @@ import type { ComponentType, LazyExoticComponent } from 'react';
 import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProjectListItem } from '../../src/components/projects/ProjectListItem';
+import { ProjectDetail } from '../../src/components/projects/ProjectDetail';
 import { ProjectStory } from '../../src/components/projects/story/ProjectStory';
 import { ZencoStory } from '../../src/components/projects/story/zenco/ZencoStory';
 import { PROJECT_STORY_COMPONENTS, hasProjectStory, registeredStoryIds, type ProjectStoryComponentProps } from '../../src/components/projects/story/storyRegistry';
@@ -107,7 +108,7 @@ describe('A14 — shared lifecycle and failure safety', () => {
     const original = registry.zenco; registry.zenco = lazy(async () => { throw new Error('simulated Zenco chunk failure'); });
     const error = vi.spyOn(console, 'error').mockImplementation(() => {}); const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
     try {
-      const { container } = render(<PortfolioModeProvider><ProjectListItem project={ZENCO} isExpanded={false} onToggle={() => {}} detailId="explorer-detail-zenco" /></PortfolioModeProvider>);
+      const { container } = render(<PortfolioModeProvider><><ProjectListItem project={ZENCO} isExpanded onToggle={() => {}} detailId="explorer-detail-zenco" /><ProjectDetail project={ZENCO} onClose={() => {}} /></></PortfolioModeProvider>);
       await act(async () => { await new Promise(resolve => setTimeout(resolve, 80)); });
       expect(container.textContent).toContain('Zenco'); expect(container.textContent).toContain('Modular Developer Tooling System');
       expect(container.querySelector('a[href="https://github.com/paudelnirajan/zenco-vscode-extension"]')).not.toBeNull();

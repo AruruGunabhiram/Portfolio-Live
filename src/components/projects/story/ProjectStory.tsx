@@ -1,6 +1,7 @@
 import { Component, Suspense, useEffect, useRef, useState } from 'react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import { PROJECT_STORY_COMPONENTS } from './storyRegistry';
+import { getStoryPresentation } from './storyPresentation';
 
 /**
  * Lazy boundary for project visual worlds.
@@ -45,16 +46,16 @@ function useNearViewport(ref: React.RefObject<HTMLElement | null>, rootMargin: s
 
 /**
  * Height-stable placeholder. No spinner, no artificial delay.
- * Breakpoints mirror the two things that change the stage's height: the compact
- * composition switches at 768px, and FeaturedProject narrows the visual to a 340px
- * column at 1024px. Measured against the rendered Ember stage so an arriving chunk
- * does not shift the page.
+ * The project-specific CSS variables come from presentation metadata, so deep,
+ * medium and light stories reserve their own measured space without coupling the
+ * registry to a story implementation.
  */
-function StorySkeleton() {
+function StorySkeleton({ projectId }: { projectId: string }) {
   return (
     <div
       aria-hidden="true"
-      className="rounded-md border min-w-0 min-h-[415px] md:min-h-[592px] lg:min-h-[625px]"
+      data-story-skeleton={projectId}
+      className="story-grid rounded-md border min-w-0"
       style={{ background: 'var(--surface-subtle)', borderColor: 'var(--border)' }}
     />
   );
@@ -94,18 +95,33 @@ export function ProjectStory({ projectId, fallback = null }: ProjectStoryProps) 
   const ref = useRef<HTMLDivElement>(null);
   const near = useNearViewport(ref, NEAR_VIEWPORT_MARGIN);
   const Story = PROJECT_STORY_COMPONENTS[projectId];
+  const presentation = getStoryPresentation(projectId);
 
-  if (!Story) return <>{fallback}</>;
+  if (!Story || !presentation) return <>{fallback}</>;
+
+  const presentationStyle = {
+    '--story-height-compact': `${presentation.compactHeight}px`,
+    '--story-height-tablet': `${presentation.tabletHeight}px`,
+    '--story-height-desktop': `${presentation.desktopHeight}px`,
+  } as CSSProperties;
+
+  const skeleton = <StorySkeleton projectId={projectId} />;
 
   return (
-    <div ref={ref} className="min-w-0">
-      <StoryErrorBoundary fallback={fallback ?? <StorySkeleton />}>
+    <div
+      ref={ref}
+      className="project-story min-w-0"
+      data-project-story={projectId}
+      data-story-density={presentation.density}
+      style={presentationStyle}
+    >
+      <StoryErrorBoundary fallback={fallback ?? skeleton}>
         {near ? (
-          <Suspense fallback={<StorySkeleton />}>
+          <Suspense fallback={skeleton}>
             <Story />
           </Suspense>
         ) : (
-          <StorySkeleton />
+          skeleton
         )}
       </StoryErrorBoundary>
     </div>

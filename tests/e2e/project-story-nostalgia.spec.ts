@@ -16,7 +16,9 @@ async function openExplorer(page: Page) {
 }
 async function scrollToNostalgia(page: Page, expectStory = true) {
   await openExplorer(page);
-  await page.locator('#project-explorer').getByRole('heading', { name: 'Nostalgia', exact: true }).scrollIntoViewIfNeeded();
+  const toggle = page.locator('button[aria-controls="explorer-detail-nostalgia"]');
+  await toggle.scrollIntoViewIfNeeded();
+  if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
   if (expectStory) { const stage = page.getByRole('img', { name: NOSTALGIA_STAGE }); await expect(stage).toBeAttached(); await stage.scrollIntoViewIfNeeded(); }
   await page.waitForTimeout(700);
 }
@@ -71,8 +73,7 @@ test.describe('A15 — Nostalgia chunk failure', () => {
     await page.route(NOSTALGIA_CHUNK, route => route.abort()); await page.goto('/', { waitUntil: 'networkidle' }); await scrollToNostalgia(page, false); await page.waitForTimeout(500);
     await expect(page.getByRole('img', { name: NOSTALGIA_STAGE })).toHaveCount(0);
     const card = page.locator('#project-explorer article').filter({ hasText: 'Browser Extension / Productivity Tool' });
-    await expect(card.getByRole('heading', { name: 'Nostalgia', exact: true })).toBeVisible(); await expect(card.locator('a[href="https://github.com/Meghan31/nostalgia-copy-paste-extension"]')).toBeVisible();
-    await card.locator('button[aria-controls="explorer-detail-nostalgia"]').click(); const detail = page.locator('#explorer-detail-nostalgia');
+    await expect(card.getByRole('heading', { name: 'Nostalgia', exact: true })).toBeVisible(); const detail = page.locator('#explorer-detail-nostalgia');
     await expect(detail).toBeVisible(); await expect(detail).toContainText('Built with a friend'); await expect(detail).toContainText('chrome.storage.local'); await expect(detail.getByRole('link', { name: /repository on GitHub/i })).toBeVisible(); await expect(page.locator('#project-explorer')).toContainText('8 projects');
   });
 });

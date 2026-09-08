@@ -2,6 +2,7 @@ import type { Project } from '../../types/portfolio';
 import { ProjectDemo } from './demo/ProjectDemo';
 import { ProjectStory } from './story/ProjectStory';
 import { hasProjectStory } from './story/storyRegistry';
+import { ProjectContributionLabel } from './ProjectContributionLabel';
 
 const LABEL: Record<string, string> = {
   backend: 'Backend',
@@ -42,9 +43,12 @@ export function ProjectListItem({
           <p className="text-xs mt-1 leading-snug break-words" style={{ color: 'var(--text-muted)', overflowWrap: 'anywhere' as const }}>
             {project.subtitle}
           </p>
-          <p className="text-xs mt-2 break-words leading-relaxed" style={{ color: 'var(--text-muted)', overflowWrap: 'anywhere' as const }}>
-            {formatTechs(project.technologies)} <span aria-hidden="true">·</span> {cats}
-          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs leading-relaxed" style={{ color: 'var(--text-muted)' }}>
+            <span className="break-words" style={{ overflowWrap: 'anywhere' as const }}>
+              {formatTechs(project.technologies)} <span aria-hidden="true">·</span> {cats}
+            </span>
+            <ProjectContributionLabel contribution={project.contribution} />
+          </div>
         </div>
         <button
           type="button"
@@ -74,7 +78,7 @@ export function ProjectListItem({
         </div>
       )}
 
-      {hasExplorerStory && (
+      {hasExplorerStory && isExpanded && (
         <div className="mt-4 min-w-0">
           <ProjectStory
             projectId={project.id}

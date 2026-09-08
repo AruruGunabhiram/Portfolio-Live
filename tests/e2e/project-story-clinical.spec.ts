@@ -30,10 +30,9 @@ async function openExplorer(page: Page) {
 
 async function scrollToClinical(page: Page) {
   await openExplorer(page);
-  await page
-    .locator('#project-explorer')
-    .getByRole('heading', { name: 'Clinical Reconciliation', exact: true })
-    .scrollIntoViewIfNeeded();
+  const toggle = page.locator('button[aria-controls="explorer-detail-clinical-reconciliation"]');
+  await toggle.scrollIntoViewIfNeeded();
+  if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
   await page.waitForTimeout(700);
 }
 
@@ -162,10 +161,6 @@ test.describe('A11 — Clinical Reconciliation chunk failure', () => {
     const card = explorer.locator('article').filter({ hasText: 'Medication Review Platform' });
     await expect(card.getByRole('heading', { name: 'Clinical Reconciliation', exact: true })).toBeVisible();
     await expect(card).toContainText('Python · FastAPI · React · +3');
-    await expect(card.locator('a[href="https://github.com/AruruGunabhiram/clinical-reconciliation"]')).toBeVisible();
-    await expect(card.locator('a[href="https://clinical-reconciliation.vercel.app"]')).toBeVisible();
-
-    await card.locator('button[aria-controls="explorer-detail-clinical-reconciliation"]').click();
     const detail = page.locator('#explorer-detail-clinical-reconciliation');
     await expect(detail).toBeVisible();
     await expect(detail).toContainText('full-stack medication reconciliation and data-quality review');

@@ -4,6 +4,7 @@ import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TimeSlingStory } from '../../src/components/projects/story/timesling/TimeSlingStory';
 import { ProjectListItem } from '../../src/components/projects/ProjectListItem';
+import { ProjectDetail } from '../../src/components/projects/ProjectDetail';
 import { ProjectStory } from '../../src/components/projects/story/ProjectStory';
 import {
   PROJECT_STORY_COMPONENTS,
@@ -191,7 +192,7 @@ describe('A13 — static, paused, shared-lifecycle, and fallback behavior', () =
     const error = vi.spyOn(console, 'error').mockImplementation(() => {});
     const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
     try {
-      const { container } = render(<PortfolioModeProvider><ProjectListItem project={TIMESLING} isExpanded={false} onToggle={() => {}} detailId="explorer-detail-timesling" /></PortfolioModeProvider>);
+      const { container } = render(<PortfolioModeProvider><><ProjectListItem project={TIMESLING} isExpanded onToggle={() => {}} detailId="explorer-detail-timesling" /><ProjectDetail project={TIMESLING} onClose={() => {}} /></></PortfolioModeProvider>);
       await settle();
       expect(container.textContent).toContain('TimeSling');
       expect(container.textContent).toContain('macOS Productivity App');

@@ -26,7 +26,7 @@ export function StoryStage({ children, ariaLabel, description, withGrid, classNa
       style={{
         background: 'var(--surface-subtle)',
         borderColor: 'var(--border)',
-        minHeight: '200px',
+        minHeight: 'var(--story-reserved-height, 200px)',
         overflowWrap: 'anywhere' as const,
         position: 'relative',
       }}

@@ -1,4 +1,5 @@
 import type { Project } from '../../types/portfolio';
+import { ProjectContributionLabel } from './ProjectContributionLabel';
 
 const categoryLabel: Record<string, string> = {
   backend: 'Backend',
@@ -29,9 +30,10 @@ export function ProjectDetail({ project, onClose }: { project: Project; onClose:
           <p className="text-xs font-medium uppercase tracking-[0.08em] mt-1" style={{ color: 'var(--accent)' }}>
             {project.subtitle}
           </p>
-          <p className="text-xs mt-2" style={{ color: 'var(--text-muted)' }}>
-            {project.categories.map(humanCategory).join(' · ')}
-          </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+            <span>{project.categories.map(humanCategory).join(' · ')}</span>
+            <ProjectContributionLabel contribution={project.contribution} />
+          </div>
         </div>
         <button
           onClick={onClose}

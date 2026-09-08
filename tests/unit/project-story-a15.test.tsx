@@ -3,6 +3,7 @@ import type { ComponentType, LazyExoticComponent } from 'react';
 import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProjectListItem } from '../../src/components/projects/ProjectListItem';
+import { ProjectDetail } from '../../src/components/projects/ProjectDetail';
 import { ProjectStory } from '../../src/components/projects/story/ProjectStory';
 import { NostalgiaStory } from '../../src/components/projects/story/nostalgia/NostalgiaStory';
 import { PROJECT_STORY_COMPONENTS, hasProjectStory, registeredStoryIds, type ProjectStoryComponentProps } from '../../src/components/projects/story/storyRegistry';
@@ -94,7 +95,7 @@ describe('A15 — Nostalgia capture, local save, and reuse story', () => {
     const original = registry.nostalgia; registry.nostalgia = lazy(async () => { throw new Error('simulated Nostalgia chunk failure'); });
     const error = vi.spyOn(console, 'error').mockImplementation(() => {}); const warning = vi.spyOn(console, 'warn').mockImplementation(() => {});
     try {
-      const { container } = render(<PortfolioModeProvider><ProjectListItem project={NOSTALGIA} isExpanded={false} onToggle={() => {}} detailId="explorer-detail-nostalgia" /></PortfolioModeProvider>);
+      const { container } = render(<PortfolioModeProvider><><ProjectListItem project={NOSTALGIA} isExpanded onToggle={() => {}} detailId="explorer-detail-nostalgia" /><ProjectDetail project={NOSTALGIA} onClose={() => {}} /></></PortfolioModeProvider>);
       await act(async () => { await new Promise(resolve => setTimeout(resolve, 80)); });
       expect(container.textContent).toContain('Nostalgia'); expect(container.textContent).toContain('Browser Extension / Productivity Tool');
       expect(container.querySelector('a[href="https://github.com/Meghan31/nostalgia-copy-paste-extension"]')).not.toBeNull();

@@ -4,6 +4,7 @@ import { act, render } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ClinicalReconciliationStory } from '../../src/components/projects/story/clinical/ClinicalReconciliationStory';
 import { ProjectListItem } from '../../src/components/projects/ProjectListItem';
+import { ProjectDetail } from '../../src/components/projects/ProjectDetail';
 import { ProjectStory } from '../../src/components/projects/story/ProjectStory';
 import {
   PROJECT_STORY_COMPONENTS,
@@ -99,12 +100,15 @@ function renderStory(options: { compact?: boolean; recruiter?: boolean; reduced?
 function renderExplorerItem() {
   return render(
     <PortfolioModeProvider>
-      <ProjectListItem
-        project={CLINICAL}
-        isExpanded={false}
-        onToggle={() => {}}
-        detailId="explorer-detail-clinical-reconciliation"
-      />
+      <>
+        <ProjectListItem
+          project={CLINICAL}
+          isExpanded
+          onToggle={() => {}}
+          detailId="explorer-detail-clinical-reconciliation"
+        />
+        <ProjectDetail project={CLINICAL} onClose={() => {}} />
+      </>
     </PortfolioModeProvider>
   );
 }

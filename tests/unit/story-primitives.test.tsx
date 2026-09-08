@@ -24,7 +24,7 @@ describe('A2 — story primitives accessibility + tokens', () => {
     // no fixed width, min-width 0 via class, position relative
     expect(stage.className).toContain('min-w-0');
     expect(stage.style.position).toBe('relative');
-    expect(stage.style.minHeight).toBe('200px');
+    expect(stage.style.minHeight).toBe('var(--story-reserved-height, 200px)');
   });
 
   it('9a — StoryConnector decorative is aria-hidden', () => {

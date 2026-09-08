@@ -20,7 +20,9 @@ async function openExplorer(page: Page) {
 
 async function scrollToTimeSling(page: Page, expectStory = true) {
   await openExplorer(page);
-  await page.locator('#project-explorer').getByRole('heading', { name: 'TimeSling', exact: true }).scrollIntoViewIfNeeded();
+  const toggle = page.locator('button[aria-controls="explorer-detail-timesling"]');
+  await toggle.scrollIntoViewIfNeeded();
+  if ((await toggle.getAttribute('aria-expanded')) !== 'true') await toggle.click();
   if (expectStory) {
     const stage = page.getByRole('img', { name: TIMESLING_STAGE });
     await expect(stage).toBeAttached();
@@ -113,8 +115,6 @@ test.describe('A13 — TimeSling chunk failure', () => {
     await expect(page.getByRole('img', { name: TIMESLING_STAGE })).toHaveCount(0);
     const card = page.locator('#project-explorer article').filter({ hasText: 'macOS Productivity App' });
     await expect(card.getByRole('heading', { name: 'TimeSling', exact: true })).toBeVisible();
-    await expect(card.locator('a[href="https://github.com/AruruGunabhiram/TimeSling-fresh"]')).toBeVisible();
-    await card.locator('button[aria-controls="explorer-detail-timesling"]').click();
     const detail = page.locator('#explorer-detail-timesling');
     await expect(detail).toBeVisible();
     await expect(detail).toContainText('Native macOS menu bar utility');

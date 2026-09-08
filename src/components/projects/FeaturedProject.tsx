@@ -3,6 +3,7 @@ import { ProjectDemo } from './demo/ProjectDemo';
 import { ProjectStory } from './story/ProjectStory';
 import { hasProjectStory } from './story/storyRegistry';
 import { usePortfolioMode } from '../../context/PortfolioModeContext';
+import { ProjectContributionLabel } from './ProjectContributionLabel';
 
 const CATEGORY_LABEL: Record<string, string> = {
   backend: 'Backend',
@@ -44,8 +45,8 @@ export function FeaturedProject({
       : null;
 
   return (
-    <article className="py-7 sm:py-8">
-      <div className={hasVisual ? 'grid lg:grid-cols-[1.15fr_340px] gap-6 lg:gap-8 items-start' : 'flex items-start justify-between gap-4'}>
+    <article className="py-6 sm:py-7" data-project-tier="featured">
+      <div className={hasVisual ? 'grid lg:grid-cols-[1.15fr_340px] gap-5 lg:gap-7 items-start' : 'flex items-start justify-between gap-4'}>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-3">
             <span className="text-[11px] tracking-[0.12em] uppercase font-medium" style={{ color: 'var(--text-muted)' }} aria-hidden="true">
@@ -68,7 +69,7 @@ export function FeaturedProject({
           </p>
 
           <ul className="mt-4 space-y-2">
-            {project.highlights.slice(0, 3).map((h, i) => (
+            {project.highlights.slice(0, isRecruiter ? 2 : 3).map((h, i) => (
               <li key={i} className="flex gap-2.5 text-sm leading-relaxed">
                 <span className="mt-[7px] w-1 h-1 rounded-full shrink-0" style={{ background: 'var(--text-muted)' }} aria-hidden="true" />
                 <span style={{ color: 'var(--text-secondary)' }}>{h}</span>
@@ -76,9 +77,10 @@ export function FeaturedProject({
             ))}
           </ul>
 
-          <p className="text-xs mt-4 break-words" style={{ color: 'var(--text-muted)', overflowWrap: 'anywhere' as const }}>
-            {formatTechs(project.technologies)}
-          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-2 text-xs" style={{ color: 'var(--text-muted)' }}>
+            <span className="break-words" style={{ overflowWrap: 'anywhere' as const }}>{formatTechs(project.technologies)}</span>
+            <ProjectContributionLabel contribution={project.contribution} />
+          </div>
 
           <div className="mt-5 flex flex-wrap items-center gap-3">
             <button
