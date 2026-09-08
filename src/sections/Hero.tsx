@@ -227,13 +227,13 @@ export const Hero = () => {
             </motion.div>
 
             {/* CTAs — max 2 high-emphasis, recruiter makes Resume primary */}
-            <motion.div variants={item} className="flex flex-col xs:flex-row flex-wrap gap-3 pt-6 min-w-0">
+            <motion.div variants={item} className="flex flex-col sm:flex-row flex-wrap gap-3 pt-6 min-w-0">
               {isRecruiter ? (
                 <>
                   <a
                     href={CONTACT.resumeUrl}
                     download="Gunabhiram_Resume.pdf"
-                    className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 xs:flex-none"
+                    className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 sm:flex-none"
                     style={{
                       background: 'var(--accent-button)',
                       color: '#ffffff',
@@ -259,7 +259,7 @@ export const Hero = () => {
                   </a>
                   <a
                     href="#projects"
-                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border bg-transparent transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 xs:flex-none"
+                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border bg-transparent transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 sm:flex-none"
                     style={{
                       borderColor: 'var(--border-strong)',
                       color: 'var(--text)',
@@ -272,7 +272,7 @@ export const Hero = () => {
                 <>
                   <a
                     href="#projects"
-                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 xs:flex-none"
+                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border shadow-sm transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 sm:flex-none"
                     style={{
                       background: 'var(--accent-button)',
                       color: '#ffffff',
@@ -284,7 +284,7 @@ export const Hero = () => {
                   <a
                     href={CONTACT.resumeUrl}
                     download="Gunabhiram_Resume.pdf"
-                    className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-medium border bg-transparent transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 xs:flex-none"
+                    className="inline-flex items-center justify-center gap-1.5 px-5 py-2.5 rounded-md text-sm font-medium border bg-transparent transition-colors focus-visible:outline-none min-h-[44px] min-w-0 flex-1 sm:flex-none"
                     style={{
                       borderColor: 'var(--border-strong)',
                       color: 'var(--text)',

@@ -67,15 +67,17 @@ test.describe('A8 — Ember story lazy loading (network evidence)', () => {
     await expect(page.locator('#projects')).toContainText('Personal AI Execution Assistant');
     await expect(page.locator('#projects')).toContainText('Durable orchestrator over modular capabilities');
 
-    // NOTE: this app does not implement hash deep-link scrolling (pre-existing —
-    // App.tsx only handles the skip link), so a direct #projects load stays at the
-    // top of the page. The correct lazy behaviour there is NOT to fetch the chunk.
-    expect(emberHits(js).length, 'no fetch while Ember is still far offscreen').toBe(0);
-
-    // Once Ember is actually reached the story loads and renders correctly.
+    // A20 — cold hash navigation now re-applies after mount (generic rAF scroll),
+    // so #projects lands near the projects section and the Ember chunk will load
+    // shortly after, rather than staying at the top with no fetch.
+    await page.waitForTimeout(900);
+    const afterHash = emberHits(js).length;
+    // It may already have fetched (hash scrolled) or will on explicit scroll — both are lazy, not eager on initial.
+    // Ensure we end with exactly one fetch once Ember is in view.
     await page.getByRole('heading', { name: 'Ember', exact: true }).scrollIntoViewIfNeeded();
     await expect(page.getByRole('img', { name: /durable orchestrator/ })).toBeVisible();
     expect(emberHits(js).length).toBe(1);
+    expect(afterHash <= 1).toBeTruthy();
   });
 
   test('a blocked story chunk leaves the Ember card fully usable', async ({ page }) => {

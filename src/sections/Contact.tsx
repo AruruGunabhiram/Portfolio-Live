@@ -63,7 +63,7 @@ export const Contact = () => {
             <p className="text-xs font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
               Email
             </p>
-            <div className="mt-2 flex flex-col xs:flex-row flex-wrap items-start xs:items-center gap-3 min-w-0">
+            <div className="mt-2 flex flex-col sm:flex-row flex-wrap items-start sm:items-center gap-3 min-w-0">
               <a
                 href={`mailto:${CONTACT.email}`}
                 className="text-sm sm:text-base font-medium break-all focus-visible:outline-none link-accent min-w-0"

@@ -118,7 +118,7 @@ export const Projects = () => {
                 aria-expanded={explorerOpen}
                 aria-controls="project-explorer"
                 onClick={() => setExplorerOpen(v => !v)}
-                className="inline-flex items-center gap-1 text-sm underline-offset-4 hover:underline focus-visible:outline-none"
+                className="inline-flex items-center gap-1 text-sm underline-offset-4 hover:underline focus-visible:outline-none min-h-[44px]"
                 style={{ color: 'var(--text-muted)' }}
               >
                 {explorerOpen ? 'Show fewer projects' : 'View all projects'}
@@ -133,7 +133,7 @@ export const Projects = () => {
                 aria-expanded={explorerOpen}
                 aria-controls="project-explorer"
                 onClick={() => setExplorerOpen(v => !v)}
-                className="inline-flex items-center gap-2 text-sm font-medium border rounded-md px-4 py-2.5 transition-colors focus-visible:outline-none"
+                className="inline-flex items-center gap-2 text-sm font-medium border rounded-md px-4 py-2.5 transition-colors focus-visible:outline-none min-h-[44px]"
                 style={
                   explorerOpen
                     ? { background: 'var(--surface-subtle)', borderColor: 'var(--border)', color: 'var(--text-secondary)' }

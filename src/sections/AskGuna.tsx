@@ -105,7 +105,7 @@ export const AskGuna = () => {
                 <label htmlFor="ask-guna-input" className="block text-[11px] font-semibold tracking-[0.12em] uppercase" style={{ color: 'var(--text-muted)' }}>
                   Your question
                 </label>
-                <div className="flex flex-col xs:flex-row gap-2 min-w-0">
+                <div className="flex flex-col sm:flex-row gap-2 min-w-0">
                   <input
                     id="ask-guna-input"
                     type="text"
@@ -123,7 +123,7 @@ export const AskGuna = () => {
                   <button
                     type="submit"
                     disabled={loading || !question.trim()}
-                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none min-h-[44px] shrink-0 xs:w-auto w-full"
+                    className="inline-flex items-center justify-center px-5 py-2.5 rounded-md text-sm font-medium border transition-colors disabled:opacity-50 disabled:cursor-not-allowed focus-visible:outline-none min-h-[44px] shrink-0 sm:w-auto w-full"
                     style={{ background: 'var(--accent-button)', borderColor: 'var(--accent-button)', color: '#fff' }}
                   >
                     {loading ? 'Checking portfolio…' : 'Ask'}
