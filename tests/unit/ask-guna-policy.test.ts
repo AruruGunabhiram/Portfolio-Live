@@ -97,11 +97,11 @@ describe('Ask Guna handler — three-state behavior (8 required cases, mocked Gr
   beforeEach(async () => {
     vi.resetModules();
     process.env.GROQ_API_KEY = 'test-key';
-    // initial mock will be overridden per test
+    // initial mock will be overridden per test — must be JSON classification
     global.fetch = vi.fn(async () => ({
       ok: true,
       status: 200,
-      json: async () => ({ choices: [{ message: { content: 'mock' } }] }),
+      json: async () => ({ choices: [{ message: { content: JSON.stringify({ classification: 'RELEVANT_KNOWN', answer: 'mock' }) } }] }),
       text: async () => '',
     })) as unknown as typeof fetch;
     const mod = await import('../../api/ask-guna');
@@ -115,10 +115,15 @@ describe('Ask Guna handler — three-state behavior (8 required cases, mocked Gr
   });
 
   function mockGroqAnswer(answer: string) {
+    // Auto-classify for backward compat: IRRELEVANT/UNKNOWN strings map to their classifications, others to RELEVANT_KNOWN
+    let classification: string = 'RELEVANT_KNOWN';
+    if (answer === IRRELEVANT) classification = 'IRRELEVANT';
+    else if (answer === UNKNOWN) classification = 'RELEVANT_UNKNOWN';
+    const content = JSON.stringify({ classification, answer });
     global.fetch = vi.fn(async () => ({
       ok: true,
       status: 200,
-      json: async () => ({ choices: [{ message: { content: answer } }] }),
+      json: async () => ({ choices: [{ message: { content } }] }),
       text: async () => '',
     })) as unknown as typeof fetch;
   }

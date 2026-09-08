@@ -38,11 +38,11 @@ describe('21W — Ask Guna API handler', () => {
   beforeEach(async () => {
     vi.resetModules();
     process.env.GROQ_API_KEY = 'test-key';
-    // mock fetch globally
+    // mock fetch globally — new handler requires JSON classification
     global.fetch = vi.fn(async () => ({
       ok: true,
       status: 200,
-      json: async () => ({ choices: [{ message: { content: 'SocialLens is a backend analytics platform.' } }] }),
+      json: async () => ({ choices: [{ message: { content: JSON.stringify({ classification: 'RELEVANT_KNOWN', answer: 'SocialLens is a backend analytics platform.' }) } }] }),
       text: async () => '',
     })) as unknown as typeof fetch;
     const mod = await import('../../api/ask-guna');
