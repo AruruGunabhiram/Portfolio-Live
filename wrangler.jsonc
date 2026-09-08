@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "portfolio-live",
+  // Cloudflare Worker + static assets (full-stack). `main` provides server-side /api/ask execution;
+  // `assets` serves the Vite SPA from dist/. Without `main`, Cloudflare rejects env vars as static-only.
+  "main": "worker/index.ts",
+  "compatibility_date": "2025-09-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application"
+  },
+  // GROQ_API_KEY is a secret — set via `wrangler secret put GROQ_API_KEY` or Cloudflare dashboard
+  // Worker Secrets (do NOT put in vars, do NOT prefix with VITE_). GROQ_MODEL may be set as var.
+  "vars": {
+    "GROQ_MODEL": "llama-3.1-8b-instant"
+  },
+  // Observability optional
+  "observability": {
+    "enabled": true
+  }
+}

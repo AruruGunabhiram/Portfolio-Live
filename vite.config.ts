@@ -44,7 +44,7 @@ Additional constraints:
       server.middlewares.use(async (req: unknown, res: unknown, next: () => void) => {
         const r = req as { url?: string; method?: string; headers: Record<string, unknown>; socket?: { remoteAddress?: string }; on: (ev: string, fn: (c: string) => void) => void };
         const s = res as { statusCode?: number; setHeader: (k: string, v: string) => void; end: (d: string) => void };
-        if (!r.url?.startsWith('/api/ask-guna')) return next();
+        if (!r.url?.startsWith('/api/ask')) return next();
         if (r.method !== 'POST') {
           s.statusCode = 405;
           s.setHeader('Content-Type', 'application/json');

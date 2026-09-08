@@ -1,6 +1,6 @@
 # Gunabhiram Aruru
 
-## Professional Profile
+## Profile
 
 * Computer Science master's student at the University of Colorado Boulder.
 * Software engineer with experience across backend development, full-stack applications, AI-assisted systems, automation, and cloud technologies.
@@ -39,7 +39,7 @@
 * Worked in a software engineering internship role.
 * Contributed to software development using modern application development technologies.
 
-## Selected Technical Projects
+## Projects
 
 ### Ember / Worthy
 
@@ -101,7 +101,7 @@
 * Contributed to the development of Code Battlegrounds as part of a collaborative project.
 * This was a shared project and is not represented as solely authored by Gunabhiram.
 
-## Technical Skills
+## Skills
 
 ### Programming Languages
 
